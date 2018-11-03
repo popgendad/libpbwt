@@ -88,8 +88,8 @@ typedef struct
   long nBlockStart;		  /* u->n at start of block encoding current u->y */
 } PbwtCursor;
 
-extern BOOL isCheck;		/* when TRUE carry out various checks */
-extern BOOL isStats;		/* when TRUE report stats in various places */
+extern BOOL isCheck;	      /* when TRUE carry out various checks */
+extern BOOL isStats;		    /* when TRUE report stats in various places */
 extern DICT *variationDict;	/* "xxx|yyy" where variation is from xxx to yyy in VCF */
 
 /* Function prototypes */
