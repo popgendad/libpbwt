@@ -33,9 +33,9 @@ typedef struct
 
 typedef struct PBWTstruct
 {
-  int N;			          /* number of sites */
-  int M;			          /* number of samples */
-  char* chrom;			    /* chromosome name */
+  int nsite; 	          /* number of sites */
+  int nsam;             /* number of samples */
+  char *chr;	  		    /* chromosome name */
   Array sites;			    /* array of Site */
   Array samples;		    /* array of int index into global samples */
   Array yz;			        /* compressed PBWT array of uchar */
@@ -89,13 +89,13 @@ typedef struct
 } PbwtCursor;
 
 /* Function prototypes */
-extern BOOL isCheck ;		/* when TRUE carry out various checks */
-extern BOOL isStats ;		/* when TRUE report stats in various places */
-extern DICT *variationDict ;	/* "xxx|yyy" where variation is from xxx to yyy in VCF */
+extern BOOL isCheck;		/* when TRUE carry out various checks */
+extern BOOL isStats;		/* when TRUE report stats in various places */
+extern DICT *variationDict;	/* "xxx|yyy" where variation is from xxx to yyy in VCF */
 
-void pbwtInit (void);
+int pbwtInit (void);
 PBWT *pbwtCreate (int M, int N); /* OK to have N == 0 and set p->N later if not known now */
-void pbwtDestroy (PBWT *p);
+int pbwtDestroy (PBWT *p);
 PBWT *pbwtSubSites (PBWT *pOld, double fmin, double frac);
 PBWT *pbwtSubRange (PBWT *pOld, int start, int end);
 void pbwtBuildReverse (PBWT *p);
