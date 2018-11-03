@@ -88,14 +88,17 @@ typedef struct
   long nBlockStart;		  /* u->n at start of block encoding current u->y */
 } PbwtCursor;
 
-/* Function prototypes */
 extern BOOL isCheck;		/* when TRUE carry out various checks */
 extern BOOL isStats;		/* when TRUE report stats in various places */
 extern DICT *variationDict;	/* "xxx|yyy" where variation is from xxx to yyy in VCF */
 
+/* Function prototypes */
+
+/* Functions in pbwt.c */
 int pbwtInit (void);
 PBWT *pbwtCreate (int M, int N); /* OK to have N == 0 and set p->N later if not known now */
 int pbwtDestroy (PBWT *p);
+
 PBWT *pbwtSubSites (PBWT *pOld, double fmin, double frac);
 PBWT *pbwtSubRange (PBWT *pOld, int start, int end);
 void pbwtBuildReverse (PBWT *p);
