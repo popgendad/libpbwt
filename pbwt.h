@@ -1,6 +1,8 @@
 #ifndef PBWT_H
 #define PBWT_H
 
+#include <stdlib.h>
+
 /* Define values */
 #ifndef BOOL_DEFINED
 #define BOOL_DEFINED
@@ -17,7 +19,7 @@ typedef struct ArrayStruct
     int magic;
     char *base;         /* char* since need to do pointer arithmetic in bytes */
     long dim;           /* length of alloc'ed space */
-    int size;
+    size_t size;
     long max;           /* largest element accessed via array() */
     int id;             /* unique identifier */
 } *Array;
