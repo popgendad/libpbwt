@@ -58,13 +58,13 @@ pbwt_print (const struct pbwt *b)
 		printf("%zu | %zu | ", b->div[i], b->ppa[i]);
 		for (j = 0; j < b->nsite - 1; ++j)
 			putchar((char)(X[i][j]));
-		printf(" %c\n", (char)(X[i][b->nsite -1]));
+		printf(" %c\n", (char)(X[i][b->nsite-1]));
 	}
 	return 0;
 }
 
 int
-main (int argc, char **argv)
+build_prefix_array (struct pbwt *b)
 {
 	size_t i = 0;
 	size_t j = 0;
@@ -73,9 +73,12 @@ main (int argc, char **argv)
 	size_t ib = 0;
 	size_t da = 0;
 	size_t db = 0;
-	struct pbwt *b;
-
-	b = pbwt_init(6, 8);
+	size_t *ara = malloc(b->nsam * sizeof(size_t));
+	size_t *arb = malloc(b->nsam * sizeof(size_t));
+	size_t *ard = malloc(b->nsam * sizeof(size_t));
+	size_t *are = malloc(b->nsam * sizeof(size_t));
+	size_t *ma = malloc(b->nsam * sizeof(size_t));
+	size_t *mb = malloc(b->nsam * sizeof(size_t));
 
 	for (i = 0; i < b->nsite - 1; ++i)
 	{
@@ -83,12 +86,6 @@ main (int argc, char **argv)
 		ib = 0;
 		da = i + 1;
 		db = i + 1;
-		size_t *ara = malloc(b->nsam * sizeof(size_t));
-		size_t *arb = malloc(b->nsam * sizeof(size_t));
-		size_t *ard = malloc(b->nsam * sizeof(size_t));
-		size_t *are = malloc(b->nsam * sizeof(size_t));
-		size_t *ma = malloc(b->nsam * sizeof(size_t));
-		size_t *mb = malloc(b->nsam * sizeof(size_t));
 
 		for (j = 0; j < b->nsam; ++j)
 		{
@@ -132,19 +129,35 @@ main (int argc, char **argv)
 				b->div[k] = are[j];
 			}
 		}
-
-		free(ara);
-		free(arb);
-		free(ard);
-		free(are);
-		free(ma);
-		free(mb);
 	}
 
-	/* Print data structure */
-	pbwt_print(b);
-
-	pbwt_destroy(b);
+	/* Free allocated memory */
+	free(ara);
+	free(arb);
+	free(ard);
+	free(are);
+	free(ma);
+	free(mb);
 
 	return 0;
+}
+
+int
+main (int argc, char **argv)
+{
+	int v = 0;
+	struct pbwt *b;
+
+	/* Initialize pbwt structure */
+	b = pbwt_init(6, 8);
+
+	/* Build the prefix and divergence arrays */
+	v = build_prefix_array(b);
+
+	/* Print data structure */
+	v = pbwt_print(b);
+
+	v = pbwt_destroy(b);
+
+	return v;
 }
