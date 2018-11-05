@@ -56,7 +56,7 @@ pbwt_print (const pbwt_t *b)
 		printf("%2zu | %5zu | ", b->div[i], index);
 		for (j = 0; j < b->nsite; ++j)
 			putchar((char)(b->data[index][j]));
-		putchar('\n');
+		printf(" %s  %s\n", b->sid[index], b->reg[index]);
 	}
 	return 0;
 }

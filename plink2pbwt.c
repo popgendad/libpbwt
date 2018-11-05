@@ -72,6 +72,10 @@ main (int argc, char **argv)
     {
         	memcpy(b->data[2*i], hap2uchar(p, i, 0), b->nsite * sizeof(unsigned char));
         	memcpy(b->data[2*i+1], hap2uchar(p, i, 1), b->nsite * sizeof(unsigned char));
+        	b->sid[2*i] = strdup (p->fam[i].iid);
+        	b->sid[2*i+1] = strdup (p->fam[i].iid);
+        	b->reg[2*i] = strdup(p->reg[i].reg);
+        	b->reg[2*i+1] = strdup (p->reg[i].reg);
     }
 
 	/* Build the prefix and divergence arrays */
