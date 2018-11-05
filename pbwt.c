@@ -1,81 +1,145 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "pbwt.h"
 
-static int p3decode[128];
-#define ENCODE_MAX1 64		            /* ~64 */
-#define ENCODE_MAX2 ((95-63) << 6)    /* ~1k - is this 32 or 31?*/
-#define ENCODE_MAX3 ((127-96) << 11)  /* ~64k - ditto */
-
-int
-pbwtInit (void) 
+pbwt_t *
+pbwt_init (const size_t nsite, const size_t nsam)
 {
-    variationDict = dictCreate(32);
-    pack3init(); 
-    sampleInit();
-    return 0;
-}
+	size_t i = 0;
+	pbwt_t *b = NULL;
 
-PBWT *
-pbwtCreate (int nsam, int nsite)
-{
-    int i = 0;
-    PBWT *p = NULL;
-    
-    p = (PBWT *)malloc(sizeof(PBWT));
-    p->nsam = nsam;
-    p->nsite = nsite;
-    p->aFstart = (int *)malloc(nsam * sizeof(int));
-    for (i = 0; i < nsam; ++i)
-        p->aFstart[i] = i;
-
-  return p;
+	b = (pbwt_t *)malloc(sizeof(struct pbwt));
+	b->nsite = nsite;
+	b->nsam = nsam;
+	b->ppa = (size_t *)malloc(nsam * sizeof(size_t));
+	b->div = (size_t *)malloc(nsam * sizeof(size_t));
+	b->sid = (char **)malloc(nsam * sizeof(char *));
+	b->reg = (char **)malloc(nsam * sizeof(char *));
+	b->data = (unsigned char **)malloc(nsam * sizeof(unsigned char *));
+	for (i = 0; i < nsam; ++i)
+	{
+		b->ppa[i] = i;
+		b->div[i] = 0;
+		b->data[i] = (unsigned char *)malloc(nsite * sizeof(unsigned char));
+	}
+	return b;
 }
 
 int
-pbwtDestroy (PBWT *p)
+pbwt_destroy (pbwt_t *b)
 {
-  if (p->chr)
-    free(p->chr);
-  if (p->sites)
-    arrayDestroy(p->sites);
-  if (p->samples)
-    arrayDestroy(p->samples);
-  if (p->yz)
-    arrayDestroy(p->yz);
-  if (p->zz)
-    arrayDestroy(p->zz);
-  if (p->aFstart)
-    free(p->aFstart);
-  if (p->aFend)
-    free(p->aFend);
-  if (p->aRstart)
-    free(p->aRstart);
-  if (p->aRend)
-    free(p->aRend);
-  if (p->missingOffset)
-    arrayDestroy(p->missingOffset);
-  if (p->zMissing)
-    arrayDestroy(p->zMissing);
-  if (p->dosageOffset)
-    arrayDestroy(p->dosageOffset);
-  if (p->zDosage)
-    arrayDestroy(p->zDosage);
-  free(p);
-
-  return 0;
+	size_t i = 0;
+	for (i=0; i < b->nsam; ++i)
+	{
+		free(b->sid[i]);
+		free(b->reg[i]);
+		free(b->data[i]);
+	}
+	free(b->sid);
+	free(b->reg);
+	free(b->data);
+	free(b->div);
+	free(b->ppa);
+	free(b);
+	return 0;
 }
 
-static int
-pack3init (void)
+int
+pbwt_print (const pbwt_t *b)
 {
-    int i = 0;
-  
-    for (i = 0; i < 64; ++i)
-        p3decode[i] = i;
-    for (i = 64; i < 96; ++i)
-        p3decode[i] = (i - 64) << 6;
-    for (i = 96; i < 128; ++i)
-        p3decode[i] = (i - 96) << 11;
+	size_t i = 0;
+	size_t j = 0;
+	for (i = 0; i < b->nsam; ++i)
+	{
+		size_t index = b->ppa[i];
+		printf("%2zu | %5zu | ", b->div[i], index);
+		for (j = 0; j < b->nsite; ++j)
+			putchar((char)(b->data[index][j]));
+		putchar('\n');
+	}
+	return 0;
+}
 
-    return 0;
+int
+build_prefix_array (pbwt_t *b)
+{
+	size_t i = 0;
+	size_t j = 0;
+	size_t k = 0;
+	size_t ia = 0;
+	size_t ib = 0;
+	size_t da = 0;
+	size_t db = 0;
+	size_t *ara = malloc(b->nsam * sizeof(size_t));
+	size_t *arb = malloc(b->nsam * sizeof(size_t));
+	size_t *ard = malloc(b->nsam * sizeof(size_t));
+	size_t *are = malloc(b->nsam * sizeof(size_t));
+
+	for (i = 0; i < b->nsite; ++i)
+	{
+		ia = 0;
+		ib = 0;
+		da = i + 1;
+		db = i + 1;
+
+		for (j = 0; j < b->nsam; ++j)
+		{
+			size_t ix = b->ppa[j];
+			size_t ms = b->div[j];
+
+			if (ms > da)
+				da = ms;
+			if (ms > db)
+				db = ms;
+
+			if (b->data[ix][i] == '0')
+			{
+				ara[ia] = ix;
+				ard[ia] = da;
+				da = 0;
+				++ia;
+			}
+			else
+			{
+				arb[ib] = ix;
+				are[ib] = db;
+				db = 0;
+				++ib;
+			}
+		}
+
+		/* Concatenate arrays */
+		if (i < b->nsite - 1)
+		{
+			for (j=0; j < ia; ++j)
+			{
+				b->ppa[j] = ara[j];
+				b->div[j] = ard[j];
+			}
+			for (j=0, k=ia; j < ib; ++j, ++k)
+			{
+				b->ppa[k] = arb[j];
+				b->div[k] = are[j];
+			}
+		}
+	}
+
+	/* Free allocated memory */
+	free(ara);
+	free(arb);
+	free(ard);
+	free(are);
+
+	return 0;
+}
+
+int report_set_maximal_matches(pbwt_t *b)
+{
+	return 0;
+}
+
+int report_long_matches(pbwt_t *b)
+{
+	return 0;
 }

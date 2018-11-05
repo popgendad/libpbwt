@@ -1,0 +1,3 @@
+[submodule "libplink"]
+	path = libplink
+	url = git@github.ancestry.com:dgarrigan/libplink.git
