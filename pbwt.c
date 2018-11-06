@@ -12,16 +12,19 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	b = (pbwt_t *)malloc(sizeof(struct pbwt));
 	b->nsite = nsite;
 	b->nsam = nsam;
+	b->datasize = nsite * nsam;
+	b->is_compress = 0;
 	b->ppa = (size_t *)malloc(nsam * sizeof(size_t));
 	b->div = (size_t *)malloc(nsam * sizeof(size_t));
 	b->sid = (char **)malloc(nsam * sizeof(char *));
 	b->reg = (char **)malloc(nsam * sizeof(char *));
-	b->data = (unsigned char *)malloc(nsam * nsite * sizeof(unsigned char));
+	b->data = (unsigned char *)malloc(nsite * nsam * sizeof(unsigned char));
 	for (i = 0; i < nsam; ++i)
 	{
 		b->ppa[i] = i;
 		b->div[i] = 0;
 	}
+
 	return b;
 }
 
@@ -29,6 +32,7 @@ int
 pbwt_destroy (pbwt_t *b)
 {
 	size_t i = 0;
+
 	for (i=0; i < b->nsam; ++i)
 	{
 		free(b->sid[i]);
@@ -40,70 +44,168 @@ pbwt_destroy (pbwt_t *b)
 	free(b->div);
 	free(b->ppa);
 	free(b);
+
 	return 0;
 }
 
 int
-pbwt_write (pbwt_t *b)
+pbwt_write (const char *outfile, pbwt_t *b)
 {
+	/* If data aren't compressed, then compress */
+	if (b->is_compress == 0)
+		pbwt_compress(b);
+
+	size_t i = 0;
+	FILE *fout;
+
+	/* Open the binary output file stream */
+	fout = fopen(outfile, "wb");
+
+	/* Write the data to the output file */
+	fwrite((const void *)&(b->nsite), sizeof(size_t), 1, fout);
+	fwrite((const void *)&(b->nsam), sizeof(size_t), 1, fout);
+	fwrite((const void *)&(b->datasize), sizeof(size_t), 1, fout);
+	fwrite((const void *)b->data, sizeof(unsigned char), b->datasize, fout);
+	fwrite((const void *)b->ppa, sizeof(size_t), b->nsam, fout);
+	fwrite((const void *)b->div, sizeof(size_t), b->nsam, fout);
+
+	/* Write sample info */
+	for (i=0; i < b->nsam; i++)
+	{
+		size_t len = strlen(b->sid[i]);
+		fwrite((const void *)&len, sizeof(size_t), 1, fout);
+		fwrite(b->sid[i], sizeof(char), len, fout);
+		len = strlen(b->reg[i]);
+		fwrite((const void *)&len, sizeof(size_t), 1, fout);
+		fwrite(b->reg[i], sizeof(char), len, fout);		
+	}
+
+	/* Close output file stream */
+	fclose(fout);
+
 	return 0;
 }
 
 pbwt_t *
-pbwt_read (const char *filename)
+pbwt_read (const char *infile)
 {
+	size_t i = 0;
+	size_t ret;
+	size_t nsite;
+	size_t nsam;
 	pbwt_t *b;
+	FILE *fin;
+
+	/* Open binary input file stream */
+	fin = fopen(infile, "rb");
+
+	/* Read the data into memory */
+
+	/* Read metadata */
+	ret = fread(&nsite, sizeof(size_t), 1, fin);
+	ret = fread(&nsam, sizeof(size_t), 1, fin);
+
+	/* Initialize the new pbwt */
+	b = pbwt_init(nsite, nsam);
+
+	b->is_compress = 1;
+
+	/* Read haplotype and pbwt data */
+	ret = fread(&(b->datasize), sizeof(size_t), 1, fin);
+	ret = fread(b->data, sizeof(unsigned char), b->datasize, fin);
+	ret = fread(b->ppa, sizeof(size_t), b->nsam, fin);
+	ret = fread(b->div, sizeof(size_t), b->nsam, fin);
+
+	/* Read sample info */
+	for (i = 0; i < nsam; i++)
+	{
+		size_t len;
+		ret = fread(&len, sizeof(size_t), 1, fin);
+		b->sid[i] = (char *) malloc((len + 1) * sizeof(char));
+		ret = fread(b->sid[i], sizeof(char), len, fin);
+		b->sid[i][len] = '\0';
+		ret = fread(&len, sizeof(size_t), 1, fin);
+		b->reg[i] = (char *) malloc((len + 1) * sizeof(char));
+		ret = fread(b->reg[i], sizeof(char), len, fin);
+		b->reg[i][len] = '\0';	
+	}
+
+	/* Close the input file stream */
+	fclose(fin);
+
 	return b;
 }
 
-unsigned long int
-pbwt_uncompress (pbwt_t *b, size_t defsize)
+int
+pbwt_uncompress (pbwt_t *b)
 {
-/* 	unsigned char *g = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
+	/* If data are already uncompressed */
+	if (b->is_compress == 0)
+		return 0;
+
+	unsigned char *g = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
     z_stream infstream;
+ 
+	/* Initialize inflate stream */
     infstream.zalloc = Z_NULL;
     infstream.zfree = Z_NULL;
     infstream.opaque = Z_NULL;
-    infstream.avail_in = (size_t)(defstream.next_out - f); // size of input
-	infstream.avail_in = (size_t)(defsize - g);
-    infstream.next_in = (Bytef *)f; // input char array
-	infstream.next_in = (Bytef *)defsize;
-    infstream.avail_out = b->nsite * b->nsam; // size of output
-    infstream.next_out = (Bytef *)g; // output char array
+	infstream.avail_in = b->datasize;
+    infstream.next_in = (Bytef *)b->data;
+    infstream.avail_out = b->nsite * b->nsam;
+    infstream.next_out = (Bytef *)g;
 
-    // the actual DE-compression work
+    /* Inflate the data */
     inflateInit(&infstream);
     inflate(&infstream, Z_NO_FLUSH);
     inflateEnd(&infstream);
 
-    printf("Uncompressed size is: %lu\n", strlen((char*)g));
-	free(g); */
+	/* Update pbwt data structure */
+	free(b->data);
+	b->data = g;
+	b->datasize = infstream.total_out;
+	b->is_compress = 0;
+
 	return 0;
 }
 
-unsigned long int
+int
 pbwt_compress (pbwt_t *b)
 {
-	unsigned char *f = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
+	/* Check if data are already compressed */
+	if (b->is_compress)
+		return 0;
+
+	int ret;
+	unsigned char *f = (unsigned char *) malloc (b->nsam * b->nsite * sizeof(unsigned char));
 	z_stream defstream;
+
+	/* Setup the deflate stream */
 	defstream.zalloc = Z_NULL;
 	defstream.zfree = Z_NULL;
 	defstream.opaque = Z_NULL;
-	defstream.avail_in = b->nsite * b->nsam;
+	defstream.avail_in = b->datasize;
 	defstream.next_in = (Bytef *)b->data;
-	defstream.avail_out = b->nsite * b->nsam;
+	defstream.avail_out = b->datasize;
 	defstream.next_out = (Bytef *)f;
 
-	deflateInit(&defstream, Z_DEFAULT_COMPRESSION);
+	/* Deflate the data */
+	ret = deflateInit(&defstream, Z_DEFAULT_COMPRESSION);
+	if (ret != Z_OK)
+	{
+		fputs ("libpwbt [ERROR]: cannot initialize compression stream", stderr);
+		exit (EXIT_FAILURE);
+	}
 	deflate(&defstream, Z_FINISH);
 	deflateEnd(&defstream);
-	printf("nsites: %lu\n", b->nsite);
-	printf("nsam: %lu\n", b->nsam);
-	printf("Uncompressed size: %lu\n", defstream.total_in);
-	printf("Compressed size: %lu\n", defstream.total_out);
-	printf("Compression ratio: %lf\n", (double)(defstream.total_in)/(double)(defstream.total_out));
-	free(f);
-	return defstream.total_out;
+
+	/* Update pbwt data structure */
+	free(b->data);
+	b->is_compress = 1;
+	b->data = f;
+	b->datasize = defstream.total_out;
+
+	return ret;
 }
 
 int

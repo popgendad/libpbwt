@@ -1,5 +1,6 @@
 *.o
 plink2pbwt
 plink2pbwt-compress
+plink2pbwt-view
 libpbwt.a
 .ipynb_checkpoints/

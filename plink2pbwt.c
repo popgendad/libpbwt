@@ -5,7 +5,7 @@
 #include <plink.h>
 #include "pbwt.h"
 
-int print_usage(const char *);
+int print_usage (const char *);
 
 extern int opterr, optopt, optind;
 extern char *optarg;
@@ -81,14 +81,21 @@ main (int argc, char **argv)
 	/* Build the prefix and divergence arrays */
 	v = build_prefix_array(b);
 
-	/* Print data structure */
-	v = pbwt_print(b);
-
-	/* Compress the pbwt haplotyp data */
+	/* Compress the pbwt haplotype data */
 	/*v = pbwt_compress(b);*/
+	/*v = pbwt_uncompress(b);*/
 
-	/* Deallocate memory for bpwt structure */
+	/* Write to binary file */
+	v = pbwt_write("example.pbwt", b);
 	v = pbwt_destroy(b);
+	pbwt_t *new_b = pbwt_read("example.pbwt");
+	v = pbwt_uncompress(new_b);
+
+	/* Print data structure */
+	v = pbwt_print(new_b);
+
+	/* Deallocate memory for pbwt structure */
+	v = pbwt_destroy(new_b);
 
 	return v;
 }

@@ -11,6 +11,8 @@ typedef struct pbwt
 	char **sid;               /* Sample identifier string */
 	char **reg;               /* Region/population of sample */
 	unsigned char *data;      /* Haplotype representation */
+	int is_compress;          /* Are haplotype data compressed? */
+	size_t datasize;          /* Number of bytes stored in data */
 	size_t nsite;             /* Number of sites */
 	size_t nsam;              /* Number of haplotypes */
 	size_t *ppa;              /* Prefix array */
@@ -20,9 +22,9 @@ typedef struct pbwt
 /* Function declarations */
 pbwt_t *pbwt_init (const size_t, const size_t);
 int pbwt_destroy (pbwt_t *);
-unsigned long int pbwt_compress(pbwt_t *);
-unsigned long int pbwt_uncompress (pbwt_t *, size_t);
-int pbwt_write (pbwt_t *);
+int pbwt_compress(pbwt_t *);
+int pbwt_uncompress (pbwt_t *);
+int pbwt_write (const char *, pbwt_t *);
 pbwt_t *pbwt_read (const char *);
 int pbwt_print (const pbwt_t *);
 int build_prefix_array (pbwt_t *);
