@@ -43,10 +43,48 @@ pbwt_destroy (pbwt_t *b)
 	return 0;
 }
 
-int pbwt_compress(pbwt_t *b)
+int
+pbwt_write (pbwt_t *b)
+{
+	return 0;
+}
+
+pbwt_t *
+pbwt_read (const char *filename)
+{
+	pbwt_t *b;
+	return b;
+}
+
+unsigned long int
+pbwt_uncompress (pbwt_t *b, size_t defsize)
+{
+/* 	unsigned char *g = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
+    z_stream infstream;
+    infstream.zalloc = Z_NULL;
+    infstream.zfree = Z_NULL;
+    infstream.opaque = Z_NULL;
+    infstream.avail_in = (size_t)(defstream.next_out - f); // size of input
+	infstream.avail_in = (size_t)(defsize - g);
+    infstream.next_in = (Bytef *)f; // input char array
+	infstream.next_in = (Bytef *)defsize;
+    infstream.avail_out = b->nsite * b->nsam; // size of output
+    infstream.next_out = (Bytef *)g; // output char array
+
+    // the actual DE-compression work
+    inflateInit(&infstream);
+    inflate(&infstream, Z_NO_FLUSH);
+    inflateEnd(&infstream);
+
+    printf("Uncompressed size is: %lu\n", strlen((char*)g));
+	free(g); */
+	return 0;
+}
+
+unsigned long int
+pbwt_compress (pbwt_t *b)
 {
 	unsigned char *f = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
-	/* unsigned char *g = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char)); */
 	z_stream defstream;
 	defstream.zalloc = Z_NULL;
 	defstream.zfree = Z_NULL;
@@ -61,26 +99,11 @@ int pbwt_compress(pbwt_t *b)
 	deflateEnd(&defstream);
 	printf("nsites: %lu\n", b->nsite);
 	printf("nsam: %lu\n", b->nsam);
-	printf("Uncompressed size: %lu\n", strlen((char *)b->data));
-	printf("Compressed size: %lu\n", strlen((char*)f));
-/*     z_stream infstream;
-    infstream.zalloc = Z_NULL;
-    infstream.zfree = Z_NULL;
-    infstream.opaque = Z_NULL;
-    infstream.avail_in = (size_t)(defstream.next_out - f); // size of input
-    infstream.next_in = (Bytef *)f; // input char array
-    infstream.avail_out = b->nsite * b->nsam; // size of output
-    infstream.next_out = (Bytef *)g; // output char array
-     
-    // the actual DE-compression work.
-    inflateInit(&infstream);
-    inflate(&infstream, Z_NO_FLUSH);
-    inflateEnd(&infstream);
-     
-    printf("Uncompressed size is: %lu\n", strlen((char*)g));
-	free(g); */
+	printf("Uncompressed size: %lu\n", defstream.total_in);
+	printf("Compressed size: %lu\n", defstream.total_out);
+	printf("Compression ratio: %lf\n", (double)(defstream.total_in)/(double)(defstream.total_out));
 	free(f);
-	return 0;
+	return defstream.total_out;
 }
 
 int

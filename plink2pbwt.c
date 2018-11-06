@@ -105,7 +105,7 @@ print_usage (const char *msg)
     puts("  -r      Input PLINK stub includes a REG file");
     puts("  -q STR  Use only this region/population (requires -r switch");
     puts("  -h      Display this help message and exit");
-    putchar('\n');  
+    putchar('\n');
 
     return 0;
 }
