@@ -70,8 +70,8 @@ main (int argc, char **argv)
     /* Iterate through all samples in the fam/reg */
     for (i = 0; i < p->nsam; ++i)
     {
-        	memcpy(b->data[2*i], hap2uchar(p, i, 0), b->nsite * sizeof(unsigned char));
-        	memcpy(b->data[2*i+1], hap2uchar(p, i, 1), b->nsite * sizeof(unsigned char));
+        	memcpy(&b->data[TWODCORD(2*i, b->nsite, 0)], hap2uchar(p, i, 0), b->nsite * sizeof(unsigned char));
+        	memcpy(&b->data[TWODCORD(2*i+1, b->nsite, 0)], hap2uchar(p, i, 1), b->nsite * sizeof(unsigned char));
         	b->sid[2*i] = strdup (p->fam[i].iid);
         	b->sid[2*i+1] = strdup (p->fam[i].iid);
         	b->reg[2*i] = strdup(p->reg[i].reg);
@@ -83,6 +83,9 @@ main (int argc, char **argv)
 
 	/* Print data structure */
 	v = pbwt_print(b);
+
+	/* Compress the pbwt haplotyp data */
+	/*v = pbwt_compress(b);*/
 
 	/* Deallocate memory for bpwt structure */
 	v = pbwt_destroy(b);

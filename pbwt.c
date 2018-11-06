@@ -16,12 +16,11 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	b->div = (size_t *)malloc(nsam * sizeof(size_t));
 	b->sid = (char **)malloc(nsam * sizeof(char *));
 	b->reg = (char **)malloc(nsam * sizeof(char *));
-	b->data = (unsigned char **)malloc(nsam * sizeof(unsigned char *));
+	b->data = (unsigned char *)malloc(nsam * nsite * sizeof(unsigned char));
 	for (i = 0; i < nsam; ++i)
 	{
 		b->ppa[i] = i;
 		b->div[i] = 0;
-		b->data[i] = (unsigned char *)malloc(nsite * sizeof(unsigned char));
 	}
 	return b;
 }
@@ -34,7 +33,6 @@ pbwt_destroy (pbwt_t *b)
 	{
 		free(b->sid[i]);
 		free(b->reg[i]);
-		free(b->data[i]);
 	}
 	free(b->sid);
 	free(b->reg);
@@ -42,6 +40,46 @@ pbwt_destroy (pbwt_t *b)
 	free(b->div);
 	free(b->ppa);
 	free(b);
+	return 0;
+}
+
+int pbwt_compress(pbwt_t *b)
+{
+	unsigned char *f = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
+	/* unsigned char *g = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char)); */
+	z_stream defstream;
+	defstream.zalloc = Z_NULL;
+	defstream.zfree = Z_NULL;
+	defstream.opaque = Z_NULL;
+	defstream.avail_in = b->nsite * b->nsam;
+	defstream.next_in = (Bytef *)b->data;
+	defstream.avail_out = b->nsite * b->nsam;
+	defstream.next_out = (Bytef *)f;
+
+	deflateInit(&defstream, Z_DEFAULT_COMPRESSION);
+	deflate(&defstream, Z_FINISH);
+	deflateEnd(&defstream);
+	printf("nsites: %lu\n", b->nsite);
+	printf("nsam: %lu\n", b->nsam);
+	printf("Uncompressed size: %lu\n", strlen((char *)b->data));
+	printf("Compressed size: %lu\n", strlen((char*)f));
+/*     z_stream infstream;
+    infstream.zalloc = Z_NULL;
+    infstream.zfree = Z_NULL;
+    infstream.opaque = Z_NULL;
+    infstream.avail_in = (size_t)(defstream.next_out - f); // size of input
+    infstream.next_in = (Bytef *)f; // input char array
+    infstream.avail_out = b->nsite * b->nsam; // size of output
+    infstream.next_out = (Bytef *)g; // output char array
+     
+    // the actual DE-compression work.
+    inflateInit(&infstream);
+    inflate(&infstream, Z_NO_FLUSH);
+    inflateEnd(&infstream);
+     
+    printf("Uncompressed size is: %lu\n", strlen((char*)g));
+	free(g); */
+	free(f);
 	return 0;
 }
 
@@ -55,7 +93,7 @@ pbwt_print (const pbwt_t *b)
 		size_t index = b->ppa[i];
 		printf("%2zu | %5zu | ", b->div[i], index);
 		for (j = 0; j < b->nsite; ++j)
-			putchar((char)(b->data[index][j]));
+			putchar((char)(b->data[TWODCORD(index, b->nsite, j)]));
 		printf(" %s  %s\n", b->sid[index], b->reg[index]);
 	}
 	return 0;
@@ -93,7 +131,7 @@ build_prefix_array (pbwt_t *b)
 			if (ms > db)
 				db = ms;
 
-			if (b->data[ix][i] == '0')
+			if (b->data[TWODCORD(ix, b->nsite, i)] == '0')
 			{
 				ara[ia] = ix;
 				ard[ia] = da;
