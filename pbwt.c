@@ -33,7 +33,7 @@ pbwt_destroy (pbwt_t *b)
 {
 	size_t i = 0;
 
-	for (i=0; i < b->nsam; ++i)
+	for (i = 0; i < b->nsam; ++i)
 	{
 		free(b->sid[i]);
 		free(b->reg[i]);
@@ -77,7 +77,7 @@ pbwt_write (const char *outfile, pbwt_t *b)
 		fwrite(b->sid[i], sizeof(char), len, fout);
 		len = strlen(b->reg[i]);
 		fwrite((const void *)&len, sizeof(size_t), 1, fout);
-		fwrite(b->reg[i], sizeof(char), len, fout);		
+		fwrite(b->reg[i], sizeof(char), len, fout);
 	}
 
 	/* Close output file stream */
@@ -90,10 +90,10 @@ pbwt_t *
 pbwt_read (const char *infile)
 {
 	size_t i = 0;
-	size_t ret;
-	size_t nsite;
-	size_t nsam;
-	pbwt_t *b;
+	size_t ret = 0;
+	size_t nsite = 0;
+	size_t nsam = 0;
+	pbwt_t *b = NULL;
 	FILE *fin;
 
 	/* Open binary input file stream */
@@ -108,13 +108,14 @@ pbwt_read (const char *infile)
 	/* Initialize the new pbwt */
 	b = pbwt_init(nsite, nsam);
 
-	b->is_compress = 1;
-
 	/* Read haplotype and pbwt data */
 	ret = fread(&(b->datasize), sizeof(size_t), 1, fin);
 	ret = fread(b->data, sizeof(unsigned char), b->datasize, fin);
 	ret = fread(b->ppa, sizeof(size_t), b->nsam, fin);
 	ret = fread(b->div, sizeof(size_t), b->nsam, fin);
+
+	/* Mark pbwt as compressed */
+	b->is_compress = 1;
 
 	/* Read sample info */
 	for (i = 0; i < nsam; i++)
@@ -127,7 +128,7 @@ pbwt_read (const char *infile)
 		ret = fread(&len, sizeof(size_t), 1, fin);
 		b->reg[i] = (char *) malloc((len + 1) * sizeof(char));
 		ret = fread(b->reg[i], sizeof(char), len, fin);
-		b->reg[i][len] = '\0';	
+		b->reg[i][len] = '\0';
 	}
 
 	/* Close the input file stream */
@@ -145,7 +146,7 @@ pbwt_uncompress (pbwt_t *b)
 
 	unsigned char *g = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
     z_stream infstream;
- 
+
 	/* Initialize inflate stream */
     infstream.zalloc = Z_NULL;
     infstream.zfree = Z_NULL;
