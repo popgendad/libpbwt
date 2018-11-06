@@ -87,8 +87,14 @@ main (int argc, char **argv)
 
 	/* Write to binary file */
 	v = pbwt_write("example.pbwt", b);
+
+	/* Free memory for the original pbwt data structure */
 	v = pbwt_destroy(b);
+
+	/* Read new pbwt from file */
 	pbwt_t *new_b = pbwt_read("example.pbwt");
+
+	/* Uncompress the haplotype data */
 	v = pbwt_uncompress(new_b);
 
 	/* Print data structure */
