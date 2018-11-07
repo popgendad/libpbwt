@@ -3,5 +3,7 @@ plink2pbwt
 plink2pbwt-compress
 plink2pbwt-view
 libpbwt.a
+libpbwt.so
 .ipynb_checkpoints/
 EV62-phase.3881.*
+refer

@@ -1,14 +1,21 @@
 CC=gcc
-CFLAGS=-Wall -O2 -fPIC
+CFLAGS=-Wall -O2 -fpic
+LIBS=-lz
+PREFIX=/usr/
+H_DIR=$(PREFIX)/include/
+L_DIR=$(PREFIX)/lib/
 
-all: libpbwt.a
+all: libpbwt.so
 
-libpbwt.a: pbwt.o
-	ar rcs $@ $<
-	ranlib $@
+libpbwt.so: pbwt.o
+	gcc -shared -o $@ $< $(LIBS)
 
 pbwt.o: pbwt.c
-	$(CC) $(CFLAGS) -c $< $(LIBS)
+	$(CC) $(CFLAGS) -c $<
+
+install:
+	cp libpbwt.* $(L_DIR)
+	cp pbwt.h $(H_DIR)
 
 clean:
-	rm pbwt.o libpbwt.a
+	rm pbwt.o libpbwt.so
