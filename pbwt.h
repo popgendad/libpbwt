@@ -1,8 +1,6 @@
 #ifndef PBWT_H
 #define PBWT_H
 
-#include <zlib.h>
-
 #define TWODCORD(row, dim, col) ((row) * (dim) + (col))
 
 
