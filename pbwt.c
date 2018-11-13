@@ -4,22 +4,71 @@
 #include <zlib.h>
 #include "pbwt.h"
 
+/* Declare local functions */
+void io_error (FILE *);
+
+
 pbwt_t *
 pbwt_init (const size_t nsite, const size_t nsam)
 {
-	size_t i = 0;
-	pbwt_t *b = NULL;
+	size_t i;
+	pbwt_t *b;
+
+	/* Allocate heap memory for the pwbt data structure */
 
 	b = (pbwt_t *) malloc (sizeof(pbwt_t));
+	if (!b)
+	{
+		perror ("libpbwt [ERROR]");
+		return 0;
+	}
+
 	b->nsite = nsite;
 	b->nsam = nsam;
 	b->datasize = nsite * nsam;
 	b->is_compress = 0;
+
 	b->ppa = (size_t *) malloc (nsam * sizeof(size_t));
+	if (!b->ppa)
+	{
+		perror ("libpbwt [ERROR]");
+		pbwt_destroy (b);
+		return 0;
+	}
+
 	b->div = (size_t *) malloc (nsam * sizeof(size_t));
+	if (!b->div)
+	{
+		perror ("libpbwt [ERROR]");
+		pbwt_destroy (b);
+		return 0;
+	}
+
 	b->sid = (char **) malloc (nsam * sizeof(char *));
+	if (!b->sid)
+	{
+		perror ("libpbwt [ERROR]");
+		pbwt_destroy (b);
+		return 0;
+	}
+
 	b->reg = (char **) malloc (nsam * sizeof(char *));
+	if (!b->reg)
+	{
+		perror ("libpbwt [ERROR]");
+		pbwt_destroy (b);
+		return 0;
+	}
+
 	b->data = (unsigned char *) malloc (nsite * nsam * sizeof(unsigned char));
+	if (!b->data)
+	{
+		perror ("libpbwt [ERROR]");
+		pbwt_destroy (b);
+		return 0;
+	}
+
+	/* Initialize values for prefix and divergence arrays */
 	for (i = 0; i < nsam; ++i)
 	{
 		b->ppa[i] = i;
@@ -29,24 +78,35 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	return b;
 }
 
-int
+void
 pbwt_destroy (pbwt_t *b)
 {
-	size_t i = 0;
-
-	for (i = 0; i < b->nsam; ++i)
+	/* Deallocate all heap memory pointed to by pbwt structure */
+	if (b)
 	{
-		free (b->sid[i]);
-		free (b->reg[i]);
+		size_t i;
+		if (b->sid)
+		{
+			for (i = 0; i < b->nsam; ++i)
+				if (b->sid[i])
+					free (b->sid[i]);
+			free (b->sid);
+		}
+		if (b->reg)
+		{
+			for (i = 0; i < b->nsam; ++i)
+				if (b->reg[i])
+					free (b->reg[i]);
+			free (b->reg);
+		}
+		if (b->data)
+			free (b->data);
+		if (b->div)
+			free (b->div);
+		if (b->ppa)
+			free (b->ppa);
+		free (b);
 	}
-	free (b->sid);
-	free (b->reg);
-	free (b->data);
-	free (b->div);
-	free (b->ppa);
-	free (b);
-
-	return 0;
 }
 
 int
@@ -54,33 +114,97 @@ pbwt_write (const char *outfile, pbwt_t *b)
 {
 	/* If data aren't compressed, then compress */
 	if (!b->is_compress)
-	{
 		pbwt_compress (b);
-	}
 
-	size_t i = 0;
+	size_t i;
 	FILE *fout;
 
 	/* Open the binary output file stream */
 	fout = fopen (outfile, "wb");
+	if (!fout)
+	{
+		perror ("libpbwt [ERROR]");
+		return -1;
+	}
 
 	/* Write the data to the output file */
-	fwrite ((const void *)&(b->nsite), sizeof(size_t), 1, fout);
-	fwrite ((const void *)&(b->nsam), sizeof(size_t), 1, fout);
-	fwrite ((const void *)&(b->datasize), sizeof(size_t), 1, fout);
-	fwrite ((const void *)b->data, sizeof(unsigned char), b->datasize, fout);
-	fwrite ((const void *)b->ppa, sizeof(size_t), b->nsam, fout);
-	fwrite ((const void *)b->div, sizeof(size_t), b->nsam, fout);
+
+	/* Write the number of sites */
+	if (fwrite ((const void *)&(b->nsite), sizeof(size_t), 1, fout) != 1)
+	{
+		io_error (fout);
+		return -1;
+	}
+
+	/* Write the number of samples */
+	if (fwrite ((const void *)&(b->nsam), sizeof(size_t), 1, fout) != 1)
+	{
+		io_error (fout);
+		return -1;	
+	}
+
+	/* Write the size of the haplotype data */
+	if (fwrite ((const void *)&(b->datasize), sizeof(size_t), 1, fout) != 1)
+	{
+		io_error (fout);
+		return -1;
+	}
+
+	/* Write the haplotype data */
+	if (fwrite ((const void *)b->data, sizeof(unsigned char), b->datasize, fout) != b->datasize)
+	{
+		io_error (fout);
+		return -1;
+	}
+
+	/* Write the prefix array */
+	if (fwrite ((const void *)b->ppa, sizeof(size_t), b->nsam, fout) != b->nsam)
+	{
+		io_error (fout);
+		return -1;
+	}
+
+	/* Write the divergence array */
+	if (fwrite ((const void *)b->div, sizeof(size_t), b->nsam, fout) != b->nsam)
+	{
+		io_error (fout);
+		return -1;
+	}
 
 	/* Write sample info */
 	for (i = 0; i < b->nsam; i++)
 	{
-		size_t len = strlen (b->sid[i]);
-		fwrite ((const void *)&len, sizeof(size_t), 1, fout);
-		fwrite (b->sid[i], sizeof(char), len, fout);
+		size_t len;
+
+		/* Write the size of the sample identifier string */
+		len = strlen (b->sid[i]);
+		if (fwrite ((const void *)&len, sizeof(size_t), 1, fout) != 1)
+		{
+			io_error (fout);
+			return -1;
+		}
+
+		/* Write the sample identifier string */
+		if (fwrite (b->sid[i], sizeof(char), len, fout) != len)
+		{
+			io_error (fout);
+			return -1;
+		}
+
+		/* Write the length of the region string */
 		len = strlen (b->reg[i]);
-		fwrite ((const void *)&len, sizeof(size_t), 1, fout);
-		fwrite (b->reg[i], sizeof(char), len, fout);
+		if (fwrite ((const void *)&len, sizeof(size_t), 1, fout) != 1)
+		{
+			io_error (fout);
+			return -1;
+		}
+
+		/* Write the region string */
+		if (fwrite (b->reg[i], sizeof(char), len, fout) != len)
+		{
+			io_error (fout);
+			return -1;
+		}
 	}
 
 	/* Close output file stream */
@@ -92,45 +216,127 @@ pbwt_write (const char *outfile, pbwt_t *b)
 pbwt_t *
 pbwt_read (const char *infile)
 {
-	size_t i = 0;
-	size_t ret = 0;
-	size_t nsite = 0;
-	size_t nsam = 0;
-	pbwt_t *b = NULL;
+	size_t i;
+	size_t nsite;
+	size_t nsam;
+	pbwt_t *b;
 	FILE *fin;
 
 	/* Open binary input file stream */
 	fin = fopen (infile, "rb");
+	if (!fin)
+	{
+		perror ("libpbwt [ERROR]");
+		return 0;
+	}
 
 	/* Read the data into memory */
+	/* First read the number of sites */
+	if (fread (&nsite, sizeof(size_t), 1, fin) != 1)
+	{
+		io_error (fin);
+		return 0;
+	}
 
-	/* Read metadata */
-	ret = fread (&nsite, sizeof(size_t), 1, fin);
-	ret = fread (&nsam, sizeof(size_t), 1, fin);
+	/* Read the number of samples */
+	if (fread (&nsam, sizeof(size_t), 1, fin) != 1)
+	{
+		io_error (fin);
+		return 0;
+	}
 
-	/* Initialize the new pbwt */
+	/* Initialize the new pbwt structure */
 	b = pbwt_init (nsite, nsam);
+	if (!b)
+	{
+		fclose (fin);
+		return 0;
+	}
 
-	/* Read haplotype and pbwt data */
-	ret = fread (&(b->datasize), sizeof(size_t), 1, fin);
-	ret = fread (b->data, sizeof(unsigned char), b->datasize, fin);
-	ret = fread (b->ppa, sizeof(size_t), b->nsam, fin);
-	ret = fread (b->div, sizeof(size_t), b->nsam, fin);
+	/* Read the data size */
+	if (fread (&(b->datasize), sizeof(size_t), 1, fin) != 1)
+	{
+		io_error (fin);
+		return 0;
+	}
 
-	/* Mark pbwt as compressed */
+	/* Read the haplotype data */
+	if (fread (b->data, sizeof(unsigned char), b->datasize, fin) != b->datasize)
+	{
+		io_error (fin);
+		return 0;
+	}
+
+	/* Read the prefix array */
+	if (fread (b->ppa, sizeof(size_t), b->nsam, fin) != b->nsam)
+	{
+		io_error (fin);
+		return 0;
+	}
+
+	/* Read the divergence array */
+	if (fread (b->div, sizeof(size_t), b->nsam, fin) != b->nsam)
+	{
+		io_error (fin);
+		return 0;
+	}
+
+	/* Indicate pbwt is compressed */
 	b->is_compress = 1;
 
 	/* Read sample info */
 	for (i = 0; i < nsam; i++)
 	{
 		size_t len;
-		ret = fread (&len, sizeof(size_t), 1, fin);
+
+		/* Read length of sample identifier string */
+		if (fread (&len, sizeof(size_t), 1, fin) != 1)
+		{
+			io_error (fin);
+			return 0;
+		}
+
+		/* Allocate heap memory for sample identifier string i */
 		b->sid[i] = (char *) malloc ((len + 1) * sizeof(char));
-		ret = fread (b->sid[i], sizeof(char), len, fin);
+		if (!b->sid[i])
+		{
+			perror ("libpbwt [ERROR]");
+			return 0;
+		}
+
+		/* Read sample identifier string */
+		if (fread (b->sid[i], sizeof(char), len, fin) != len)
+		{
+			io_error (fin);
+			return 0;
+		}
+
+		/* Append null-terminating character */
 		b->sid[i][len] = '\0';
-		ret = fread (&len, sizeof(size_t), 1, fin);
+
+		/* Read length of region string */
+		if (fread (&len, sizeof(size_t), 1, fin) != 1)
+		{
+			io_error (fin);
+			return 0;
+		}
+
+		/* Allocate head memory for region string i */
 		b->reg[i] = (char *) malloc ((len + 1) * sizeof(char));
-		ret = fread (b->reg[i], sizeof(char), len, fin);
+		if (!b->reg[i])
+		{
+			perror ("libpbwt [ERROR]");
+			return 0;
+		}
+
+		/* Read region string */
+		if (fread (b->reg[i], sizeof(char), len, fin) != len)
+		{
+			io_error (fin);
+			return 0;
+		}
+
+		/* Append null-terminating character */
 		b->reg[i][len] = '\0';
 	}
 
@@ -145,12 +351,18 @@ pbwt_uncompress (pbwt_t *b)
 {
 	/* If data are already uncompressed */
 	if (!b->is_compress)
-	{
 		return 0;
-	}
 
-	unsigned char *g = (unsigned char *) malloc (b->nsite * b->nsam * sizeof(unsigned char));
+	unsigned char *g;
     z_stream infstream;
+ 
+    /* Allocate heap memory for uncompressed haplotype data */
+    g = (unsigned char *) malloc (b->nsite * b->nsam * sizeof(unsigned char));
+    if (!g)
+    {
+    	perror ("libpbwt [ERROR]");
+    	return -1;
+    }
 
 	/* Initialize inflate stream */
     infstream.zalloc = Z_NULL;
@@ -181,13 +393,18 @@ pbwt_compress (pbwt_t *b)
 {
 	/* Check if data are already compressed */
 	if (b->is_compress)
-	{
 		return 0;
-	}
 
-	int ret = 0;
-	unsigned char *f = (unsigned char *) malloc (b->nsam * b->nsite * sizeof(unsigned char));
+	unsigned char *f;
 	z_stream defstream;
+
+	/* Allocate heap memory for compressed haplotype data */
+	f = (unsigned char *) malloc (b->nsam * b->nsite * sizeof(unsigned char));
+	if (!f)
+	{
+		perror ("libpbwt [ERROR]");
+		return -1;
+	}
 
 	/* Setup the deflate stream */
 	defstream.zalloc = Z_NULL;
@@ -199,11 +416,10 @@ pbwt_compress (pbwt_t *b)
 	defstream.next_out = (Bytef *)f;
 
 	/* Deflate the data */
-	ret = deflateInit (&defstream, Z_DEFAULT_COMPRESSION);
-	if (ret != Z_OK)
+	if (deflateInit (&defstream, Z_DEFAULT_COMPRESSION) != Z_OK)
 	{
 		fputs ("libpwbt [ERROR]: cannot initialize compression stream", stderr);
-		exit (EXIT_FAILURE);
+		return -1;
 	}
 	deflate (&defstream, Z_FINISH);
 	deflateEnd (&defstream);
@@ -221,8 +437,8 @@ pbwt_compress (pbwt_t *b)
 int
 pbwt_print (const pbwt_t *b)
 {
-	size_t i = 0;
-	size_t j = 0;
+	size_t i;
+	size_t j;
 
 	for (i = 0; i < b->nsam; ++i)
 	{
@@ -240,17 +456,22 @@ pbwt_print (const pbwt_t *b)
 int
 build_prefix_array (pbwt_t *b)
 {
-	size_t i = 0;
-	size_t j = 0;
-	size_t k = 0;
-	size_t ia = 0;
-	size_t ib = 0;
-	size_t da = 0;
-	size_t db = 0;
-	size_t *ara = (size_t *) malloc (b->nsam * sizeof(size_t));
-	size_t *arb = (size_t *) malloc (b->nsam * sizeof(size_t));
-	size_t *ard = (size_t *) malloc (b->nsam * sizeof(size_t));
-	size_t *are = (size_t *) malloc (b->nsam * sizeof(size_t));
+	size_t i;
+	size_t j;
+	size_t k;
+	size_t ia;
+	size_t ib;
+	size_t da;
+	size_t db;
+	size_t *ara;
+	size_t *arb;
+	size_t *ard;
+	size_t *are;
+
+	ara = (size_t *) malloc (b->nsam * sizeof(size_t));
+	arb = (size_t *) malloc (b->nsam * sizeof(size_t));
+	ard = (size_t *) malloc (b->nsam * sizeof(size_t));
+	are = (size_t *) malloc (b->nsam * sizeof(size_t));
 
 	for (i = 0; i < b->nsite; ++i)
 	{
@@ -261,8 +482,11 @@ build_prefix_array (pbwt_t *b)
 
 		for (j = 0; j < b->nsam; ++j)
 		{
-			size_t ix = b->ppa[j];
-			size_t ms = b->div[j];
+			size_t ix;
+			size_t ms;
+
+			ix = b->ppa[i];
+			ms = b->div[j];
 
 			if (ms > da)
 				da = ms;
@@ -322,4 +546,14 @@ int
 report_long_matches (pbwt_t *b)
 {
 	return 0;
+}
+
+void
+io_error (FILE *f)
+{
+	if (ferror (f))
+		fputs ("libpbwt [ERROR]: I/O failure", stderr);
+	else if (feof (f))
+		fputs ("libpbwt [ERROR]: truncated input file", stderr);
+	fclose (f);	
 }

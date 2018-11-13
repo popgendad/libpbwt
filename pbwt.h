@@ -23,7 +23,7 @@ typedef struct pbwt
 
 pbwt_t *pbwt_init (const size_t, const size_t);
 
-int pbwt_destroy (pbwt_t *);
+void pbwt_destroy (pbwt_t *);
 
 int pbwt_compress(pbwt_t *);
 
