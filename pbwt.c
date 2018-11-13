@@ -4,9 +4,11 @@
 #include <zlib.h>
 #include "pbwt.h"
 
-/* Declare local functions */
-void io_error (FILE *);
+/* Declarations of non-API functions */
+static void io_error (FILE *);
+static int add_match (match_t *, size_t, size_t, size_t, size_t);
 
+/* Definitions of API functions */
 
 pbwt_t *
 pbwt_init (const size_t nsite, const size_t nsam)
@@ -20,20 +22,21 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	if (!b)
 	{
 		perror ("libpbwt [ERROR]");
-		return 0;
+		return NULL;
 	}
 
 	b->nsite = nsite;
 	b->nsam = nsam;
 	b->datasize = nsite * nsam;
 	b->is_compress = 0;
+	b->match = NULL;
 
 	b->ppa = (size_t *) malloc (nsam * sizeof(size_t));
 	if (!b->ppa)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
-		return 0;
+		return NULL;
 	}
 
 	b->div = (size_t *) malloc (nsam * sizeof(size_t));
@@ -41,7 +44,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
-		return 0;
+		return NULL;
 	}
 
 	b->sid = (char **) malloc (nsam * sizeof(char *));
@@ -49,7 +52,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
-		return 0;
+		return NULL;
 	}
 
 	b->reg = (char **) malloc (nsam * sizeof(char *));
@@ -57,7 +60,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
-		return 0;
+		return NULL;
 	}
 
 	b->data = (unsigned char *) malloc (nsite * nsam * sizeof(unsigned char));
@@ -65,7 +68,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
-		return 0;
+		return NULL;
 	}
 
 	/* Initialize values for prefix and divergence arrays */
@@ -105,8 +108,107 @@ pbwt_destroy (pbwt_t *b)
 			free (b->div);
 		if (b->ppa)
 			free (b->ppa);
+		if (b->match)
+		{
+			match_t *p;
+			match_t *pn;
+			p = b->match;
+			while (p != NULL)
+			{
+				pn = b->match->next;
+				free (p);
+				p = pn;
+			}
+		}
 		free (b);
 	}
+	return;
+}
+
+/* What to do with matching? */
+int
+pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
+{
+	int has_reg;
+	size_t i;
+	size_t len;
+	size_t new_index1;
+	size_t new_index2;
+
+	/* Determine if a sample region is provided */
+	if (new_reg)
+		has_reg = 1;
+	else
+		has_reg = 0;
+
+	/* Check length of input haplotype sequences */
+	if (strlen (h1) != b->nsite || strlen (h2) != b->nsite)
+	{
+		fputs ("libpbwt [ERROR]: pbwt_add(), input haplotype is wrong length", stderr);
+		return -1;
+	}
+
+	/* Check that new sample identifier string is not NULL */
+	if (!new_sid)
+	{
+		fputs ("libpbwt [ERROR]: pbwt_add(), input sample identifier is NULL", stderr);
+		return -1;
+	}
+
+	/* Assign the index positions of the new haplotypes */
+	new_index1 = b->nsam;
+	new_index2 = b->nsam + 1;
+
+	/* Assign new haplotype sample size */
+	b->nsam += 2;
+
+	/* Grow the sample identifier list */
+	b->sid = (char **) realloc (b->sid, b->nsam * sizeof(char *));
+
+	/* Add new sample identifier to list */
+	len = strlen (new_sid);
+	b->sid[new_index1] = (char *) malloc (len * sizeof(char));
+	b->sid[new_index2] = (char *) malloc (len * sizeof(char));
+	strcpy (b->sid[new_index1], new_sid);
+	strcpy (b->sid[new_index2], new_sid);
+
+	/* Grow the region identifier list */
+	b->reg = (char **) realloc (b->reg, b->nsam * sizeof(char *));
+
+	/* Add new region identifier to list */
+	if (has_reg)
+	{
+		len = strlen (new_reg);
+		b->reg[new_index1] = (char *) malloc (len * sizeof(char));
+		b->reg[new_index2] = (char *) malloc (len * sizeof(char));
+		strcpy (b->reg[new_index1], new_reg);
+		strcpy (b->reg[new_index2], new_reg);	
+	}
+
+	/* Re-calculate datasize */
+	b->datasize = b->nsam * b->nsite;
+
+	/* Grow the binary haplotype matrix */
+	b->data = (unsigned char *) realloc (b->data, b->datasize * sizeof(unsigned char));
+
+	/* Copy new binary haplotype data */
+	memcpy (&(b->data[TWODCORD(new_index1, b->nsite, 0)]), h1, b->nsite);
+	memcpy (&(b->data[TWODCORD(new_index2, b->nsite, 0)]), h2, b->nsite);
+
+	/* Grow the prefix array */
+	b->ppa = (size_t *) realloc (b->ppa, b->nsam * sizeof(size_t));
+
+	/* Grow the divergence array */
+	b->div = (size_t *) realloc (b->div, b->nsam * sizeof(size_t));
+
+	/* Re-initialize prefix and divergence arrays */
+	for (i = 0; i < b->nsam; ++i)
+	{
+		b->ppa[i] = i;
+		b->div[i] = 0;
+	}
+
+	return 0;
 }
 
 int
@@ -433,20 +535,43 @@ pbwt_compress (pbwt_t *b)
 	return 0;
 }
 
-
 int
 pbwt_print (const pbwt_t *b)
 {
+	/* Check if pointer is NULL */
+	if (!b)
+		return -1;
+
 	size_t i;
 	size_t j;
 
 	for (i = 0; i < b->nsam; ++i)
 	{
-		size_t index = b->ppa[i];
-		printf ("%2zu | %5zu | ", b->div[i], index);
+		size_t index;
+
+		index = b->ppa[i];
+
+		/* Print prefix and divergence array member for haplotype i */
+		printf ("%5zu\t%5zu\t", b->div[i], index);
+
+		/* Print binary haplotype array for haplotype i */
 		for (j = 0; j < b->nsite; ++j)
 			putchar ((char)(b->data[TWODCORD(index, b->nsite, j)]));
-		printf (" %s  %s\n", b->sid[index], b->reg[index]);
+
+		/* Print sample identifier associated with haplotype i */
+		if (b->sid[index])
+			printf ("\t%s", b->sid[index]);
+		else
+		{
+			fprintf (stderr, "libpbwt [ERROR]: problem reading sample identifier with index %5zu\n", index);
+			return -1;
+		}
+
+		/* If a region is present */
+		if (b->reg[index])
+			printf ("\t%s\n", b->reg[index]);
+		else
+			putchar ('\n');
 	}
 
 	return 0;
@@ -534,26 +659,55 @@ build_prefix_array (pbwt_t *b)
 	return 0;
 }
 
-
 int
-report_set_maximal_matches (pbwt_t *b)
+find_matches (pbwt_t *b, size_t query_index, size_t minlen)
 {
 	return 0;
 }
 
 
-int
-report_long_matches (pbwt_t *b)
+/* Definitions of non-API functions */
+
+static int
+add_match (match_t *list, size_t first, size_t second, size_t begin, size_t end)
 {
+	match_t *new_match;
+
+	/* Allocate heap memory for new match */
+	new_match = (match_t *) malloc (sizeof(match_t));
+	if (!new_match)
+	{
+		perror ("libpbwt [ERROR]");
+		return -1;
+	}
+
+	/* Populate the match data */
+	new_match->first = first;
+	new_match->second = second;
+	new_match->begin = begin;
+	new_match->end = end;
+	new_match->next = NULL;
+
+	/* Goto end of list and add the new element */
+	if (!list)
+		list = new_match;
+	else
+	{
+		match_t *pos;
+		for (pos = list; pos->next != NULL; pos = pos->next);
+		pos->next = new_match;
+	}
+
 	return 0;
 }
 
-void
+static void
 io_error (FILE *f)
 {
 	if (ferror (f))
 		fputs ("libpbwt [ERROR]: I/O failure", stderr);
 	else if (feof (f))
 		fputs ("libpbwt [ERROR]: truncated input file", stderr);
-	fclose (f);	
+	fclose (f);
+	return;
 }
