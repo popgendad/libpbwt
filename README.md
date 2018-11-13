@@ -133,3 +133,7 @@ int find_matches (pbwt_t *b, size_t query_index, size_t minlen)
 The `find_matches` function finds all the matches in `b` that match the haplotype indexed by `query_index`.
 The minimum length required to be considered a match is specified by the `minlen` variable. The results are
 stored in the linked list in `b->match`.
+
+## Examples
+
+## Contributing
