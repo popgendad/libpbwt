@@ -12,15 +12,15 @@ the data contributing to the to haplotype alignment of interest. The `pbwt_t` is
 ```
 typedef struct pbwt
 {
-	char **sid;               /* Diploid sample identifier string */
-	char **reg;               /* Region/population of sample */
-	unsigned char *data;      /* Binary haplotype representation */
-	int is_compress;          /* Are haplotype data compressed? */
-	size_t datasize;          /* Number of bytes stored in data */
-	size_t nsite;             /* Number of sampled sites */
-	size_t nsam;              /* Number of sampled haplotypes */
-	size_t *ppa;              /* Pointer to the prefix array */
-	size_t *div;              /* Pointer to the divergence array */
+    char **sid;               /* Diploid sample identifier string */
+    char **reg;               /* Region/population of sample */
+    unsigned char *data;      /* Binary haplotype representation */
+    int is_compress;          /* Are haplotype data compressed? */
+    size_t datasize;          /* Number of bytes stored in data */
+    size_t nsite;             /* Number of sampled sites */
+    size_t nsam;              /* Number of sampled haplotypes */
+    size_t *ppa;              /* Pointer to the prefix array */
+    size_t *div;              /* Pointer to the divergence array */
     match_t *match;           /* Pointer to match data structure */
 } pbwt_t;
 ```
@@ -33,11 +33,11 @@ The `match_t` type is declared as
 ```
 typedef struct _match
 {
-	size_t first;             /* The original index of the first matching haplotype */
-	size_t second;            /* The original index of the second matching haplotype */
-	size_t begin;             /* The beginning position of the match */
-	size_t end;               /* The end position of the match */
-	struct _match *next;      /* Pointer to the next match */
+    size_t first;             /* The original index of the first matching haplotype */
+    size_t second;            /* The original index of the second matching haplotype */
+    size_t begin;             /* The beginning position of the match */
+    size_t end;               /* The end position of the match */
+    struct _match *next;      /* Pointer to the next match */
 } match_t;
 ```
 
@@ -100,13 +100,13 @@ int pbwt_print (const pbwt_t *b)
 The `pbwt_print()` function will print a representation of the `pbwt_t` data structure to
 `stdout`. The function will return 0 on success and -1 on failure.
 
-### build_prefix_array()
+### pbwt_build()
 
 ```
-int build_prefix_array (pbwt_t *b)
+int pbwt_build (pbwt_t *b)
 ```
 
-The `build_prefix_array()` function is based on algorithm 2 of Durbin (2014) and takes
+The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes
 an initialized `pbwt_t` data structure that already contains the raw binary haplotype
 data and constructs both the prefix and divergence arrays up to the site at index
 position `nsite - 1`. The function will return 0 on success and -1 on error.
@@ -124,13 +124,13 @@ pointer to the new sample identifier `new_sid`, a pointer to the new sample regi
 (which can be `NULL`), a pointer to the first binary haplotype array `h1` and the second haplotype
 array `h2`.
 
-### find_matches()
+### pbwt_match()
 
 ```
-int find_matches (pbwt_t *b, size_t query_index, size_t minlen)
+int pbwt_match (pbwt_t *b, size_t query_index, size_t minlen)
 ```
 
-The `find_matches` function finds all the matches in `b` that match the haplotype indexed by `query_index`.
+The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`.
 The minimum length required to be considered a match is specified by the `minlen` variable. The results are
 stored in the linked list in `b->match`.
 
