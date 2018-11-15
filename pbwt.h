@@ -1,7 +1,10 @@
 #ifndef PBWT_H
 #define PBWT_H
 
+/* 2D linearization macro */
 #define TWODCORD(row, dim, col) ((row) * (dim) + (col))
+
+/* Boolean macros */
 #define FALSE 0
 #define TRUE 1
 
