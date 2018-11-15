@@ -10,26 +10,26 @@
 /* Structure to hold linked list of matches */
 typedef struct _match
 {
-	size_t first;             /* The original index of the first matching haplotype */
-	size_t second;            /* The original index of the second matching haplotype */
-	size_t begin;             /* The beginning position of the match */
-	size_t end;               /* The end position of the match */
-	struct _match *next;      /* Pointer to the next match */
+    size_t first;             /* The original index of the first matching haplotype */
+    size_t second;            /* The original index of the second matching haplotype */
+    size_t begin;             /* The beginning position of the match */
+    size_t end;               /* The end position of the match */
+    struct _match *next;      /* Pointer to the next match */
 } match_t;
 
 /* Structure to hold the positional Burrows-Wheeler transform */
 typedef struct pbwt
 {
-	char **sid;               /* Diploid sample identifier string */
-	char **reg;               /* Region/population of sample */
-	unsigned char *data;      /* Binary haplotype representation */
-	int is_compress;          /* Are haplotype data compressed? */
-	size_t datasize;          /* Number of bytes stored in data */
-	size_t nsite;             /* Number of sampled sites */
-	size_t nsam;              /* Number of sampled haplotypes */
-	size_t *ppa;              /* Pointer to the prefix array */
-	size_t *div;              /* Pointer to the divergence array */
-    match_t *match;           /* Pointer to match data structure */
+    char **sid;               /* Diploid sample identifier string */
+    char **reg;               /* Region/population of sample */
+    unsigned char *data;      /* Binary haplotype representation */
+    int is_compress;          /* Are haplotype data compressed? */
+    size_t datasize;          /* Number of bytes stored in data */
+    size_t nsite;             /* Number of sampled sites */
+    size_t nsam;              /* Number of sampled haplotypes */
+    size_t *ppa;              /* Pointer to the prefix array */
+    size_t *div;              /* Pointer to the divergence array */
+    match_t *match;           /* Pointer to set-proximal match linked list */
 } pbwt_t;
 
 
