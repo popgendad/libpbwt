@@ -51,10 +51,10 @@ extern pbwt_t *pbwt_read (const char *);
 
 extern int pbwt_print (const pbwt_t *);
 
-extern int build_prefix_array (pbwt_t *);
+extern int pbwt_build (pbwt_t *);
 
-extern match_t *find_matches (pbwt_t *, const size_t, const size_t);
+extern match_t *pbwt_match (pbwt_t *, const size_t, const size_t);
 
-extern int print_matches (match_t *);
+extern int pbwt_print_match (match_t *);
 
 #endif

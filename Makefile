@@ -4,13 +4,15 @@ LIBS=-lz
 PREFIX=/usr/local
 H_DIR=$(PREFIX)/include
 L_DIR=$(PREFIX)/lib
+SRCS=$(wildcard *.c)
+OBJS=$(patsubst %.c, %.o, $(SRCS))
 
 all: libpbwt.so
 
-libpbwt.so: pbwt.o
-	gcc -shared -o $@ $< $(LIBS)
+libpbwt.so: $(OBJS)
+	gcc -shared -o $@ $^ $(LIBS)
 
-pbwt.o: pbwt.c
+%.o: %.c
 	$(CC) $(CFLAGS) -c $<
 
 install:
@@ -18,4 +20,4 @@ install:
 	cp pbwt.h $(H_DIR)
 
 clean:
-	rm pbwt.o libpbwt.so
+	rm $(OBJS) libpbwt.so
