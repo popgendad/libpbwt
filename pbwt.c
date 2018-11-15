@@ -6,7 +6,7 @@
 
 /* Declarations of non-API functions */
 static void io_error (FILE *);
-static int add_match (match_t *, size_t, size_t, size_t, size_t);
+static int add_match (match_t **, const size_t, const size_t, const size_t, const size_t);
 
 /* Definitions of API functions */
 
@@ -17,9 +17,8 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	pbwt_t *b;
 
 	/* Allocate heap memory for the pwbt data structure */
-
 	b = (pbwt_t *) malloc (sizeof(pbwt_t));
-	if (!b)
+	if (b == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		return NULL;
@@ -28,11 +27,11 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	b->nsite = nsite;
 	b->nsam = nsam;
 	b->datasize = nsite * nsam;
-	b->is_compress = 0;
+	b->is_compress = FALSE;
 	b->match = NULL;
 
 	b->ppa = (size_t *) malloc (nsam * sizeof(size_t));
-	if (!b->ppa)
+	if (b->ppa == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
@@ -40,7 +39,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	}
 
 	b->div = (size_t *) malloc (nsam * sizeof(size_t));
-	if (!b->div)
+	if (b->div == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
@@ -48,7 +47,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	}
 
 	b->sid = (char **) malloc (nsam * sizeof(char *));
-	if (!b->sid)
+	if (b->sid == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
@@ -56,7 +55,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	}
 
 	b->reg = (char **) malloc (nsam * sizeof(char *));
-	if (!b->reg)
+	if (b->reg == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
@@ -64,7 +63,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
 	}
 
 	b->data = (unsigned char *) malloc (nsite * nsam * sizeof(unsigned char));
-	if (!b->data)
+	if (b->data == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		pbwt_destroy (b);
@@ -85,30 +84,30 @@ void
 pbwt_destroy (pbwt_t *b)
 {
 	/* Deallocate all heap memory pointed to by pbwt structure */
-	if (b)
+	if (b != NULL)
 	{
 		size_t i;
-		if (b->sid)
+		if (b->sid != NULL)
 		{
 			for (i = 0; i < b->nsam; ++i)
-				if (b->sid[i])
+				if (b->sid[i] != NULL)
 					free (b->sid[i]);
 			free (b->sid);
 		}
-		if (b->reg)
+		if (b->reg != NULL)
 		{
 			for (i = 0; i < b->nsam; ++i)
-				if (b->reg[i])
+				if (b->reg[i] != NULL)
 					free (b->reg[i]);
 			free (b->reg);
 		}
-		if (b->data)
+		if (b->data != NULL)
 			free (b->data);
-		if (b->div)
+		if (b->div != NULL)
 			free (b->div);
-		if (b->ppa)
+		if (b->ppa != NULL)
 			free (b->ppa);
-		if (b->match)
+		if (b->match != NULL)
 		{
 			match_t *p;
 			match_t *pn;
@@ -125,7 +124,7 @@ pbwt_destroy (pbwt_t *b)
 	return;
 }
 
-/* What to do with matching? */
+
 int
 pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
 {
@@ -137,9 +136,9 @@ pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, c
 
 	/* Determine if a sample region is provided */
 	if (new_reg)
-		has_reg = 1;
+		has_reg = TRUE;
 	else
-		has_reg = 0;
+		has_reg = FALSE;
 
 	/* Check length of input haplotype sequences */
 	if (strlen (h1) != b->nsite || strlen (h2) != b->nsite)
@@ -149,7 +148,7 @@ pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, c
 	}
 
 	/* Check that new sample identifier string is not NULL */
-	if (!new_sid)
+	if (new_sid == NULL)
 	{
 		fputs ("libpbwt [ERROR]: pbwt_add(), input sample identifier is NULL", stderr);
 		return -1;
@@ -176,7 +175,7 @@ pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, c
 	b->reg = (char **) realloc (b->reg, b->nsam * sizeof(char *));
 
 	/* Add new region identifier to list */
-	if (has_reg)
+	if (has_reg == TRUE)
 	{
 		len = strlen (new_reg);
 		b->reg[new_index1] = (char *) malloc (len * sizeof(char));
@@ -211,11 +210,12 @@ pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, c
 	return 0;
 }
 
+
 int
 pbwt_write (const char *outfile, pbwt_t *b)
 {
 	/* If data aren't compressed, then compress */
-	if (!b->is_compress)
+	if (b->is_compress == FALSE)
 		pbwt_compress (b);
 
 	size_t i;
@@ -315,6 +315,7 @@ pbwt_write (const char *outfile, pbwt_t *b)
 	return 0;
 }
 
+
 pbwt_t *
 pbwt_read (const char *infile)
 {
@@ -326,10 +327,10 @@ pbwt_read (const char *infile)
 
 	/* Open binary input file stream */
 	fin = fopen (infile, "rb");
-	if (!fin)
+	if (fin == NULL)
 	{
 		perror ("libpbwt [ERROR]");
-		return 0;
+		return NULL;
 	}
 
 	/* Read the data into memory */
@@ -337,54 +338,54 @@ pbwt_read (const char *infile)
 	if (fread (&nsite, sizeof(size_t), 1, fin) != 1)
 	{
 		io_error (fin);
-		return 0;
+		return NULL;
 	}
 
 	/* Read the number of samples */
 	if (fread (&nsam, sizeof(size_t), 1, fin) != 1)
 	{
 		io_error (fin);
-		return 0;
+		return NULL;
 	}
 
 	/* Initialize the new pbwt structure */
 	b = pbwt_init (nsite, nsam);
-	if (!b)
+	if (b == NULL)
 	{
 		fclose (fin);
-		return 0;
+		return NULL;
 	}
 
 	/* Read the data size */
 	if (fread (&(b->datasize), sizeof(size_t), 1, fin) != 1)
 	{
 		io_error (fin);
-		return 0;
+		return NULL;
 	}
 
 	/* Read the haplotype data */
 	if (fread (b->data, sizeof(unsigned char), b->datasize, fin) != b->datasize)
 	{
 		io_error (fin);
-		return 0;
+		return NULL;
 	}
 
 	/* Read the prefix array */
 	if (fread (b->ppa, sizeof(size_t), b->nsam, fin) != b->nsam)
 	{
 		io_error (fin);
-		return 0;
+		return NULL;
 	}
 
 	/* Read the divergence array */
 	if (fread (b->div, sizeof(size_t), b->nsam, fin) != b->nsam)
 	{
 		io_error (fin);
-		return 0;
+		return NULL;
 	}
 
 	/* Indicate pbwt is compressed */
-	b->is_compress = 1;
+	b->is_compress = TRUE;
 
 	/* Read sample info */
 	for (i = 0; i < nsam; i++)
@@ -395,22 +396,22 @@ pbwt_read (const char *infile)
 		if (fread (&len, sizeof(size_t), 1, fin) != 1)
 		{
 			io_error (fin);
-			return 0;
+			return NULL;
 		}
 
 		/* Allocate heap memory for sample identifier string i */
 		b->sid[i] = (char *) malloc ((len + 1) * sizeof(char));
-		if (!b->sid[i])
+		if (b->sid[i] == NULL)
 		{
 			perror ("libpbwt [ERROR]");
-			return 0;
+			return NULL;
 		}
 
 		/* Read sample identifier string */
 		if (fread (b->sid[i], sizeof(char), len, fin) != len)
 		{
 			io_error (fin);
-			return 0;
+			return NULL;
 		}
 
 		/* Append null-terminating character */
@@ -425,17 +426,17 @@ pbwt_read (const char *infile)
 
 		/* Allocate head memory for region string i */
 		b->reg[i] = (char *) malloc ((len + 1) * sizeof(char));
-		if (!b->reg[i])
+		if (b->reg[i] == NULL)
 		{
 			perror ("libpbwt [ERROR]");
-			return 0;
+			return NULL;
 		}
 
 		/* Read region string */
 		if (fread (b->reg[i], sizeof(char), len, fin) != len)
 		{
 			io_error (fin);
-			return 0;
+			return NULL;
 		}
 
 		/* Append null-terminating character */
@@ -452,7 +453,7 @@ int
 pbwt_uncompress (pbwt_t *b)
 {
 	/* If data are already uncompressed */
-	if (!b->is_compress)
+	if (b->is_compress == FALSE)
 		return 0;
 
 	unsigned char *g;
@@ -460,7 +461,7 @@ pbwt_uncompress (pbwt_t *b)
  
     /* Allocate heap memory for uncompressed haplotype data */
     g = (unsigned char *) malloc (b->nsite * b->nsam * sizeof(unsigned char));
-    if (!g)
+    if (g == NULL)
     {
     	perror ("libpbwt [ERROR]");
     	return -1;
@@ -484,7 +485,7 @@ pbwt_uncompress (pbwt_t *b)
 	free (b->data);
 	b->data = g;
 	b->datasize = infstream.total_out;
-	b->is_compress = 0;
+	b->is_compress = FALSE;
 
 	return 0;
 }
@@ -494,7 +495,7 @@ int
 pbwt_compress (pbwt_t *b)
 {
 	/* Check if data are already compressed */
-	if (b->is_compress)
+	if (b->is_compress == TRUE)
 		return 0;
 
 	unsigned char *f;
@@ -502,7 +503,7 @@ pbwt_compress (pbwt_t *b)
 
 	/* Allocate heap memory for compressed haplotype data */
 	f = (unsigned char *) malloc (b->nsam * b->nsite * sizeof(unsigned char));
-	if (!f)
+	if (f == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		return -1;
@@ -528,18 +529,19 @@ pbwt_compress (pbwt_t *b)
 
 	/* Update pbwt data structure */
 	free (b->data);
-	b->is_compress = 1;
+	b->is_compress = TRUE;
 	b->data = f;
 	b->datasize = defstream.total_out;
 
 	return 0;
 }
 
+
 int
 pbwt_print (const pbwt_t *b)
 {
 	/* Check if pointer is NULL */
-	if (!b)
+	if (b == NULL)
 		return -1;
 
 	size_t i;
@@ -659,85 +661,186 @@ build_prefix_array (pbwt_t *b)
 	return 0;
 }
 
-int
-find_matches (pbwt_t *b, size_t query_index, size_t minlen)
+match_t *
+find_matches (pbwt_t *b, const size_t query_index, const size_t minlen)
 {
 	size_t i;
 	size_t j;
 	size_t k;
-	size_t ia;
-	size_t ib;
-	size_t da;
-	size_t db;
-	size_t *ara;
-	size_t *arb;
-	size_t *ard;
-	size_t *are;
+	size_t *sdiv;
+	size_t *jppa;
+	match_t *mlist;
 
-	ara = (size_t *) malloc (b->nsam * sizeof(size_t));
-	arb = (size_t *) malloc (b->nsam * sizeof(size_t));
-	ard = (size_t *) malloc (b->nsam * sizeof(size_t));
-	are = (size_t *) malloc (b->nsam * sizeof(size_t));
+	mlist = NULL;
+
+	/* Allocate heap memory for prefix and divergence arrays */
+	sdiv = (size_t *) malloc ((b->nsam + 1) * sizeof(size_t));
+	if (sdiv == NULL)
+	{
+		perror ("libpbwt [ERROR]");
+		return NULL;
+	}
+	jppa = (size_t *) malloc (b->nsam * sizeof(size_t));
+	if (jppa == NULL)
+	{
+		perror ("libpbwt [ERROR]");
+		return NULL;
+	}
+
+	/* Initialize prefix and divergence arrays */
+	for (i = 0; i < b->nsam; ++i)
+	{
+		sdiv[i] = 0;
+		jppa[i] = i;
+	}
 
 	for (i = 0; i < b->nsite; ++i)
 	{
-		ia = 0;
-		ib = 0;
-		da = i + 1;
-		db = i + 1;
+		sdiv[0] = i + 1;
+		sdiv[b->nsam] = i + 1;
 
 		for (j = 0; j < b->nsam; ++j)
 		{
-			size_t ix;
-			size_t ms;
+			int m = j - 1;
+			int n = j + 1;
+			int mc = 0;
 
-			ix = b->ppa[j];
-			ms = b->div[j];
-
-			/*if (ms > i - minlen) */
-
-			if (ms > da)
-				da = ms;
-			if (ms > db)
-				db = ms;
-
-			if (b->data[TWODCORD(ix, b->nsite, i)] == '0')
+			if (sdiv[j] <= sdiv[j+1])
 			{
-				ara[ia] = ix;
-				ard[ia] = da;
-				da = 0;
-				++ia;
+				while (sdiv[m+1] <= sdiv[j])
+				{
+					if (b->data[TWODCORD(jppa[m], b->nsite, i)] ==
+					    b->data[TWODCORD(jppa[j], b->nsite, i)])
+					{
+						mc = 1;
+						break;
+					}
+					m -= 1;
+				}
 			}
-			else
+
+			if (mc)
+				continue;
+
+			if (sdiv[j] >= sdiv[j+1])
 			{
-				arb[ib] = ix;
-				are[ib] = db;
-				db = 0;
-				++ib;
+				while (sdiv[n] <= sdiv[j+1])
+				{
+					if (b->data[TWODCORD(jppa[n], b->nsite, i)] ==
+					    b->data[TWODCORD(jppa[j], b->nsite, i)])
+					{
+						mc = 1;
+						break;
+					}
+					n += 1;
+				}
+			}
+
+			if (mc)
+				continue;
+
+			for (k = m + 1; k < j; ++k)
+			{
+				if (sdiv[j] < i && i - sdiv[j] >= minlen)
+				{
+					add_match (&mlist, jppa[j], jppa[k], sdiv[j], i);
+				}
+			}
+
+			for (k = j + 1; k < n; ++k)
+			{
+				if (sdiv[j+1] < i && i - sdiv[j+1] >= minlen)
+				{
+					add_match (&mlist, jppa[j], jppa[k], sdiv[j+1], i);
+				}
 			}
 		}
 
-		/* Concatenate arrays */
 		if (i < b->nsite - 1)
 		{
+			size_t da;
+			size_t db;
+			size_t ia;
+			size_t ib;
+			size_t *ara;
+			size_t *arb;
+			size_t *ard;
+			size_t *are;
+
+			ara = (size_t *) malloc (b->nsam * sizeof(size_t));
+			arb = (size_t *) malloc (b->nsam * sizeof(size_t));
+			ard = (size_t *) malloc (b->nsam * sizeof(size_t));
+			are = (size_t *) malloc (b->nsam * sizeof(size_t));
+
+			da = i + 1;
+			db = i + 1;
+			ia = 0;
+			ib = 0;
+
+			for (j = 0; j < b->nsam; ++j)
+			{
+				size_t ix;
+				size_t ms;
+
+				ix = jppa[j];
+				ms = sdiv[j];
+				if (ms > da)
+					da = ms;
+				if (ms > db)
+					db = ms;
+
+				if (b->data[TWODCORD(ix, b->nsite, i)] == '0')
+				{
+					ara[ia] = ix;
+					ard[ia] = da;
+					da = 0;
+					++ia;
+				}
+				else
+				{
+					arb[ib] = ix;
+					are[ib] = db;
+					db = 0;
+					++ib;
+				}
+			}
+
+			/* Concatenate arrays */
 			for (j = 0; j < ia; ++j)
 			{
-				b->ppa[j] = ara[j];
-				b->div[j] = ard[j];
+				jppa[j] = ara[j];
+				sdiv[j] = ard[j];
 			}
+
 			for (j = 0, k = ia; j < ib; ++j, ++k)
 			{
-				b->ppa[k] = arb[j];
-				b->div[k] = are[j];
+				jppa[k] = arb[j];
+				sdiv[k] = are[j];
 			}
+
+			free (ara);
+			free (arb);
+			free (ard);
+			free (are);
 		}
 	}
 
-	/* Free allocated memory */
-	free (ara);
-	free (arb);
-	free (ard);
-	free (are);
+	free (sdiv);
+	free (jppa);
+
+	return mlist;
+}
+
+
+int
+print_matches (match_t *list)
+{
+	if (list != NULL)
+	{
+		match_t *p;
+		for (p = list; p != NULL; p = p->next)
+			printf ("%zu\t%zu\t%zu\t%zu\n", p->first, p->second, p->begin, p->end);
+	}
 
 	return 0;
 }
@@ -746,13 +849,14 @@ find_matches (pbwt_t *b, size_t query_index, size_t minlen)
 /* Definitions of non-API functions */
 
 static int
-add_match (match_t *list, size_t first, size_t second, size_t begin, size_t end)
+add_match (match_t **head, const size_t first, const size_t second,
+           const size_t begin, const size_t end)
 {
 	match_t *new_match;
 
 	/* Allocate heap memory for new match */
 	new_match = (match_t *) malloc (sizeof(match_t));
-	if (!new_match)
+	if (new_match == NULL)
 	{
 		perror ("libpbwt [ERROR]");
 		return -1;
@@ -763,17 +867,8 @@ add_match (match_t *list, size_t first, size_t second, size_t begin, size_t end)
 	new_match->second = second;
 	new_match->begin = begin;
 	new_match->end = end;
-	new_match->next = NULL;
-
-	/* Goto end of list and add the new element */
-	if (!list)
-		list = new_match;
-	else
-	{
-		match_t *pos;
-		for (pos = list; pos->next != NULL; pos = pos->next);
-		pos->next = new_match;
-	}
+	new_match->next = (*head);
+	(*head) = new_match;
 
 	return 0;
 }
@@ -785,6 +880,8 @@ io_error (FILE *f)
 		fputs ("libpbwt [ERROR]: I/O failure", stderr);
 	else if (feof (f))
 		fputs ("libpbwt [ERROR]: truncated input file", stderr);
+
 	fclose (f);
+
 	return;
 }

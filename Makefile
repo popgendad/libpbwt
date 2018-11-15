@@ -1,9 +1,9 @@
 CC=gcc
-CFLAGS=-Wall -O2 -fpic
+CFLAGS=-Wall -g -fpic
 LIBS=-lz
-PREFIX=/usr/
-H_DIR=$(PREFIX)/include/
-L_DIR=$(PREFIX)/lib/
+PREFIX=/usr/local
+H_DIR=$(PREFIX)/include
+L_DIR=$(PREFIX)/lib
 
 all: libpbwt.so
 

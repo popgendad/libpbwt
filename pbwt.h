@@ -2,7 +2,8 @@
 #define PBWT_H
 
 #define TWODCORD(row, dim, col) ((row) * (dim) + (col))
-
+#define FALSE 0
+#define TRUE 1
 
 /* Data structure declarations */
 
@@ -34,24 +35,26 @@ typedef struct pbwt
 
 /* libpbwt API function declarations */
 
-pbwt_t *pbwt_init (const size_t, const size_t);
+extern pbwt_t *pbwt_init (const size_t, const size_t);
 
-void pbwt_destroy (pbwt_t *);
+extern void pbwt_destroy (pbwt_t *);
 
-int pbwt_compress(pbwt_t *);
+extern int pbwt_compress(pbwt_t *);
 
-int pbwt_uncompress (pbwt_t *);
+extern int pbwt_uncompress (pbwt_t *);
 
-int pbwt_write (const char *, pbwt_t *);
+extern int pbwt_write (const char *, pbwt_t *);
 
-int pbwt_add (pbwt_t *, const char *, const char *, const char *, const char *);
+extern int pbwt_add (pbwt_t *, const char *, const char *, const char *, const char *);
 
-pbwt_t *pbwt_read (const char *);
+extern pbwt_t *pbwt_read (const char *);
 
-int pbwt_print (const pbwt_t *);
+extern int pbwt_print (const pbwt_t *);
 
-int build_prefix_array (pbwt_t *);
+extern int build_prefix_array (pbwt_t *);
 
-int find_matches (pbwt_t *, size_t, size_t);
+extern match_t *find_matches (pbwt_t *, const size_t, const size_t);
+
+extern int print_matches (match_t *);
 
 #endif
