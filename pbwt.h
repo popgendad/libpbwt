@@ -60,4 +60,6 @@ extern match_t *pbwt_match (pbwt_t *, const size_t, const size_t);
 
 extern int pbwt_print_match (match_t *);
 
+extern pbwt_t * pbwt_subset (pbwt_t *, const char *);
+
 #endif
