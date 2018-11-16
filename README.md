@@ -193,7 +193,78 @@ Dumps all reported matches to `stdout`.
 
 ## Examples
 
-Coming soon
+The example below reads a plink format file and converts it to the `pbwt_t` data structure. The original `pbwt_t` is then subset to haplotypes belonging to the "Beringia" region. The program then prints the Beringia-only `pbwt_t` structure and then finds and prints matches that span more than half of the input window.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <plink.h>
+#include <pbwt.h>
+
+int main (int argc, char *argv[])
+{
+   int v;
+   size_t i;
+	plink_t *p;
+	pbwt_t *b;
+	match_t *x;
+
+   const char instub[] = "infile_stub";
+
+	/* Initialize plink data structure */
+	p = plink_init (instub, 1, 1);
+
+	/* Initialize pbwt structure */
+	b = pbwt_init (p->nsnp, 2 * p->nsam);
+
+    /* Iterate through all samples in the fam/reg */
+    for (i = 0; i < p->nsam; ++i)
+    {
+        	memcpy (&b->data[TWODCORD(2*i, b->nsite, 0)],
+                 hap2uchar(p, i, 0),
+                 b->nsite * sizeof(unsigned char));
+        	memcpy (&b->data[TWODCORD(2*i+1, b->nsite, 0)],
+                 hap2uchar(p, i, 1),
+                 b->nsite * sizeof(unsigned char));
+        	b->sid[2*i]   = strdup (p->fam[i].iid);
+        	b->sid[2*i+1] = strdup (p->fam[i].iid);
+        	b->reg[2*i]   = strdup (p->reg[i].reg);
+        	b->reg[2*i+1] = strdup (p->reg[i].reg);
+    }
+
+   /* Read marker data from plink bim */
+	for (i = 0; i < p->nsnp; ++i)
+	{
+		b->rsid[i] = strdup (p->bim[i].rsid);
+		b->cm[i] = p->bim[i].cM;
+		b->chr[i] = p->bim[i].ch;
+	}
+
+   /* Subset the pbwt to the Beringia region */
+	pbwt_t *s = pbwt_subset (b, "Beringia");
+	if (s == NULL)
+		return -1;
+
+   /* Build the prefix and divergence arrays for the subset pbwt */
+	v = pbwt_build (s);
+
+   /* Print the subset pbwt */
+	v = pbwt_print (s);
+
+	/* Find all set-maximal matches */
+	x = pbwt_match (s, 0, 0.5);
+
+	/* Print matches to stdout */
+	v = pbwt_print_match (s, x);
+
+	/* Free memory for the original pbwt data structure */
+	pbwt_destroy (b);
+	pbwt_destroy (s);
+
+   return v;
+}
+```
 
 ## Contributing
 
