@@ -77,7 +77,8 @@ pbwt_subset (pbwt_t *b, const char *reg)
     for (j = 0; j < b->nsite; ++j)
     {
         p->chr[j] = b->chr[j];
-        p->rsid[j] = strdup (b->rsid[j]);
+        if (b->rsid[j] != NULL)
+            p->rsid[j] = strdup (b->rsid[j]);
         p->cm[j] = b->cm[j];
     }
 

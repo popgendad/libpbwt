@@ -71,6 +71,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
     }
 
     b->cm = (double *) malloc (nsite * sizeof(double));
+    if (b->cm == NULL)
     {
         perror ("libpbwt [ERROR]");
         pbwt_destroy (b);

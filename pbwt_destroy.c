@@ -35,6 +35,10 @@ pbwt_destroy (pbwt_t *b)
             free (b->div);
         if (b->ppa != NULL)
             free (b->ppa);
+        if (b->chr != NULL)
+            free (b->chr);
+        if (b->cm != NULL)
+            free (b->cm);
         if (b->match != NULL)
         {
             match_t *p;
