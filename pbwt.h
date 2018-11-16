@@ -11,6 +11,8 @@
 #ifndef PBWT_H
 #define PBWT_H
 
+#include <stdlib.h>
+
 /* 2D linearization macro */
 #define TWODCORD(row, dim, col) ((row) * (dim) + (col))
 
@@ -69,7 +71,7 @@ extern int pbwt_print (const pbwt_t *);
 
 extern int pbwt_build (pbwt_t *);
 
-extern match_t *pbwt_match (pbwt_t *, const size_t, const size_t);
+extern match_t *pbwt_match (pbwt_t *, const size_t, const double);
 
 extern int pbwt_print_match (pbwt_t *, match_t *);
 

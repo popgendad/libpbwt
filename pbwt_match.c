@@ -1,11 +1,10 @@
-#include <stdlib.h>
 #include <stdio.h>
 #include "pbwt.h"
 
 static int add_match (match_t **, const size_t, const size_t, const size_t, const size_t);
 
 match_t *
-pbwt_match (pbwt_t *b, const size_t query_index, const size_t minlen)
+pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
 {
     size_t i;
     size_t j;
@@ -84,7 +83,8 @@ pbwt_match (pbwt_t *b, const size_t query_index, const size_t minlen)
 
             for (k = m + 1; k < j; ++k)
             {
-                if (sdiv[j] < i && i - sdiv[j] >= minlen)
+                double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]); 
+                if (b->cm[sdiv[j]] < i && match_dist >= minlen)
                 {
                     add_match (&mlist, jppa[j], jppa[k], sdiv[j], i);
                 }
@@ -92,7 +92,8 @@ pbwt_match (pbwt_t *b, const size_t query_index, const size_t minlen)
 
             for (k = j + 1; k < n; ++k)
             {
-                if (sdiv[j+1] < i && i - sdiv[j+1] >= minlen)
+                double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]); 
+                if (sdiv[j+1] < i && match_dist >= minlen)
                 {
                     add_match (&mlist, jppa[j], jppa[k], sdiv[j+1], i);
                 }
