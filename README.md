@@ -165,13 +165,19 @@ int pbwt_build (pbwt_t *b)
 
 The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes an initialized `pbwt_t` data structure that already contains the raw binary haplotype data and constructs both the prefix and divergence arrays up to the site at index position `nsite - 1`. The function will return 0 on success and -1 on error.
 
-#### pbwt_add()
+#### pbwt_push()
 
 ```c
-int pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
+int pbwt_push (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
 ```
 
-The `pbwt_add()` function adds two query sequences to the `pbwt_t` data structure pointed to by `b` and reconstructs the prefix and divergence arrays. In addition to a pointer to the `pbwt_t` data structure to be augmented, the function takes arguments that include a pointer to the new sample identifier `new_sid`, a pointer to the new sample region `new_reg` (which can be `NULL`), a pointer to the first binary haplotype array `h1` and the second haplotype array `h2`.
+The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structure pointed to by `b` and reconstructs the prefix and divergence arrays. In addition to a pointer to the `pbwt_t` data structure to be augmented, the function takes arguments that include a pointer to the new sample identifier `new_sid`, a pointer to the new sample region `new_reg` (which can be `NULL`), a pointer to the first binary haplotype array `h1` and the second haplotype array `h2`.
+
+#### pbwt_pull()
+
+
+#### pbwt_merge()
+
 
 ### Matching
 
@@ -182,6 +188,15 @@ int pbwt_match (pbwt_t *b, size_t query_index, double minlen)
 ```
 
 The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The results are stored in the linked list in `b->match`.
+
+#### pbwt_longest_match()
+
+
+#### match_coverage()
+
+
+#### match_find()
+
 
 #### pbwt_print_matches()
 
