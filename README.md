@@ -76,7 +76,7 @@ Coming soon
 
 The main data type is called `pbwt_t` and it stores all of the information associated with the data contributing to the to haplotype alignment of interest. The `pbwt_t` is declared as
 
-```
+```c
 typedef struct pbwt
 {
     char **sid;               /* Diploid sample identifier string */
@@ -96,7 +96,7 @@ typedef struct pbwt
 
 The `match_t` data type stores match coordinates found within the pbwt in a linked list. The `match_t` type is declared as
 
-```
+```c
 typedef struct _match
 {
     size_t first;             /* The original index of the first matching haplotype */
@@ -113,7 +113,7 @@ typedef struct _match
 
 #### pbwt_init()
 
-```
+```c
 pbwt_t * pbwt_init (const size_t nsite, const size_t nsam)
 ```
 
@@ -123,7 +123,7 @@ The above function takes the number of sites (`nsite`) and the number of haploty
 
 #### pbwt_destroy()
 
-```
+```c
 void pbwt_destroy (pbwt_t *b)
 ```
 
@@ -133,7 +133,7 @@ This function deallocates all memory contained in the `pbwt_t` data structure re
 
 #### pbwt_read()
 
-```
+```c
 pbwt_t * pbwt_read (const char *infile)
 ```
 
@@ -141,7 +141,7 @@ The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a
 
 #### pbwt_write()
 
-```
+```c
 int pbwt_write (const char *outfile, pbwt_t *b)
 ```
 
@@ -149,7 +149,7 @@ The above function will write the `pbwt_t` data structure pointed to by `b` and 
 
 #### pbwt_print()
 
-```
+```c
 int pbwt_print (const pbwt_t *b)
 ```
 
@@ -159,7 +159,7 @@ The `pbwt_print()` function will print a representation of the `pbwt_t` data str
 
 #### pbwt_build()
 
-```
+```c
 int pbwt_build (pbwt_t *b)
 ```
 
@@ -167,7 +167,7 @@ The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes a
 
 #### pbwt_add()
 
-```
+```c
 int pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
 ```
 
@@ -177,7 +177,7 @@ The `pbwt_add()` function adds two query sequences to the `pbwt_t` data structur
 
 #### pbwt_match()
 
-```
+```c
 int pbwt_match (pbwt_t *b, size_t query_index, double minlen)
 ```
 
@@ -185,7 +185,7 @@ The `pbwt_match` function finds all the matches in `b` that match the haplotype 
 
 #### pbwt_print_matches()
 
-```
+```c
 int pbwt_print_match (pbwt_t *b, match_t *list)
 ```
 
