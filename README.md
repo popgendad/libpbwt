@@ -97,7 +97,9 @@ typedef struct _match
 
 ## API functions
 
-### pbwt_init()
+### Create/Destroy data structures
+
+#### pbwt_init()
 
 ```
 pbwt_t * pbwt_init (const size_t nsite, const size_t nsam)
@@ -112,7 +114,7 @@ for the uncompressed binary haplotype data (`data`), the sample and region ident
 `reg`, respectively), the prefix array (`ppa`) and the divergence array (`div`). The `match` member
 variable is not initialized at this time and remains `NULL`.
 
-### pbwt_destroy()
+#### pbwt_destroy()
 
 ```
 void pbwt_destroy (pbwt_t *b)
@@ -122,7 +124,9 @@ This function deallocates all memory contained in the `pbwt_t` data structure re
 The variable `b` cannot be re-used after `pbwt_destroy()` is called, rather it must be re-initialized
 with the `pbwt_init()` function. This function does not return a value.
 
-### pbwt_read()
+### I/O functions
+
+#### pbwt_read()
 
 ```
 pbwt_t * pbwt_read (const char *infile)
@@ -132,7 +136,7 @@ The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a
 `pbwt_t` data structure contained in that file. The full name of the input file is given in the
 `infile` variable. The function returns a `NULL` pointer if it encounters a problem reading the file.
 
-### pbwt_write()
+#### pbwt_write()
 
 ```
 int pbwt_write (const char *outfile, pbwt_t *b)
@@ -145,7 +149,7 @@ the function will return a value of -1. The function will compress the binary ha
 contained in the `pbwt_t` data structure before writing the file. The function will return 0 on
 success and -1 on error.
 
-### pbwt_print()
+#### pbwt_print()
 
 ```
 int pbwt_print (const pbwt_t *b)
@@ -154,7 +158,9 @@ int pbwt_print (const pbwt_t *b)
 The `pbwt_print()` function will print a representation of the `pbwt_t` data structure to
 `stdout`. The function will return 0 on success and -1 on failure.
 
-### pbwt_build()
+### Functions that operate on pbwt
+
+#### pbwt_build()
 
 ```
 int pbwt_build (pbwt_t *b)
@@ -165,7 +171,7 @@ an initialized `pbwt_t` data structure that already contains the raw binary hapl
 data and constructs both the prefix and divergence arrays up to the site at index
 position `nsite - 1`. The function will return 0 on success and -1 on error.
 
-### pbwt_add()
+#### pbwt_add()
 
 ```
 int pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
@@ -178,7 +184,9 @@ pointer to the new sample identifier `new_sid`, a pointer to the new sample regi
 (which can be `NULL`), a pointer to the first binary haplotype array `h1` and the second haplotype
 array `h2`.
 
-### pbwt_match()
+### Matching
+
+#### pbwt_match()
 
 ```
 int pbwt_match (pbwt_t *b, size_t query_index, size_t minlen)
@@ -187,6 +195,14 @@ int pbwt_match (pbwt_t *b, size_t query_index, size_t minlen)
 The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`.
 The minimum length required to be considered a match is specified by the `minlen` variable. The results are
 stored in the linked list in `b->match`.
+
+#### pbwt_print_matches()
+
+```
+int pbwt_print_match (pbwt_t *b, match_t *list)
+```
+
+Dumps all reported matches to `stdout`.
 
 ## Examples
 
