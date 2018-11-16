@@ -204,65 +204,65 @@ The example below reads a plink format file and converts it to the `pbwt_t` data
 
 int main (int argc, char *argv[])
 {
-   int v;
-   size_t i;
-	plink_t *p;
-	pbwt_t *b;
-	match_t *x;
+    int v;
+    size_t i;
+    plink_t *p;
+    pbwt_t *b;
+    match_t *x;
 
-   const char instub[] = "infile_stub";
+    const char instub[] = "infile_stub";
 
-	/* Initialize plink data structure */
-	p = plink_init (instub, 1, 1);
+    /* Initialize plink data structure */
+    p = plink_init (instub, 1, 1);
 
-	/* Initialize pbwt structure */
-	b = pbwt_init (p->nsnp, 2 * p->nsam);
+    /* Initialize pbwt structure */
+    b = pbwt_init (p->nsnp, 2 * p->nsam);
 
     /* Iterate through all samples in the fam/reg */
     for (i = 0; i < p->nsam; ++i)
     {
-        	memcpy (&b->data[TWODCORD(2*i, b->nsite, 0)],
-                 hap2uchar(p, i, 0),
+        memcpy (&b->data[TWODCORD(2*i, b->nsite, 0)],
+                hap2uchar(p, i, 0),
                  b->nsite * sizeof(unsigned char));
-        	memcpy (&b->data[TWODCORD(2*i+1, b->nsite, 0)],
-                 hap2uchar(p, i, 1),
-                 b->nsite * sizeof(unsigned char));
-        	b->sid[2*i]   = strdup (p->fam[i].iid);
-        	b->sid[2*i+1] = strdup (p->fam[i].iid);
-        	b->reg[2*i]   = strdup (p->reg[i].reg);
-        	b->reg[2*i+1] = strdup (p->reg[i].reg);
+        memcpy (&b->data[TWODCORD(2*i+1, b->nsite, 0)],
+                hap2uchar(p, i, 1),
+                b->nsite * sizeof(unsigned char));
+        b->sid[2*i]   = strdup (p->fam[i].iid);
+        b->sid[2*i+1] = strdup (p->fam[i].iid);
+        b->reg[2*i]   = strdup (p->reg[i].reg);
+        b->reg[2*i+1] = strdup (p->reg[i].reg);
     }
 
-   /* Read marker data from plink bim */
-	for (i = 0; i < p->nsnp; ++i)
-	{
-		b->rsid[i] = strdup (p->bim[i].rsid);
-		b->cm[i] = p->bim[i].cM;
-		b->chr[i] = p->bim[i].ch;
-	}
+    /* Read marker data from plink bim */
+    for (i = 0; i < p->nsnp; ++i)
+    {
+        b->rsid[i] = strdup (p->bim[i].rsid);
+        b->cm[i] = p->bim[i].cM;
+        b->chr[i] = p->bim[i].ch;
+    }
 
-   /* Subset the pbwt to the Beringia region */
-	pbwt_t *s = pbwt_subset (b, "Beringia");
-	if (s == NULL)
-		return -1;
+    /* Subset the pbwt to the Beringia region */
+    pbwt_t *s = pbwt_subset (b, "Beringia");
+    if (s == NULL)
+        return -1;
 
-   /* Build the prefix and divergence arrays for the subset pbwt */
-	v = pbwt_build (s);
+    /* Build the prefix and divergence arrays for the subset pbwt */
+    v = pbwt_build (s);
 
-   /* Print the subset pbwt */
-	v = pbwt_print (s);
+    /* Print the subset pbwt */
+    v = pbwt_print (s);
 
-	/* Find all set-maximal matches */
-	x = pbwt_match (s, 0, 0.5);
+    /* Find all set-maximal matches */
+    x = pbwt_match (s, 0, 0.5);
 
-	/* Print matches to stdout */
-	v = pbwt_print_match (s, x);
+    /* Print matches to stdout */
+    v = pbwt_print_match (s, x);
 
-	/* Free memory for the original pbwt data structure */
-	pbwt_destroy (b);
-	pbwt_destroy (s);
+    /* Free memory for the original pbwt data structure */
+    pbwt_destroy (b);
+    pbwt_destroy (s);
 
-   return v;
+    return v;
 }
 ```
 
