@@ -14,6 +14,7 @@ pbwt_subset (pbwt_t *b, const char *reg)
     }
 
     size_t i;
+    size_t j;
     size_t nhap_read;
     size_t nhap_write;
     pbwt_t *p;
@@ -70,6 +71,14 @@ pbwt_subset (pbwt_t *b, const char *reg)
             /* Iterate number of subset haplotypes */
             ++nhap_write;
         }
+    }
+
+    /* Copy site data */
+    for (j = 0; j < b->nsite; ++j)
+    {
+        p->chr[j] = b->chr[j];
+        p->rsid[j] = strdup (b->rsid[j]);
+        p->cm[j] = b->cm[j];
     }
 
     /* Check to make sure we wrote the right amount of data */

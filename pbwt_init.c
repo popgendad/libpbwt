@@ -62,6 +62,21 @@ pbwt_init (const size_t nsite, const size_t nsam)
         return NULL;
     }
 
+    b->chr = (int *) malloc (nsite * sizeof(int));
+    if (b->chr == NULL)
+    {
+        perror ("libpbwt [ERROR]");
+        pbwt_destroy (b);
+        return NULL;
+    }
+
+    b->cm = (double *) malloc (nsite * sizeof(double));
+    {
+        perror ("libpbwt [ERROR]");
+        pbwt_destroy (b);
+        return NULL;
+    }
+
     b->rsid = (char **) malloc (nsite * sizeof(char *));
     if (b->rsid == NULL)
     {
