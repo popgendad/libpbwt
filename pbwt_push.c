@@ -3,7 +3,8 @@
 #include "pbwt.h"
 
 int
-pbwt_add (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
+pbwt_push (pbwt_t *b, const char *new_sid, const char *new_reg,
+           const char *h1, const char *h2)
 {
     int has_reg;
     size_t i;
