@@ -9,6 +9,7 @@ pbwt_read (const char *infile)
 {
     size_t i;
     size_t j;
+    size_t r;
     size_t nsite;
     size_t nsam;
     pbwt_t *b;
@@ -24,14 +25,16 @@ pbwt_read (const char *infile)
 
     /* Read the data into memory */
     /* First read the number of sites */
-    if (fread (&nsite, sizeof(size_t), 1, fin) != 1)
+    r = fread (&nsite, sizeof(size_t), 1, fin);
+    if (r != 1)
     {
         io_error (fin);
         return NULL;
     }
 
     /* Read the number of samples */
-    if (fread (&nsam, sizeof(size_t), 1, fin) != 1)
+    r = fread (&nsam, sizeof(size_t), 1, fin);
+    if (r != 1)
     {
         io_error (fin);
         return NULL;
@@ -46,28 +49,32 @@ pbwt_read (const char *infile)
     }
 
     /* Read the data size */
-    if (fread (&(b->datasize), sizeof(size_t), 1, fin) != 1)
+    r = fread (&(b->datasize), sizeof(size_t), 1, fin);
+    if (r != 1)
     {
         io_error (fin);
         return NULL;
     }
 
     /* Read the haplotype data */
-    if (fread (b->data, sizeof(unsigned char), b->datasize, fin) != b->datasize)
+    r = fread (b->data, sizeof(unsigned char), b->datasize, fin);
+    if (r != b->datasize)
     {
         io_error (fin);
         return NULL;
     }
 
     /* Read the prefix array */
-    if (fread (b->ppa, sizeof(size_t), b->nsam, fin) != b->nsam)
+    r = fread (b->ppa, sizeof(size_t), b->nsam, fin);
+    if (r != b->nsam)
     {
         io_error (fin);
         return NULL;
     }
 
     /* Read the divergence array */
-    if (fread (b->div, sizeof(size_t), b->nsam, fin) != b->nsam)
+    r = fread (b->div, sizeof(size_t), b->nsam, fin);
+    if (r != b->nsam)
     {
         io_error (fin);
         return NULL;
@@ -82,7 +89,8 @@ pbwt_read (const char *infile)
         size_t len;
 
         /* Read length of sample identifier string */
-        if (fread (&len, sizeof(size_t), 1, fin) != 1)
+        r = fread (&len, sizeof(size_t), 1, fin);
+        if (r != 1)
         {
             io_error (fin);
             return NULL;
@@ -97,7 +105,8 @@ pbwt_read (const char *infile)
         }
 
         /* Read sample identifier string */
-        if (fread (b->sid[i], sizeof(char), len, fin) != len)
+        r = fread (b->sid[i], sizeof(char), len, fin);
+        if (r != len)
         {
             io_error (fin);
             return NULL;
@@ -107,7 +116,8 @@ pbwt_read (const char *infile)
         b->sid[i][len] = '\0';
 
         /* Read length of region string */
-        if (fread (&len, sizeof(size_t), 1, fin) != 1)
+        r = fread (&len, sizeof(size_t), 1, fin);
+        if (r != 1)
         {
             io_error (fin);
             return 0;
@@ -122,7 +132,8 @@ pbwt_read (const char *infile)
         }
 
         /* Read region string */
-        if (fread (b->reg[i], sizeof(char), len, fin) != len)
+        r = fread (b->reg[i], sizeof(char), len, fin);
+        if (r != len)
         {
             io_error (fin);
             return NULL;
@@ -137,7 +148,8 @@ pbwt_read (const char *infile)
         size_t len;
 
        /* Read length of RSID string */
-        if (fread (&len, sizeof(size_t), 1, fin) != 1)
+       r = fread (&len, sizeof(size_t), 1, fin);
+        if (r != 1)
         {
             io_error (fin);
             return 0;
@@ -152,7 +164,8 @@ pbwt_read (const char *infile)
         }
 
         /* Read RSID string */
-        if (fread (b->rsid[j], sizeof(char), len, fin) != len)
+        r = fread (b->rsid[j], sizeof(char), len, fin);
+        if (r != len)
         {
             io_error (fin);
             return NULL;
@@ -161,8 +174,17 @@ pbwt_read (const char *infile)
         /* Append null-terminating character */
         b->rsid[j][len] = '\0';
 
+        /* Read the chromosome identifier */
+        r = fread (&(b->chr[j]), sizeof(int), 1, fin);
+        if (r != 1)
+        {
+            io_error (fin);
+            return NULL;
+        }
+
         /* Read centimorgan position */
-        if (fread (&(b->cm[j]), sizeof(double), 1, fin) != 1)
+        r = fread (&(b->cm[j]), sizeof(double), 1, fin);
+        if (r != 1)
         {
             io_error (fin);
             return NULL;

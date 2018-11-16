@@ -14,6 +14,7 @@ pbwt_write (const char *outfile, pbwt_t *b)
 
     size_t i;
     size_t j;
+    size_t r;
     FILE *fout;
 
     /* Open the binary output file stream */
@@ -34,35 +35,40 @@ pbwt_write (const char *outfile, pbwt_t *b)
     }
 
     /* Write the number of samples */
-    if (fwrite ((const void *)&(b->nsam), sizeof(size_t), 1, fout) != 1)
+    r = fwrite ((const void *)&(b->nsam), sizeof(size_t), 1, fout);
+    if (r != 1)
     {
         io_error (fout);
         return -1;
     }
 
     /* Write the size of the haplotype data */
-    if (fwrite ((const void *)&(b->datasize), sizeof(size_t), 1, fout) != 1)
+    r = fwrite ((const void *)&(b->datasize), sizeof(size_t), 1, fout);
+    if (r != 1)
     {
         io_error (fout);
         return -1;
     }
 
     /* Write the haplotype data */
-    if (fwrite ((const void *)b->data, sizeof(unsigned char), b->datasize, fout) != b->datasize)
+    r = fwrite ((const void *)b->data, sizeof(unsigned char), b->datasize, fout);
+    if (r != b->datasize)
     {
         io_error (fout);
         return -1;
     }
 
     /* Write the prefix array */
-    if (fwrite ((const void *)b->ppa, sizeof(size_t), b->nsam, fout) != b->nsam)
+    r = fwrite ((const void *)b->ppa, sizeof(size_t), b->nsam, fout);
+    if (r != b->nsam)
     {
         io_error (fout);
         return -1;
     }
 
     /* Write the divergence array */
-    if (fwrite ((const void *)b->div, sizeof(size_t), b->nsam, fout) != b->nsam)
+    r = fwrite ((const void *)b->div, sizeof(size_t), b->nsam, fout);
+    if (r != b->nsam)
     {
         io_error (fout);
         return -1;
@@ -75,14 +81,16 @@ pbwt_write (const char *outfile, pbwt_t *b)
 
         /* Write the size of the sample identifier string */
         len = strlen (b->sid[i]);
-        if (fwrite ((const void *)&len, sizeof(size_t), 1, fout) != 1)
+        r = fwrite ((const void *)&len, sizeof(size_t), 1, fout);
+        if (r != 1)
         {
             io_error (fout);
             return -1;
         }
 
         /* Write the sample identifier string */
-        if (fwrite (b->sid[i], sizeof(char), len, fout) != len)
+        r = fwrite (b->sid[i], sizeof(char), len, fout);
+        if (r != len)
         {
             io_error (fout);
             return -1;
@@ -90,14 +98,16 @@ pbwt_write (const char *outfile, pbwt_t *b)
 
         /* Write the length of the region string */
         len = strlen (b->reg[i]);
-        if (fwrite ((const void *)&len, sizeof(size_t), 1, fout) != 1)
+        r = fwrite ((const void *)&len, sizeof(size_t), 1, fout);
+        if (r != 1)
         {
             io_error (fout);
             return -1;
         }
 
         /* Write the region string */
-        if (fwrite (b->reg[i], sizeof(char), len, fout) != len)
+        r = fwrite (b->reg[i], sizeof(char), len, fout);
+        if (r != len)
         {
             io_error (fout);
             return -1;
@@ -110,21 +120,32 @@ pbwt_write (const char *outfile, pbwt_t *b)
 
         /* Write the size of the RSID string */
         len = strlen (b->rsid[j]);
-        if (fwrite ((const void *)&len, sizeof(size_t), 1, fout) != 1)
+        r = fwrite ((const void *)&len, sizeof(size_t), 1, fout);
+        if (r != 1)
         {
             io_error (fout);
             return -1;
         }
        
         /* Write the RSID string */
-        if (fwrite (b->rsid[j], sizeof(char), len, fout) != len)
+        r = fwrite (b->rsid[j], sizeof(char), len, fout);
+        if (r != len)
+        {
+            io_error (fout);
+            return -1;
+        }
+
+        /* Write the chromosome identifier */
+        r = fwrite ((const void *)&(b->chr[j]), sizeof(int), 1, fout);
+        if (r != 1)
         {
             io_error (fout);
             return -1;
         }
 
         /* Write the centimorgan position */
-        if (fwrite ((const void *)&(b->cm[j]), sizeof(double), 1, fout) != 1)
+        r = fwrite ((const void *)&(b->cm[j]), sizeof(double), 1, fout);
+        if (r != 1)
         {
             io_error (fout);
             return -1;

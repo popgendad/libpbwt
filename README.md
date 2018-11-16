@@ -3,35 +3,57 @@
 A C library for implementing the positional Burrows-Wheeler transform
 
 ## pbwt file format
-pbwt file format description
 
-1. Header
+Files with the `.pbwt` extension are binary files that store a single instance
+of the `pbwt_t` data structure. The haplotype data stored in the `pbwt::data` 
+variable are compressed when the data structure is written to file. The `.pbwt`
+format can be written and read with the `pbwt_write()` and `pbwt_read()` functions,
+respectively, provided by the `libpbwt` library.
 
-"data type","description" 
-size_t,"Count of pbwt entries"
+### File structure
 
-2. Data
+Below is a table of the data format of a `.pbwt` file, in order that they are
+are stored.
 
-"data type","description","variable name"
-size_t,"Number of sites",pbwt::nsite
-size_t,"Number of haplotypes",pbwt::nsam
-size_t,"Genotype matrix size (bytes)",pwbt::datasize
-unsigned char,"Genotype data",pbwt::data
-size_t,"Prefix array",pbwt::ppa
-size_t,"Divergence array",pbwt::div
+| description | data type | libpbwt variable name |
+| ----------- | --------- | --------------------- |
+| Number of sites in alignment | `size_t` | `pbwt::nsite` |
+| Number of haplotypes | `size_t` | `pbwt::nsam` |
+| Size of compressed genotype data | `size_t` | `pwbt::datasize` |
+| Compressed genotype data | `unsigned char * pbwt::datasize` | `pbwt::data` |
+| Prefix array | `size_t * pbwt::nsam` | `pbwt::ppa` |
+| Divergence array | `size_t * pbwt::nsam` | `pbwt::div` |
 
-foreach i in haplotype (pbwt::nsam):
-size_t,"String length of haplotype name i",strlen(pbwt::sid[i])
-char,"Haplotype name i",pbwt::sid[i]
+Following these data are the variable-length strings, in which
+each string is preceeded by its length:
 
-foreach i in haplotype (pbwt::nsam):
-size_t,"String length of region name for sample i",strlen(pbwt::reg[i])
-char,"Region name of sample i",pbwt::reg[i]
+The haplotype identifiers:
 
-foreach j in sites (pbwt::nsite):
-size_t,"String length of RSID for marker j",strlen(pbwt::rsid[j])
-char,"RSID for marker j",pbwt::rsid[j]
-double,"Genetic map position for marker j",pbwt::cm
+```
+foreach i in pbwt::nsam
+   "Length of haplotype identifier string", size_t, strlen(pbwt::sid[i])
+   "Haplotype identifier string", char * strlen(pbwt::sid[i]), pbwt::sid[i]
+```
+
+The haplotype regions:
+
+```
+foreach i in pbwt::nsam
+   "Length of region identifier string", size_t, strlen(pbwt::reg[i])
+   "Region identifer string", char * strlen(pbwt::reg[i]), pbwt::reg[i]
+```
+
+And then the chromosome, genetic map position and RSID of each site:
+
+```
+foreach j in pbwt::nsite
+   "Length of RSID string", size_t, strlen(pbwt::rsid[j])
+   "RSID string" char * strlen(pbwt::rsid[j]), pbwt::rsid[j]
+   "Chromosome identifier", int, pbwt::chr[j]
+   "Map position for marker j", double, pbwt::cm[j]
+```
+
+### Compression metrics
 
 
 ## Data types

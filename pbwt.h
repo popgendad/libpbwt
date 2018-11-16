@@ -1,3 +1,13 @@
+/*********************************************************************
+ * libpbwt
+ * A C library for implementing the positional Burrows-Wheeler transform
+ * 
+ * Author: Daniel Garrigan <daniel.garrigan@ancestry.com>
+ * 
+ * Git: https://github.ancestry.com/DNA-Science/libpbwt
+ * 
+ *********************************************************************/
+
 #ifndef PBWT_H
 #define PBWT_H
 
@@ -25,6 +35,7 @@ typedef struct pbwt
 {
     char **sid;               /* Diploid sample identifier string */
     char **reg;               /* Region/population of sample */
+    int *chr;                 /* Chromosome identifer of all SNPs in pbwt */
     char **rsid;              /* RSID for all SNPs in pbwt */
     double *cm;               /* Genetic map positions for all SNPs in pbwt */
     unsigned char *data;      /* Binary haplotype representation */
