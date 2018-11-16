@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -g -fpic
 LIBS=-lz
-PREFIX=/usr/local
+PREFIX=/usr
 H_DIR=$(PREFIX)/include
 L_DIR=$(PREFIX)/lib
 SRCS=$(wildcard *.c)
