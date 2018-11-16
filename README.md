@@ -2,6 +2,38 @@
 
 A C library for implementing the positional Burrows-Wheeler transform
 
+## pbwt file format
+pbwt file format description
+
+1. Header
+
+"data type","description" 
+size_t,"Count of pbwt entries"
+
+2. Data
+
+"data type","description","variable name"
+size_t,"Number of sites",pbwt::nsite
+size_t,"Number of haplotypes",pbwt::nsam
+size_t,"Genotype matrix size (bytes)",pwbt::datasize
+unsigned char,"Genotype data",pbwt::data
+size_t,"Prefix array",pbwt::ppa
+size_t,"Divergence array",pbwt::div
+
+foreach i in haplotype (pbwt::nsam):
+size_t,"String length of haplotype name i",strlen(pbwt::sid[i])
+char,"Haplotype name i",pbwt::sid[i]
+
+foreach i in haplotype (pbwt::nsam):
+size_t,"String length of region name for sample i",strlen(pbwt::reg[i])
+char,"Region name of sample i",pbwt::reg[i]
+
+foreach j in sites (pbwt::nsite):
+size_t,"String length of RSID for marker j",strlen(pbwt::rsid[j])
+char,"RSID for marker j",pbwt::rsid[j]
+double,"Genetic map position for marker j",pbwt::cm
+
+
 ## Data types
 
 ### pbwt_t
