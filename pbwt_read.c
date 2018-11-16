@@ -8,6 +8,7 @@ pbwt_t *
 pbwt_read (const char *infile)
 {
     size_t i;
+    size_t j;
     size_t nsite;
     size_t nsam;
     pbwt_t *b;
@@ -129,6 +130,43 @@ pbwt_read (const char *infile)
 
         /* Append null-terminating character */
         b->reg[i][len] = '\0';
+    }
+
+    for (j = 0; j < b->nsite; ++j)
+    {
+        size_t len;
+
+       /* Read length of RSID string */
+        if (fread (&len, sizeof(size_t), 1, fin) != 1)
+        {
+            io_error (fin);
+            return 0;
+        }
+
+        /* Allocate head memory for RSID string j */
+        b->rsid[j] = (char *) malloc ((len + 1) * sizeof(char));
+        if (b->rsid[j] == NULL)
+        {
+            perror ("libpbwt [ERROR]");
+            return NULL;
+        }
+
+        /* Read RSID string */
+        if (fread (b->rsid[j], sizeof(char), len, fin) != len)
+        {
+            io_error (fin);
+            return NULL;
+        }
+
+        /* Append null-terminating character */
+        b->rsid[j][len] = '\0';
+
+        /* Read centimorgan position */
+        if (fread (&(b->cm[j]), sizeof(double), 1, fin) != 1)
+        {
+            io_error (fin);
+            return NULL;
+        }
     }
 
     /* Close the input file stream */

@@ -62,6 +62,14 @@ pbwt_init (const size_t nsite, const size_t nsam)
         return NULL;
     }
 
+    b->rsid = (char **) malloc (nsite * sizeof(char *));
+    if (b->rsid == NULL)
+    {
+        perror ("libpbwt [ERROR]");
+        pbwt_destroy (b);
+        return NULL;
+    }
+
     /* Initialize values for prefix and divergence arrays */
     for (i = 0; i < nsam; ++i)
     {

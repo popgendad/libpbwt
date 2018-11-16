@@ -3,13 +3,14 @@
 #include "pbwt.h"
 
 int
-pbwt_print_match (match_t *list)
+pbwt_print_match (pbwt_t *b, match_t *list)
 {
     if (list != NULL)
     {
         match_t *p;
         for (p = list; p != NULL; p = p->next)
-            printf ("%zu\t%zu\t%zu\t%zu\n", p->first, p->second, p->begin, p->end);
+            printf ("%s\t%s\t%zu\t%zu\n",
+                    b->sid[p->first], b->sid[p->second], p->begin, p->end);
     }
 
     return 0;

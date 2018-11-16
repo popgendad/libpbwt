@@ -22,6 +22,13 @@ pbwt_destroy (pbwt_t *b)
                     free (b->reg[i]);
             free (b->reg);
         }
+        if (b->rsid != NULL)
+        {
+            for (i = 0; i < b->nsite; ++i)
+                if (b->rsid[i] != NULL)
+                    free (b->rsid[i]);
+            free (b->rsid);
+        }
         if (b->data != NULL)
             free (b->data);
         if (b->div != NULL)

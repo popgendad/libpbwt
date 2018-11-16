@@ -13,6 +13,7 @@ pbwt_write (const char *outfile, pbwt_t *b)
         pbwt_compress (b);
 
     size_t i;
+    size_t j;
     FILE *fout;
 
     /* Open the binary output file stream */
@@ -68,7 +69,7 @@ pbwt_write (const char *outfile, pbwt_t *b)
     }
 
     /* Write sample info */
-    for (i = 0; i < b->nsam; i++)
+    for (i = 0; i < b->nsam; ++i)
     {
         size_t len;
 
@@ -97,6 +98,33 @@ pbwt_write (const char *outfile, pbwt_t *b)
 
         /* Write the region string */
         if (fwrite (b->reg[i], sizeof(char), len, fout) != len)
+        {
+            io_error (fout);
+            return -1;
+        }
+    }
+
+    for (j = 0; j < b->nsite; ++j)
+    {
+        size_t len;
+
+        /* Write the size of the RSID string */
+        len = strlen (b->rsid[j]);
+        if (fwrite ((const void *)&len, sizeof(size_t), 1, fout) != 1)
+        {
+            io_error (fout);
+            return -1;
+        }
+       
+        /* Write the RSID string */
+        if (fwrite (b->rsid[j], sizeof(char), len, fout) != len)
+        {
+            io_error (fout);
+            return -1;
+        }
+
+        /* Write the centimorgan position */
+        if (fwrite ((const void *)&(b->cm[j]), sizeof(double), 1, fout) != 1)
         {
             io_error (fout);
             return -1;

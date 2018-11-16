@@ -25,6 +25,8 @@ typedef struct pbwt
 {
     char **sid;               /* Diploid sample identifier string */
     char **reg;               /* Region/population of sample */
+    char **rsid;              /* RSID for all SNPs in pbwt */
+    double *cm;               /* Genetic map positions for all SNPs in pbwt */
     unsigned char *data;      /* Binary haplotype representation */
     int is_compress;          /* Are haplotype data compressed? */
     size_t datasize;          /* Number of bytes stored in data */
@@ -58,7 +60,7 @@ extern int pbwt_build (pbwt_t *);
 
 extern match_t *pbwt_match (pbwt_t *, const size_t, const size_t);
 
-extern int pbwt_print_match (match_t *);
+extern int pbwt_print_match (pbwt_t *, match_t *);
 
 extern pbwt_t * pbwt_subset (pbwt_t *, const char *);
 
