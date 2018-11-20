@@ -85,19 +85,19 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
 
             for (k = m + 1; k < j; ++k)
             {
-                double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]); 
-                if (b->cm[sdiv[j]] < i && match_dist >= minlen)
+                double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]);
+                if (sdiv[j] < i && match_dist >= minlen)
                 {
-                    match_insert (mlist, jppa[j], jppa[k], sdiv[j], i);
+                    mlist = match_insert (mlist, jppa[j], jppa[k], sdiv[j], i);
                 }
             }
 
             for (k = j + 1; k < n; ++k)
             {
-                double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]); 
+                double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
-                    match_insert (mlist, jppa[j], jppa[k], sdiv[j+1], i);
+                    mlist = match_insert (mlist, jppa[j], jppa[k], sdiv[j+1], i);
                 }
             }
         }
@@ -181,7 +181,7 @@ match_t *
 match_new (const size_t first, const size_t second, const size_t begin, const size_t end)
 {
     match_t *root;
- 
+
     root = (match_t *) malloc (sizeof(match_t));
     if (root == NULL)
     {
