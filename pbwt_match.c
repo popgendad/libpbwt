@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "pbwt.h"
 
-static int add_match (match_t **, const size_t, const size_t, const size_t, const size_t);
+match_t * match_insert (match_t *, const size_t, const size_t, const size_t, const size_t);
+match_t * match_new (const size_t, const size_t, const size_t, const size_t);
+int match_overlap (const size_t, const size_t, const size_t, const size_t);
 
 match_t *
 pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
@@ -86,7 +88,7 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]); 
                 if (b->cm[sdiv[j]] < i && match_dist >= minlen)
                 {
-                    add_match (&mlist, jppa[j], jppa[k], sdiv[j], i);
+                    match_insert (&mlist, jppa[j], jppa[k], sdiv[j], i);
                 }
             }
 
@@ -95,7 +97,7 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]); 
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
-                    add_match (&mlist, jppa[j], jppa[k], sdiv[j+1], i);
+                    match_insert (&mlist, jppa[j], jppa[k], sdiv[j+1], i);
                 }
             }
         }
@@ -175,27 +177,54 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     return mlist;
 }
 
-static int
-add_match (match_t **head, const size_t first, const size_t second,
-           const size_t begin, const size_t end)
+match_t *
+match_new (const size_t first, const size_t second, const size_t begin, const size_t end)
 {
-    match_t *new_match;
-
-    /* Allocate heap memory for new match */
-    new_match = (match_t *) malloc (sizeof(match_t));
-    if (new_match == NULL)
+    match_t *root;
+ 
+    root = (match_t *) malloc (sizeof(match_t));
+    if (root == NULL)
     {
         perror ("libpbwt [ERROR]");
-        return -1;
+        return NULL;
     }
 
-    /* Populate the match data */
-    new_match->first = first;
-    new_match->second = second;
-    new_match->begin = begin;
-    new_match->end = end;
-    new_match->next = (*head);
-    (*head) = new_match;
+    root->first = first;
+    root->second = second;
+    root->begin = begin;
+    root->end = end;
+    root->max = end;
+    root->left = NULL;
+    root->right = NULL;
 
-    return 0;
+    return root;
+}
+
+match_t *
+match_insert (match_t *root, const size_t first, const size_t second,
+              const size_t begin, const size_t end)
+{
+    if (root == NULL)
+    {
+        return match_new (first, second, begin, end);
+    }
+
+    if (begin < root->begin)
+        root->left = match_insert (root->left, first, second, begin, end);
+    else
+        root->right = match_insert (root->right, first, second, begin, end);
+
+    if (root->max < end)
+        root->max = end;
+
+    return root;
+}
+
+int
+match_overlap (const size_t begin1, const size_t end1, const size_t begin2, const size_t end2)
+{
+    if (begin1 <= end2 && begin2 <= end1)
+        return 1;
+    else
+        return 0;
 }

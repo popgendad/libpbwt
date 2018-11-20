@@ -94,7 +94,7 @@ typedef struct pbwt
 
 ### match_t
 
-The `match_t` data type stores match coordinates found within the pbwt in a linked list. The `match_t` type is declared as
+The `match_t` data type stores match coordinates found within the pbwt in an interval tree. The interval tree can be easily searched for coverage and depth. The `match_t` type is declared as
 
 ```c
 typedef struct _match
@@ -103,7 +103,9 @@ typedef struct _match
     size_t second;            /* The original index of the second matching haplotype */
     size_t begin;             /* The beginning position of the match */
     size_t end;               /* The end position of the match */
-    struct _match *next;      /* Pointer to the next match */
+    size_t max;               /* Maximum end position in subtree */
+    struct _match *left;      /* Pointer to the left match */
+    struct _match *right;     /* Pointer to the right match */
 } match_t;
 ```
 
@@ -184,10 +186,10 @@ The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structu
 #### pbwt_match()
 
 ```c
-int pbwt_match (pbwt_t *b, size_t query_index, double minlen)
+match_t * pbwt_match (pbwt_t *b, size_t query_index, double minlen)
 ```
 
-The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The results are stored in the linked list in `b->match`.
+The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns a pointer to the root of the interval tree. This pointer is also stored as `b->match`.
 
 #### pbwt_longest_match()
 
@@ -201,7 +203,7 @@ The `pbwt_match` function finds all the matches in `b` that match the haplotype 
 #### pbwt_print_matches()
 
 ```c
-int pbwt_print_match (pbwt_t *b, match_t *list)
+void pbwt_print_match (pbwt_t *b, match_t *list)
 ```
 
 Dumps all reported matches to `stdout`.

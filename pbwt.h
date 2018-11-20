@@ -29,7 +29,9 @@ typedef struct _match
     size_t second;            /* The original index of the second matching haplotype */
     size_t begin;             /* The beginning position of the match */
     size_t end;               /* The end position of the match */
-    struct _match *next;      /* Pointer to the next match */
+    size_t max;               /* Maximum end position in subtree */
+    struct _match *left;      /* Pointer to the left match */
+    struct _match *right;     /* Pointer to the right match */
 } match_t;
 
 /* Structure to hold the positional Burrows-Wheeler transform */
@@ -73,7 +75,7 @@ extern int pbwt_build (pbwt_t *);
 
 extern match_t *pbwt_match (pbwt_t *, const size_t, const double);
 
-extern int pbwt_print_match (pbwt_t *, match_t *);
+extern void pbwt_print_match (pbwt_t *, match_t *);
 
 extern pbwt_t * pbwt_subset (pbwt_t *, const char *);
 
