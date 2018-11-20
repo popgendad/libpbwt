@@ -38,7 +38,7 @@ pbwt_destroy (pbwt_t *b)
             free (b->chr);
         if (b->cm != NULL)
             free (b->cm);
-        if (b->match != NULL)
+        /*if (b->match != NULL)
         {
             match_t *p;
             match_t *pn;
@@ -49,7 +49,7 @@ pbwt_destroy (pbwt_t *b)
                 free (p);
                 p = pn;
             }
-        }
+        }*/
         free (b);
     }
     return;

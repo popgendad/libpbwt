@@ -94,7 +94,7 @@ typedef struct pbwt
 
 ### match_t
 
-The `match_t` data type stores match coordinates found within the pbwt in a linked list. The `match_t` type is declared as
+The `match_t` data type stores match coordinates found within the pbwt in an interval tree. The interval tree can be easily searched for coverage and depth. The `match_t` type is declared as
 
 ```c
 typedef struct _match
@@ -103,7 +103,9 @@ typedef struct _match
     size_t second;            /* The original index of the second matching haplotype */
     size_t begin;             /* The beginning position of the match */
     size_t end;               /* The end position of the match */
-    struct _match *next;      /* Pointer to the next match */
+    size_t max;               /* Maximum end position in subtree */
+    struct _match *left;      /* Pointer to the left match */
+    struct _match *right;     /* Pointer to the right match */
 } match_t;
 ```
 
