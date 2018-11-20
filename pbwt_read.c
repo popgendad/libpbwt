@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include "pbwt.h"
+
+static void io_error (FILE *);
+
+pbwt_t *
+pbwt_read (const char *infile)
+{
+    size_t i;
+    size_t j;
+    size_t r;
+    size_t nsite;
+    size_t nsam;
+    pbwt_t *b;
+    FILE *fin;
+
+    /* Open binary input file stream */
+    fin = fopen (infile, "rb");
+    if (fin == NULL)
+    {
+        perror ("libpbwt [ERROR]");
+        return NULL;
+    }
+
+    /* Read the data into memory */
+    /* First read the number of sites */
+    r = fread (&nsite, sizeof(size_t), 1, fin);
+    if (r != 1)
+    {
+        io_error (fin);
+        return NULL;
+    }
+
+    /* Read the number of samples */
+    r = fread (&nsam, sizeof(size_t), 1, fin);
+    if (r != 1)
+    {
+        io_error (fin);
+        return NULL;
+    }
+
+    /* Initialize the new pbwt structure */
+    b = pbwt_init (nsite, nsam);
+    if (b == NULL)
+    {
+        fclose (fin);
+        return NULL;
+    }
+
+    /* Read the data size */
+    r = fread (&(b->datasize), sizeof(size_t), 1, fin);
+    if (r != 1)
+    {
+        io_error (fin);
+        return NULL;
+    }
+
+    /* Read the haplotype data */
+    r = fread (b->data, sizeof(unsigned char), b->datasize, fin);
+    if (r != b->datasize)
+    {
+        io_error (fin);
+        return NULL;
+    }
+
+    /* Read the prefix array */
+    r = fread (b->ppa, sizeof(size_t), b->nsam, fin);
+    if (r != b->nsam)
+    {
+        io_error (fin);
+        return NULL;
+    }
+
+    /* Read the divergence array */
+    r = fread (b->div, sizeof(size_t), b->nsam, fin);
+    if (r != b->nsam)
+    {
+        io_error (fin);
+        return NULL;
+    }
+
+    /* Indicate pbwt is compressed */
+    b->is_compress = TRUE;
+
+    /* Read sample info */
+    for (i = 0; i < nsam; ++i)
+    {
+        size_t len;
+
+        /* Read length of sample identifier string */
+        r = fread (&len, sizeof(size_t), 1, fin);
+        if (r != 1)
+        {
+            io_error (fin);
+            return NULL;
+        }
+
+        /* Allocate heap memory for sample identifier string i */
+        b->sid[i] = (char *) malloc ((len + 1) * sizeof(char));
+        if (b->sid[i] == NULL)
+        {
+            perror ("libpbwt [ERROR]");
+            return NULL;
+        }
+
+        /* Read sample identifier string */
+        r = fread (b->sid[i], sizeof(char), len, fin);
+        if (r != len)
+        {
+            io_error (fin);
+            return NULL;
+        }
+
+        /* Append null-terminating character */
+        b->sid[i][len] = '\0';
+
+        /* Read length of region string */
+        r = fread (&len, sizeof(size_t), 1, fin);
+        if (r != 1)
+        {
+            io_error (fin);
+            return 0;
+        }
+
+        /* Allocate head memory for region string i */
+        b->reg[i] = (char *) malloc ((len + 1) * sizeof(char));
+        if (b->reg[i] == NULL)
+        {
+            perror ("libpbwt [ERROR]");
+            return NULL;
+        }
+
+        /* Read region string */
+        r = fread (b->reg[i], sizeof(char), len, fin);
+        if (r != len)
+        {
+            io_error (fin);
+            return NULL;
+        }
+
+        /* Append null-terminating character */
+        b->reg[i][len] = '\0';
+    }
+
+    for (j = 0; j < b->nsite; ++j)
+    {
+        size_t len;
+
+       /* Read length of RSID string */
+       r = fread (&len, sizeof(size_t), 1, fin);
+        if (r != 1)
+        {
+            io_error (fin);
+            return 0;
+        }
+
+        /* Allocate head memory for RSID string j */
+        b->rsid[j] = (char *) malloc ((len + 1) * sizeof(char));
+        if (b->rsid[j] == NULL)
+        {
+            perror ("libpbwt [ERROR]");
+            return NULL;
+        }
+
+        /* Read RSID string */
+        r = fread (b->rsid[j], sizeof(char), len, fin);
+        if (r != len)
+        {
+            io_error (fin);
+            return NULL;
+        }
+
+        /* Append null-terminating character */
+        b->rsid[j][len] = '\0';
+
+        /* Read the chromosome identifier */
+        r = fread (&(b->chr[j]), sizeof(int), 1, fin);
+        if (r != 1)
+        {
+            io_error (fin);
+            return NULL;
+        }
+
+        /* Read centimorgan position */
+        r = fread (&(b->cm[j]), sizeof(double), 1, fin);
+        if (r != 1)
+        {
+            io_error (fin);
+            return NULL;
+        }
+    }
+
+    /* Close the input file stream */
+    fclose (fin);
+
+    return b;
+}
+
+static void
+io_error (FILE *f)
+{
+    if (ferror (f))
+        fputs ("libpbwt [ERROR]: I/O failure", stderr);
+    else if (feof (f))
+        fputs ("libpbwt [ERROR]: truncated input file", stderr);
+
+    fclose (f);
+
+    return;
+}
