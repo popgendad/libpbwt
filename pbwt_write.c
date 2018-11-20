@@ -125,7 +125,7 @@ pbwt_write (const char *outfile, pbwt_t *b)
             io_error (fout);
             return -1;
         }
-       
+
         /* Write the RSID string */
         r = fwrite (b->rsid[j], sizeof(char), len, fout);
         if (r != len)

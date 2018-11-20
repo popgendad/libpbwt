@@ -88,7 +88,7 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]); 
                 if (b->cm[sdiv[j]] < i && match_dist >= minlen)
                 {
-                    match_insert (&mlist, jppa[j], jppa[k], sdiv[j], i);
+                    match_insert (mlist, jppa[j], jppa[k], sdiv[j], i);
                 }
             }
 
@@ -97,7 +97,7 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]); 
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
-                    match_insert (&mlist, jppa[j], jppa[k], sdiv[j+1], i);
+                    match_insert (mlist, jppa[j], jppa[k], sdiv[j+1], i);
                 }
             }
         }
