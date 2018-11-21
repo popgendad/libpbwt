@@ -13,9 +13,9 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     size_t k;
     size_t *sdiv;
     size_t *jppa;
-    match_t *mlist;
+    match_t *intree;
 
-    mlist = NULL;
+    intree = NULL;
 
     /* Allocate heap memory for prefix and divergence arrays */
     sdiv = (size_t *) malloc ((b->nsam + 1) * sizeof(size_t));
@@ -88,7 +88,7 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j] < i && match_dist >= minlen)
                 {
-                    mlist = match_insert (mlist, jppa[j], jppa[k], sdiv[j], i);
+                    intree = match_insert (intree, jppa[j], jppa[k], sdiv[j], i);
                 }
             }
 
@@ -97,7 +97,7 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
-                    mlist = match_insert (mlist, jppa[j], jppa[k], sdiv[j+1], i);
+                    intree = match_insert (intree, jppa[j], jppa[k], sdiv[j+1], i);
                 }
             }
         }
@@ -174,7 +174,7 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     free (sdiv);
     free (jppa);
 
-    return mlist;
+    return intree;
 }
 
 match_t *
