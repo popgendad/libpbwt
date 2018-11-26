@@ -5,7 +5,7 @@ match_t * match_insert (match_t *, const size_t, const size_t, const size_t, con
 match_t * match_new (const size_t, const size_t, const size_t, const size_t);
 int match_overlap (const size_t, const size_t, const size_t, const size_t);
 
-match_t *
+int
 pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
 {
     size_t i;
@@ -13,22 +13,22 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     size_t k;
     size_t *sdiv;
     size_t *jppa;
-    match_t *mlist;
+    match_t *intree;
 
-    mlist = NULL;
+    intree = NULL;
 
     /* Allocate heap memory for prefix and divergence arrays */
     sdiv = (size_t *) malloc ((b->nsam + 1) * sizeof(size_t));
     if (sdiv == NULL)
     {
         perror ("libpbwt [ERROR]");
-        return NULL;
+        return -1;
     }
     jppa = (size_t *) malloc (b->nsam * sizeof(size_t));
     if (jppa == NULL)
     {
         perror ("libpbwt [ERROR]");
-        return NULL;
+        return -1;
     }
 
     /* Initialize prefix and divergence arrays */
@@ -85,19 +85,19 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
 
             for (k = m + 1; k < j; ++k)
             {
-                double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]); 
-                if (b->cm[sdiv[j]] < i && match_dist >= minlen)
+                double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]);
+                if (sdiv[j] < i && match_dist >= minlen)
                 {
-                    match_insert (&mlist, jppa[j], jppa[k], sdiv[j], i);
+                    intree = match_insert (intree, jppa[j], jppa[k], sdiv[j], i);
                 }
             }
 
             for (k = j + 1; k < n; ++k)
             {
-                double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]); 
+                double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
-                    match_insert (&mlist, jppa[j], jppa[k], sdiv[j+1], i);
+                    intree = match_insert (intree, jppa[j], jppa[k], sdiv[j+1], i);
                 }
             }
         }
@@ -174,14 +174,16 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     free (sdiv);
     free (jppa);
 
-    return mlist;
+    b->match = intree;
+
+    return 0;
 }
 
 match_t *
 match_new (const size_t first, const size_t second, const size_t begin, const size_t end)
 {
     match_t *root;
- 
+
     root = (match_t *) malloc (sizeof(match_t));
     if (root == NULL)
     {
@@ -198,6 +200,23 @@ match_new (const size_t first, const size_t second, const size_t begin, const si
     root->right = NULL;
 
     return root;
+}
+
+int
+match_search (pbwt_t *b, match_t *root, size_t qbegin, size_t qend)
+{
+    if (root == NULL)
+        return 0;
+    if (match_overlap (qbegin, qend, root->begin, root->end))
+    {
+        printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[root->first], b->reg[root->first],
+                b->sid[root->second], b->reg[root->second], b->cm[root->end] - b->cm[root->begin]);
+    }
+    if (root->left != NULL && root->left->max >= qbegin)
+    {
+        return match_search (b, root->left, qbegin, qend);
+    }
+    return match_search (b, root->right, qbegin, qend);
 }
 
 match_t *

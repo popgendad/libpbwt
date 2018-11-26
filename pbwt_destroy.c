@@ -1,5 +1,8 @@
 #include "pbwt.h"
 
+/* Local function declaration */
+static void match_destroy (match_t *);
+
 void
 pbwt_destroy (pbwt_t *b)
 {
@@ -38,19 +41,20 @@ pbwt_destroy (pbwt_t *b)
             free (b->chr);
         if (b->cm != NULL)
             free (b->cm);
-        /*if (b->match != NULL)
-        {
-            match_t *p;
-            match_t *pn;
-            p = b->match;
-            while (p != NULL)
-            {
-                pn = b->match->next;
-                free (p);
-                p = pn;
-            }
-        }*/
+        if (b->match != NULL)
+            match_destroy (b->match);
         free (b);
     }
+    return;
+}
+
+static void
+match_destroy (match_t *root)
+{
+    if (root == NULL)
+        return;
+    match_destroy (root->left);
+    free (root);
+    match_destroy (root->right);
     return;
 }
