@@ -5,7 +5,7 @@ match_t * match_insert (match_t *, const size_t, const size_t, const size_t, con
 match_t * match_new (const size_t, const size_t, const size_t, const size_t);
 int match_overlap (const size_t, const size_t, const size_t, const size_t);
 
-match_t *
+int
 pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
 {
     size_t i;
@@ -22,13 +22,13 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     if (sdiv == NULL)
     {
         perror ("libpbwt [ERROR]");
-        return NULL;
+        return -1;
     }
     jppa = (size_t *) malloc (b->nsam * sizeof(size_t));
     if (jppa == NULL)
     {
         perror ("libpbwt [ERROR]");
-        return NULL;
+        return -1;
     }
 
     /* Initialize prefix and divergence arrays */
@@ -174,7 +174,9 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     free (sdiv);
     free (jppa);
 
-    return intree;
+    b->match = intree;
+
+    return 0;
 }
 
 match_t *
@@ -198,6 +200,23 @@ match_new (const size_t first, const size_t second, const size_t begin, const si
     root->right = NULL;
 
     return root;
+}
+
+int
+match_search (pbwt_t *b, match_t *root, size_t qbegin, size_t qend)
+{
+    if (root == NULL)
+        return 0;
+    if (match_overlap (qbegin, qend, root->begin, root->end))
+    {
+        printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[root->first], b->reg[root->first],
+                b->sid[root->second], b->reg[root->second], b->cm[root->end] - b->cm[root->begin]);
+    }
+    if (root->left != NULL && root->left->max >= qbegin)
+    {
+        return match_search (b, root->left, qbegin, qend);
+    }
+    return match_search (b, root->right, qbegin, qend);
 }
 
 match_t *

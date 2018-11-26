@@ -22,7 +22,7 @@
 
 /* Data structure declarations */
 
-/* Structure to hold linked list of matches */
+/* Structure to hold interval tree of matches */
 typedef struct _match
 {
     size_t first;             /* The original index of the first matching haplotype */
@@ -73,7 +73,9 @@ extern int pbwt_print (const pbwt_t *);
 
 extern int pbwt_build (pbwt_t *);
 
-extern match_t *pbwt_match (pbwt_t *, const size_t, const double);
+extern int pbwt_match (pbwt_t *, const size_t, const double);
+
+extern int match_search (pbwt_t *, match_t *, size_t, size_t);
 
 extern void pbwt_print_match (pbwt_t *, match_t *);
 

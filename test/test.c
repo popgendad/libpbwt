@@ -6,9 +6,9 @@
 int main (int argc, char *argv[])
 {
     int v;
+    size_t i;
     pbwt_t *b;
     pbwt_t *s;
-    match_t *x;
     char *infile;
     char *inpop;
 
@@ -52,13 +52,14 @@ int main (int argc, char *argv[])
         v = pbwt_build (s);
 
         /* Print the pbwt */
-        pbwt_print (s);
+        /*pbwt_print (s);*/
 
         /* Find all set-maximal matches */
-        x = pbwt_match (s, 0, 0.5);
+        v = pbwt_match (s, 0, 0.5);
 
         /* Print matches to stdout */
-        pbwt_print_match (s, x);
+        pbwt_print_match (s, s->match);
+        v = match_search (s, s->match, 1, 10);
 
         /* Free memory for the subset pbwt data structure */
         if (s != NULL)

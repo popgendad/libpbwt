@@ -186,12 +186,20 @@ The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structu
 #### pbwt_match()
 
 ```c
-match_t * pbwt_match (pbwt_t *b, size_t query_index, double minlen)
+int pbwt_match (pbwt_t *b, size_t query_index, double minlen)
 ```
 
-The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns a pointer to the root of the interval tree. This pointer is also stored as `b->match`.
+The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 #### pbwt_longest_match()
+
+#### match_search()
+
+```c
+int match_search (pbwt_t *b, match_t *root, size_t qbegin, size_t qend)
+```
+
+The `match_search` function prints a list of all matches overlapping the interval `qbegin` to `qend`.
 
 
 #### match_coverage()
