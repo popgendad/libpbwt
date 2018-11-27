@@ -1,0 +1,15 @@
+image: ubuntu_htslib:latest
+
+stages:
+  - build
+  - install
+
+build_libs:
+  stage: build
+  script:
+    - make
+
+install_libs:
+  stage: install
+  script: make && make install
+
