@@ -167,6 +167,14 @@ int pbwt_build (pbwt_t *b)
 
 The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes an initialized `pbwt_t` data structure that already contains the raw binary haplotype data and constructs both the prefix and divergence arrays up to the site at index position `nsite - 1`. The function will return 0 on success and -1 on error.
 
+#### pbwt_subset()
+
+```c
+pbwt_t *pbwt_subset (pbwt_t *b, const char *reg)
+```
+
+Subsets the `pbwt_t` data structure pointed to by `b` and creates a new `pbwt_t` data structure that is subset to haplotypes with region label `reg`. Returns a pointer to the new `pbwt_t` data structure on success and a `NULL` pointer on failure.
+
 #### pbwt_push()
 
 ```c
