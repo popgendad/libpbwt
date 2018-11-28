@@ -79,6 +79,8 @@ extern pbwt_t * pbwt_subset_with_query (pbwt_t *, const char *, const size_t);
 
 extern int pbwt_match (pbwt_t *, const size_t, const double);
 
+extern int pbwt_longest_match (pbwt_t *, const size_t, const double);
+
 extern int match_search (pbwt_t *, match_t *, size_t, size_t);
 
 extern double match_coverage (pbwt_t *, match_t *);

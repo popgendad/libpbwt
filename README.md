@@ -175,6 +175,14 @@ pbwt_t *pbwt_subset (pbwt_t *b, const char *reg)
 
 Subsets the `pbwt_t` data structure pointed to by `b` and creates a new `pbwt_t` data structure that is subset to haplotypes with region label `reg`. Returns a pointer to the new `pbwt_t` data structure on success and a `NULL` pointer on failure.
 
+#### pbwt_subset_with_query()
+
+```c
+pbwt_t * pbwt_subset_with_query (pbwt_t *b, const char *reg, const size_t query)
+```
+
+Similar to `pbwt_subset()` except it includes an additional "query" sequence with index `query`.
+
 #### pbwt_push()
 
 ```c
@@ -200,6 +208,12 @@ int pbwt_match (pbwt_t *b, size_t query_index, double minlen)
 The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 #### pbwt_longest_match()
+
+```c
+int pbwt_longest_match (pbwt_t *b, const size_t query_index, const double minlen)
+```
+
+Implements algorithm 3 from Durbin (2014). Finds all matches between haplotypes that are longer than `minlen` centimorgans. 
 
 #### match_search()
 
