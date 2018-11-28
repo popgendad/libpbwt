@@ -196,7 +196,7 @@ The `pbwt_match` function finds all the matches in `b` that match the haplotype 
 #### match_search()
 
 ```c
-int match_search (pbwt_t *b, match_t *root, size_t qbegin, size_t qend)
+int match_search (pbwt_t *b, match_t *node, size_t qbegin, size_t qend)
 ```
 
 The `match_search` function prints a list of all matches overlapping the interval `qbegin` to `qend`.
@@ -204,6 +204,21 @@ The `match_search` function prints a list of all matches overlapping the interva
 
 #### match_coverage()
 
+```c
+double match_coverage (pbwt_t *b, match_t *node)
+```
+
+Calculates match coverage over the entire range of input markers. Coverage (C) is defined as
+
+```
+C = N x (X/L)
+
+where
+
+N = total number of matches
+X = average match length (cM)
+L = total length of interval covered by input markers (cM)
+```
 
 #### match_find()
 
@@ -211,7 +226,7 @@ The `match_search` function prints a list of all matches overlapping the interva
 #### pbwt_print_matches()
 
 ```c
-void pbwt_print_match (pbwt_t *b, match_t *list)
+void pbwt_print_match (pbwt_t *b, match_t *node)
 ```
 
 Dumps all reported matches to `stdout`.
