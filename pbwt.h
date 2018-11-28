@@ -77,6 +77,8 @@ extern int pbwt_match (pbwt_t *, const size_t, const double);
 
 extern int match_search (pbwt_t *, match_t *, size_t, size_t);
 
+extern double match_coverage (pbwt_t *, match_t *);
+
 extern void pbwt_print_match (pbwt_t *, match_t *);
 
 extern pbwt_t * pbwt_subset (pbwt_t *, const char *);

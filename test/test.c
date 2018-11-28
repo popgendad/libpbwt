@@ -60,6 +60,10 @@ int main (int argc, char *argv[])
         /* Print matches to stdout */
         pbwt_print_match (s, s->match);
         v = match_search (s, s->match, 1, 10);
+    
+        double c;
+        c = match_coverage (s, s->match);
+        printf ("Coverage: %1.5lf\n", c);
 
         /* Free memory for the subset pbwt data structure */
         if (s != NULL)
