@@ -2,6 +2,7 @@
 #include "pbwt.h"
 
 match_t * match_insert (match_t *, const size_t, const size_t, const size_t, const size_t);
+size_t match_count (pbwt_t *, match_t *, double *);
 match_t * match_new (const size_t, const size_t, const size_t, const size_t);
 int match_overlap (const size_t, const size_t, const size_t, const size_t);
 
@@ -88,7 +89,10 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j] < i && match_dist >= minlen)
                 {
-                    intree = match_insert (intree, jppa[j], jppa[k], sdiv[j], i);
+                    if (jppa[j] < jppa[k])
+                        intree = match_insert (intree, jppa[j], jppa[k], sdiv[j], i);
+                    else
+                        intree = match_insert (intree, jppa[k], jppa[j], sdiv[j], i);
                 }
             }
 
@@ -97,7 +101,10 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
                 double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
-                    intree = match_insert (intree, jppa[j], jppa[k], sdiv[j+1], i);
+                    if (jppa[j] < jppa[k])
+                        intree = match_insert (intree, jppa[j], jppa[k], sdiv[j+1], i);
+                    else
+                        intree = match_insert (intree, jppa[k], jppa[j], sdiv[j+1], i);
                 }
             }
         }
@@ -182,61 +189,98 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
 match_t *
 match_new (const size_t first, const size_t second, const size_t begin, const size_t end)
 {
-    match_t *root;
+    match_t *node;
 
-    root = (match_t *) malloc (sizeof(match_t));
-    if (root == NULL)
+    node = (match_t *) malloc (sizeof(match_t));
+    if (node == NULL)
     {
         perror ("libpbwt [ERROR]");
         return NULL;
     }
 
-    root->first = first;
-    root->second = second;
-    root->begin = begin;
-    root->end = end;
-    root->max = end;
-    root->left = NULL;
-    root->right = NULL;
+    node->first = first;
+    node->second = second;
+    node->begin = begin;
+    node->end = end;
+    node->max = end;
+    node->left = NULL;
+    node->right = NULL;
 
-    return root;
+    return node;
 }
 
 int
-match_search (pbwt_t *b, match_t *root, size_t qbegin, size_t qend)
+match_search (pbwt_t *b, match_t *node, size_t qbegin, size_t qend)
 {
-    if (root == NULL)
+    if (node == NULL)
         return 0;
-    if (match_overlap (qbegin, qend, root->begin, root->end))
+    if (match_overlap (qbegin, qend, node->begin, node->end))
     {
-        printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[root->first], b->reg[root->first],
-                b->sid[root->second], b->reg[root->second], b->cm[root->end] - b->cm[root->begin]);
+        printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[node->first], b->reg[node->first],
+                b->sid[node->second], b->reg[node->second], b->cm[node->end] - b->cm[node->begin]);
     }
-    if (root->left != NULL && root->left->max >= qbegin)
+    if (node->left != NULL && node->left->max >= qbegin)
     {
-        return match_search (b, root->left, qbegin, qend);
+        return match_search (b, node->left, qbegin, qend);
     }
-    return match_search (b, root->right, qbegin, qend);
+    return match_search (b, node->right, qbegin, qend);
+}
+
+size_t
+match_count (pbwt_t *b, match_t *node, double *al)
+{
+    static size_t count = 0;
+    if (node == NULL)
+        return count;
+    match_count (b, node->left, al);
+    *al += b->cm[node->end] - b->cm[node->begin];
+    count++;
+    match_count (b, node->right, al);
+    return count;
+}
+
+double
+match_coverage (pbwt_t *b, match_t *node)
+{
+    double total_length;
+    double avg_length;
+    size_t num_matches;
+
+    num_matches = 0;
+    avg_length = 0.0;
+    total_length = b->cm[b->nsite-1] - b->cm[0];
+    num_matches = match_count (b, node, &avg_length);
+    avg_length /= (double)(num_matches);
+    return (double)(num_matches) * (avg_length / total_length);
 }
 
 match_t *
-match_insert (match_t *root, const size_t first, const size_t second,
+match_insert (match_t *node, const size_t first, const size_t second,
               const size_t begin, const size_t end)
 {
-    if (root == NULL)
+    /* Don't add if it is a duplicate entry */
+    if (node && node->first == first && node->second == second && 
+        node->begin == begin && node->end == end)
+    {
+        return node;
+    }
+
+    /* Add a leaf node */
+    if (node == NULL)
     {
         return match_new (first, second, begin, end);
     }
 
-    if (begin < root->begin)
-        root->left = match_insert (root->left, first, second, begin, end);
+    /* Traverse the tree */
+    if (begin < node->begin)
+        node->left = match_insert (node->left, first, second, begin, end);
     else
-        root->right = match_insert (root->right, first, second, begin, end);
+        node->right = match_insert (node->right, first, second, begin, end);
 
-    if (root->max < end)
-        root->max = end;
+    if (node->max < end)
+        node->max = end;
 
-    return root;
+    return node;
 }
 
 int
