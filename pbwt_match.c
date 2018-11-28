@@ -186,6 +186,12 @@ pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
     return 0;
 }
 
+int
+pbwt_longest_match (pbwt_t *b, const size_t query_index, const double minlen)
+{
+    return 0;
+}
+
 match_t *
 match_new (const size_t first, const size_t second, const size_t begin, const size_t end)
 {

@@ -41,7 +41,7 @@ int main (int argc, char *argv[])
     /* Subset the pbwt to the Beringia region */
     if (inpop != NULL)
     {
-        s = pbwt_subset (b, inpop);
+        s = pbwt_subset_with_query (b, inpop, 1000);
         if (s == NULL)
         {
             fputs ("Failed to subset the data", stderr);
@@ -52,13 +52,13 @@ int main (int argc, char *argv[])
         v = pbwt_build (s);
 
         /* Print the pbwt */
-        /*pbwt_print (s);*/
+        pbwt_print (s);
 
         /* Find all set-maximal matches */
-        v = pbwt_match (s, 0, 0.5);
+        v = pbwt_match (s, 0, 0.1);
 
         /* Print matches to stdout */
-        pbwt_print_match (s, s->match);
+        match_print (s, s->match);
         v = match_search (s, s->match, 1, 10);
     
         double c;
