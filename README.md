@@ -193,9 +193,15 @@ The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structu
 
 #### pbwt_pull()
 
+```c
+pbwt_t * pbwt_pull (pbwt_t *b, const size_t target)
+```
 
 #### pbwt_merge()
 
+```c
+pbwt_t * pbwt_merge (pbwt_t *b1, pbwt_t *b2);
+```
 
 ### Matching
 
@@ -233,11 +239,12 @@ double match_coverage (pbwt_t *b, match_t *node)
 Calculates match coverage over the entire range of input markers. Coverage (C) is defined as
 
 ```
-C = N x (X/L)
+C = ((2 * M) / (N * (N-1))) * (X / L)
 
 where
 
-N = total number of matches
+M = total number of matches
+N = number of haplotypes in pbwt
 X = average match length (cM)
 L = total length of interval covered by input markers (cM)
 ```
