@@ -223,10 +223,10 @@ L = total length of interval covered by input markers (cM)
 #### match_find()
 
 
-#### pbwt_print_matches()
+#### match_print()
 
 ```c
-void pbwt_print_match (pbwt_t *b, match_t *node)
+void match_print (pbwt_t *b, match_t *node)
 ```
 
 Dumps all reported matches to `stdout`.

@@ -58,7 +58,7 @@ int main (int argc, char *argv[])
         v = pbwt_match (s, 0, 0.5);
 
         /* Print matches to stdout */
-        pbwt_print_match (s, s->match);
+        match_print (s, s->match);
         v = match_search (s, s->match, 1, 10);
     
         double c;
