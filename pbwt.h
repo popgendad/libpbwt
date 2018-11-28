@@ -67,6 +67,10 @@ extern int pbwt_write (const char *, pbwt_t *);
 
 extern int pbwt_push (pbwt_t *, const char *, const char *, const char *, const char *);
 
+extern pbwt_t * pbwt_pull (pbwt_t *, const size_t);
+
+extern pbwt_t * pbwt_merge (pbwt_t *, pbwt_t *);
+
 extern pbwt_t *pbwt_read (const char *);
 
 extern int pbwt_print (const pbwt_t *);
