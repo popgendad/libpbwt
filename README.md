@@ -304,7 +304,7 @@ int main (int argc, char *argv[])
     x = pbwt_match (s, 0, 0.5);
 
     /* Print matches to stdout */
-    v = pbwt_print_match (s, x);
+    v = match_print (s, x);
 
     /* Free memory for the original pbwt data structure */
     pbwt_destroy (b);
