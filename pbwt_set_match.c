@@ -7,7 +7,7 @@ match_t * match_new (const size_t, const size_t, const size_t, const size_t);
 int match_overlap (const size_t, const size_t, const size_t, const size_t);
 
 int
-pbwt_match (pbwt_t *b, const size_t query_index, const double minlen)
+pbwt_set_match (pbwt_t *b, const double minlen)
 {
     size_t i;
     size_t j;

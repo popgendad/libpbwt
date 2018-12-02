@@ -205,13 +205,13 @@ pbwt_t * pbwt_merge (pbwt_t *b1, pbwt_t *b2);
 
 ### Matching
 
-#### pbwt_match()
+#### pbwt_set_match()
 
 ```c
-int pbwt_match (pbwt_t *b, size_t query_index, double minlen)
+int pbwt_set_match (pbwt_t *b, size_t query_index, double minlen)
 ```
 
-The `pbwt_match` function finds all the matches in `b` that match the haplotype indexed by `query_index`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
+The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 #### pbwt_longest_match()
 

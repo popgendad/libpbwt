@@ -81,7 +81,7 @@ extern pbwt_t * pbwt_subset (pbwt_t *, const char *);
 
 extern pbwt_t * pbwt_subset_with_query (pbwt_t *, const char *, const size_t);
 
-extern int pbwt_match (pbwt_t *, const size_t, const double);
+extern int pbwt_set_match (pbwt_t *, const double);
 
 extern int pbwt_longest_match (pbwt_t *, const size_t, const double);
 

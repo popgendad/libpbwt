@@ -6,7 +6,6 @@
 int main (int argc, char *argv[])
 {
     int v;
-    size_t i;
     pbwt_t *b;
     pbwt_t *s;
     char *infile;
@@ -55,7 +54,7 @@ int main (int argc, char *argv[])
         pbwt_print (s);
 
         /* Find all set-maximal matches */
-        v = pbwt_match (s, 0, 0.1);
+        v = pbwt_set_match (s, 0.1);
 
         /* Print matches to stdout */
         match_print (s, s->match);
