@@ -3,7 +3,7 @@
 #include "pbwt.h"
 
 
-pbwt_t * 
+pbwt_t *
 pbwt_merge (pbwt_t *b1, pbwt_t *b2)
 {
     int ret;
@@ -50,14 +50,14 @@ pbwt_merge (pbwt_t *b1, pbwt_t *b2)
         bm->reg[j] = strdup (b2->reg[i]);
     }
 
-    /* Copy site information */   
+    /* Copy site information */
     for (i = 0; i < b1->nsite; ++i)
     {
         bm->rsid[i] = strdup (b1->rsid[i]);
         bm->cm[i] = b1->cm[i];
         bm->chr[i] = b1->chr[i];
     }
-    
+
     /* Deallocate original pbwts */
     pbwt_destroy (b1);
     pbwt_destroy (b2);

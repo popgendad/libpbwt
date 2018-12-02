@@ -59,7 +59,7 @@ int main (int argc, char *argv[])
         /* Print matches to stdout */
         match_print (s, s->match);
         v = match_search (s, s->match, 1, 10);
-    
+
         double c;
         c = match_coverage (s, s->match);
         printf ("Coverage: %1.5lf\n", c);
