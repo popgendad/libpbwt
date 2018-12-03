@@ -54,15 +54,15 @@ int main (int argc, char *argv[])
         /*pbwt_print (s);*/
 
         /* Find all set-maximal matches */
-        v = pbwt_query_match (s, 0.1);
+        v = pbwt_query_match (s, 0.4);
 
         /* Print matches to stdout */
         match_print (s, s->match);
         v = match_search (s, s->match, 1, 10);
 
         double c;
-        c = match_coverage (s, s->match);
-        printf ("Coverage: %1.5lf\n", c);
+        c = match_query_coverage (s, s->match);
+        printf ("Coverage: %1.5e\n", c);
 
         /* Free memory for the subset pbwt data structure */
         if (s != NULL)

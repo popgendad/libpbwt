@@ -92,6 +92,8 @@ extern int match_search (pbwt_t *, match_t *, size_t, size_t);
 
 extern double match_coverage (pbwt_t *, match_t *);
 
+extern double match_query_coverage (pbwt_t *, match_t *);
+
 extern void match_print (pbwt_t *, match_t *);
 
 extern match_t * match_insert (match_t *, const size_t, const size_t, const size_t, const size_t);

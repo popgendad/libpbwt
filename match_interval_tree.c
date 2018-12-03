@@ -70,6 +70,23 @@ match_coverage (pbwt_t *b, match_t *node)
     return ((2.0 * num_matches) / (double)(b->nsam * b->nsam - 1)) * (avg_length / total_length);
 }
 
+double
+match_query_coverage (pbwt_t *b, match_t *node)
+{
+    double total_length;
+    double avg_length;
+    size_t num_matches;
+
+    num_matches = 0;
+    avg_length = 0.0;
+    total_length = b->cm[b->nsite-1] - b->cm[0];
+    num_matches = match_count (b, node, &avg_length);
+    if (num_matches == 0)
+        return 0.0;
+    avg_length /= (double)(num_matches);
+    return (num_matches / (double)(b->nsam - 1)) * (avg_length / total_length);
+}
+
 match_t *
 match_insert (match_t *node, const size_t first, const size_t second,
               const size_t begin, const size_t end)

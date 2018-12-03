@@ -83,7 +83,8 @@ pbwt_query_match (pbwt_t *b, const double minlen)
             for (k = m + 1; k < j; ++k)
             {
                 double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]);
-                if (b->is_query[jppa[j]] == TRUE && sdiv[j] < i && match_dist >= minlen)
+                if (b->is_query[jppa[j]] == TRUE && b->is_query[jppa[k]] == FALSE &&
+                    sdiv[j] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
                         intree = match_insert (intree, jppa[j], jppa[k], sdiv[j], i);
@@ -95,7 +96,8 @@ pbwt_query_match (pbwt_t *b, const double minlen)
             for (k = j + 1; k < n; ++k)
             {
                 double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]);
-                if (b->is_query[jppa[j]] == TRUE && sdiv[j+1] < i && match_dist >= minlen)
+                if (b->is_query[jppa[j]] == TRUE && b->is_query[jppa[k]] == FALSE &&
+                    sdiv[j+1] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
                         intree = match_insert (intree, jppa[j], jppa[k], sdiv[j+1], i);
