@@ -158,6 +158,11 @@ pbwt_subset_with_query (pbwt_t *b, const char *reg, const size_t query)
 
             /* Iterate number of subset haplotypes */
             ++nhap_write;
+
+            if (i == query)
+                p->is_query[i] = 1;
+            else
+                p->is_query[i] = 0;
         }
     }
 

@@ -44,6 +44,7 @@ typedef struct pbwt
     double *cm;               /* Genetic map positions for all SNPs in pbwt */
     unsigned char *data;      /* Binary haplotype representation */
     int is_compress;          /* Are haplotype data compressed? */
+    int *is_query;            /* Is the haplotype a query sequence? */
     size_t datasize;          /* Number of bytes stored in data */
     size_t nsite;             /* Number of sampled sites */
     size_t nsam;              /* Number of sampled haplotypes */
@@ -83,6 +84,8 @@ extern pbwt_t * pbwt_subset_with_query (pbwt_t *, const char *, const size_t);
 
 extern int pbwt_set_match (pbwt_t *, const double);
 
+extern int pbwt_query_match (pbwt_t *, const double);
+
 extern int pbwt_longest_match (pbwt_t *, const size_t, const double);
 
 extern int match_search (pbwt_t *, match_t *, size_t, size_t);
@@ -90,5 +93,13 @@ extern int match_search (pbwt_t *, match_t *, size_t, size_t);
 extern double match_coverage (pbwt_t *, match_t *);
 
 extern void match_print (pbwt_t *, match_t *);
+
+extern match_t * match_insert (match_t *, const size_t, const size_t, const size_t, const size_t);
+
+extern size_t match_count (pbwt_t *, match_t *, double *);
+
+extern match_t * match_new (const size_t, const size_t, const size_t, const size_t);
+
+extern int match_overlap (const size_t, const size_t, const size_t, const size_t);
 
 #endif

@@ -31,6 +31,8 @@ pbwt_destroy (pbwt_t *b)
                     free (b->rsid[i]);
             free (b->rsid);
         }
+        if (b->is_query != NULL)
+            free (b->is_query);
         if (b->data != NULL)
             free (b->data);
         if (b->div != NULL)

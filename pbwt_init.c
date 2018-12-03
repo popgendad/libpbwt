@@ -21,6 +21,14 @@ pbwt_init (const size_t nsite, const size_t nsam)
     b->is_compress = FALSE;
     b->match = NULL;
 
+    b->is_query = (int *) malloc (nsam * sizeof(int));
+    if (b->is_query == NULL)
+    {
+        perror ("libpbwt [ERROR]");
+        pbwt_destroy (b);
+        return NULL;
+    }
+
     b->ppa = (size_t *) malloc (nsam * sizeof(size_t));
     if (b->ppa == NULL)
     {
@@ -88,6 +96,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
     /* Initialize values for prefix and divergence arrays */
     for (i = 0; i < nsam; ++i)
     {
+        b->is_query = 0;
         b->ppa[i] = i;
         b->div[i] = 0;
     }

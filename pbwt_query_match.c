@@ -1,8 +1,9 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "pbwt.h"
 
 int
-pbwt_set_match (pbwt_t *b, const double minlen)
+pbwt_query_match (pbwt_t *b, const double minlen)
 {
     size_t i;
     size_t j;
@@ -82,7 +83,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
             for (k = m + 1; k < j; ++k)
             {
                 double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]);
-                if (sdiv[j] < i && match_dist >= minlen)
+                if (b->is_query[j] == 1 && sdiv[j] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
                         intree = match_insert (intree, jppa[j], jppa[k], sdiv[j], i);
@@ -94,7 +95,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
             for (k = j + 1; k < n; ++k)
             {
                 double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]);
-                if (sdiv[j+1] < i && match_dist >= minlen)
+                if (b->is_query[j] == 1 && sdiv[j+1] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
                         intree = match_insert (intree, jppa[j], jppa[k], sdiv[j+1], i);

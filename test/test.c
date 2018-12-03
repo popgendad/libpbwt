@@ -51,10 +51,10 @@ int main (int argc, char *argv[])
         v = pbwt_build (s);
 
         /* Print the pbwt */
-        pbwt_print (s);
+        /*pbwt_print (s);*/
 
         /* Find all set-maximal matches */
-        v = pbwt_set_match (s, 0.1);
+        v = pbwt_query_match (s, 0.1);
 
         /* Print matches to stdout */
         match_print (s, s->match);
