@@ -96,7 +96,7 @@ pbwt_init (const size_t nsite, const size_t nsam)
     /* Initialize values for prefix and divergence arrays */
     for (i = 0; i < nsam; ++i)
     {
-        b->is_query = 0;
+        b->is_query = FALSE;
         b->ppa[i] = i;
         b->div[i] = 0;
     }
