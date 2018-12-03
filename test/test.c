@@ -40,7 +40,7 @@ int main (int argc, char *argv[])
     /* Subset the pbwt to the Beringia region */
     if (inpop != NULL)
     {
-        s = pbwt_subset_with_query (b, inpop, 1000);
+        s = pbwt_subset_with_query (b, inpop, 10001);
         if (s == NULL)
         {
             fputs ("Failed to subset the data", stderr);
