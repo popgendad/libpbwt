@@ -36,11 +36,10 @@ main (int argc, char *argv[])
     size_t i;
     size_t nregs;
     char **reglist;
-    const size_t sid = 4240;
     reglist = pbwt_get_reglist (b, &nregs);
     for (i = 0; i < nregs; ++i)
     {
-        s = pbwt_subset_with_query (b, reglist[i], sid);
+        s = pbwt_subset (b, reglist[i]);
         if (s == NULL)
         {
             fputs ("Failed to subset the data", stderr);
@@ -51,13 +50,10 @@ main (int argc, char *argv[])
         v = pbwt_build (s);
 
         /* Find all set-maximal matches */
-        /*v = pbwt_query_match (s, minlen);*/
-       v = pbwt_set_match (s, minlen);
+        v = pbwt_set_match (s, minlen);
 
         double c;
-        /*c = match_query_coverage (s, s->match);*/
         c = match_coverage (s, s->match);
-        /*printf ("%s\t%s\t%s\t%1.5e\n", b->sid[sid], b->reg[sid], reglist[i], c);*/
         printf ("%s\t%1.5e\n", reglist[i], c);
 
         /* Free memory for the subset pbwt data structure */
