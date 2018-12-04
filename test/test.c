@@ -3,13 +3,14 @@
 #include <string.h>
 #include <pbwt.h>
 
-int main (int argc, char *argv[])
+int
+main (int argc, char *argv[])
 {
     int v;
     pbwt_t *b;
     pbwt_t *s;
+    const double minlen = 0.4;
     char *infile;
-    char *inpop;
 
     v = 0;
 
@@ -21,11 +22,6 @@ int main (int argc, char *argv[])
         fputs ("Usage: ./ptest <pbwt file> <optional pop>\n", stderr);
         return 1;
     }
-
-    if (argv[2] != NULL)
-        inpop = strdup (argv[2]);
-    else
-        inpop = NULL;
 
     /* Read in the pbwt file from disk */
     b = pbwt_read (infile);
@@ -55,7 +51,7 @@ int main (int argc, char *argv[])
         v = pbwt_build (s);
 
         /* Find all set-maximal matches */
-        v = pbwt_query_match (s, 0.4);
+        v = pbwt_query_match (s, minlen);
 
         double c;
         c = match_query_coverage (s, s->match);
