@@ -37,10 +37,14 @@ int main (int argc, char *argv[])
 
     pbwt_uncompress (b);
 
-    /* Subset the pbwt to the Beringia region */
-    if (inpop != NULL)
+    size_t i;
+    size_t nregs;
+    char **reglist;
+    const size_t sid = 4240;
+    reglist = pbwt_get_reglist (b, &nregs);
+    for (i = 0; i < nregs; ++i)
     {
-        s = pbwt_subset_with_query (b, inpop, 10001);
+        s = pbwt_subset_with_query (b, reglist[i], sid);
         if (s == NULL)
         {
             fputs ("Failed to subset the data", stderr);
@@ -50,19 +54,12 @@ int main (int argc, char *argv[])
         /* Build the prefix and divergence arrays for the subset pbwt */
         v = pbwt_build (s);
 
-        /* Print the pbwt */
-        /*pbwt_print (s);*/
-
         /* Find all set-maximal matches */
         v = pbwt_query_match (s, 0.4);
 
-        /* Print matches to stdout */
-        match_print (s, s->match);
-        v = match_search (s, s->match, 1, 10);
-
         double c;
         c = match_query_coverage (s, s->match);
-        printf ("Coverage: %1.5e\n", c);
+        printf ("%s\t%s\t%s\t%1.5e\n", b->sid[sid], b->reg[sid], reglist[i], c);
 
         /* Free memory for the subset pbwt data structure */
         if (s != NULL)

@@ -76,6 +76,8 @@ extern pbwt_t *pbwt_read (const char *);
 
 extern int pbwt_print (const pbwt_t *);
 
+extern char ** pbwt_get_reglist (pbwt_t *, size_t *);
+
 extern int pbwt_build (pbwt_t *);
 
 extern pbwt_t * pbwt_subset (pbwt_t *, const char *);
