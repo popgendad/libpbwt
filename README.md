@@ -200,8 +200,18 @@ pbwt_t * pbwt_pull (pbwt_t *b, const size_t target)
 #### pbwt_merge()
 
 ```c
-pbwt_t * pbwt_merge (pbwt_t *b1, pbwt_t *b2);
+pbwt_t * pbwt_merge (pbwt_t *b1, pbwt_t *b2)
 ```
+
+### Miscellaneous
+
+#### pbwt_get_reglist()
+
+```c
+char ** pbwt_get_reglist (pbwt_t *b, size_t *nr)
+```
+
+Extracts a unique list of regions from pbwt_t pointed to by `b`. The total number of unique regions is stored in the memory pointed to by `nr` and the string array is returned on success, while a `NULL` pointer is returned on failure.
 
 ### Matching
 
