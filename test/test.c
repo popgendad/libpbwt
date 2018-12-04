@@ -51,11 +51,14 @@ main (int argc, char *argv[])
         v = pbwt_build (s);
 
         /* Find all set-maximal matches */
-        v = pbwt_query_match (s, minlen);
+        /*v = pbwt_query_match (s, minlen);*/
+       v = pbwt_set_match (s, minlen);
 
         double c;
-        c = match_query_coverage (s, s->match);
-        printf ("%s\t%s\t%s\t%1.5e\n", b->sid[sid], b->reg[sid], reglist[i], c);
+        /*c = match_query_coverage (s, s->match);*/
+        c = match_coverage (s, s->match);
+        /*printf ("%s\t%s\t%s\t%1.5e\n", b->sid[sid], b->reg[sid], reglist[i], c);*/
+        printf ("%s\t%1.5e\n", reglist[i], c);
 
         /* Free memory for the subset pbwt data structure */
         if (s != NULL)
