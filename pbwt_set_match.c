@@ -81,6 +81,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
 
             for (k = m + 1; k < j; ++k)
             {
+                /* Evaluate whether match should be recorded */
                 double match_dist = (b->cm[i] - b->cm[sdiv[j]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j] < i && match_dist >= minlen)
                 {
@@ -93,6 +94,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
 
             for (k = j + 1; k < n; ++k)
             {
+                /* Evaluate whether match should be recorded */
                 double match_dist = (b->cm[i] - b->cm[sdiv[j+1]]) / (b->cm[b->nsite-1] - b->cm[0]);
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
