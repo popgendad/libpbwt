@@ -230,14 +230,6 @@ int pbwt_query_match (pbwt_t *b, const size_t query_index, const double minlen)
 ```
 
 
-#### pbwt_longest_match()
-
-```c
-int pbwt_longest_match (pbwt_t *b, const size_t query_index, const double minlen)
-```
-
-Implements algorithm 3 from Durbin (2014). Finds all matches between haplotypes that are longer than `minlen` centimorgans. 
-
 #### match_search()
 
 ```c

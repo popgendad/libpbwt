@@ -88,8 +88,6 @@ extern int pbwt_set_match (pbwt_t *, const double);
 
 extern int pbwt_query_match (pbwt_t *, const double);
 
-extern int pbwt_longest_match (pbwt_t *, const size_t, const double);
-
 extern int match_search (pbwt_t *, match_t *, size_t, size_t);
 
 extern double match_coverage (pbwt_t *, match_t *);
