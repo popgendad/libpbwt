@@ -70,6 +70,8 @@ extern int pbwt_push (pbwt_t *, const char *, const char *, const char *, const 
 
 extern pbwt_t * pbwt_pull (pbwt_t *, const size_t);
 
+extern pbwt_t * pbwt_copy (pbwt_t *);
+
 extern pbwt_t * pbwt_merge (pbwt_t *, pbwt_t *);
 
 extern pbwt_t *pbwt_read (const char *);

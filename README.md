@@ -197,6 +197,15 @@ The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structu
 pbwt_t * pbwt_pull (pbwt_t *b, const size_t target)
 ```
 
+#### pbwt_copy()
+
+```c
+pbwt_t * pbwt_copy (pbwt_t *b)
+```
+
+Returns a separate copy of the pbwt data structure pointed to by `b`.
+
+
 #### pbwt_merge()
 
 ```c
