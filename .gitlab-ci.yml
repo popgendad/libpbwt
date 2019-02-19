@@ -1,4 +1,4 @@
-image: ubuntu_htslib:latest
+image: dev.evolgen.us:4567/dgarrigan/ubuntu_htslib:latest
 
 stages:
   - build
