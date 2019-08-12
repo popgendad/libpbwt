@@ -4,14 +4,14 @@ A C library for implementing the positional Burrows-Wheeler transform
 
 ## Introduction
 
-The position Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [pbwt file format](https://github.ancestry.com/DNA-Science/libpbwt#pbwt-file-format) subsection below.
+The position Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [pbwt file format](https://gitlab.com/evolgen/libpbwt#pbwt-file-format) subsection below.
 
 ## Installation
 
 A Makefile is provided with the `libpbwt` package. The only dependency outside of the standard C library is `zlib`. The default installation directories are `/usr/lib` for the shared library file `libpbwt.so` and `/usr/include` for the `pbwt.h` header file. Below is an example of installing the library.
 
 ```
-git clone git@github.ancestry.com:DNA-Science/libpbwt.git
+git clone git@gitlab.com/evolgen/libpbwt.git
 cd libpbwt
 make
 sudo make install

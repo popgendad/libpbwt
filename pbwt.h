@@ -2,9 +2,9 @@
  * libpbwt
  * A C library for implementing the positional Burrows-Wheeler transform
  *
- * Author: Daniel Garrigan <daniel.garrigan@ancestry.com>
+ * Author: Daniel Garrigan <popgendad@gmail.com>
  *
- * Git: https://github.ancestry.com/DNA-Science/libpbwt
+ * Git: https://gitlab.com/evolgen/libpbwt
  *
  *********************************************************************/
 
