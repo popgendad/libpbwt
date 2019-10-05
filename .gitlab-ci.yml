@@ -2,7 +2,7 @@ image: debian
 
 before_script:
   - apt-get update
-  - apt-get install gcc make zlib1g-dev
+  - apt-get install -y gcc make zlib1g-dev
   - gcc --version
 
 build:
