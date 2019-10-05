@@ -12,4 +12,4 @@ WORKDIR /libpbwt
 
 RUN make && make install
 
-CMD ["/bin/bash"]
+CMD ["test/ptest"]
