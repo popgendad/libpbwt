@@ -4,7 +4,7 @@ A C library for implementing the positional Burrows-Wheeler transform
 
 ## Introduction
 
-The position Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [pbwt file format](https://gitlab.com/evolgen/libpbwt#pbwt-file-format) subsection below.
+The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [pbwt file format](https://gitlab.com/evolgen/libpbwt#pbwt-file-format) subsection below.
 
 ## Installation
 
