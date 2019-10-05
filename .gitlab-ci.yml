@@ -18,5 +18,8 @@ build:
 test:
   stage: test
   script:
+    - make
+    - make install
+    - make -C test
     - test/ptest
 
