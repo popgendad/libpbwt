@@ -10,6 +10,6 @@ ADD . /libpbwt
 
 WORKDIR /libpbwt
 
-RUN make && make install
+RUN make && make install && make -C test
 
-CMD ["test/ptest"]
+CMD ["test/ptest", "test/3881.pbwt", "F008928.2"]
