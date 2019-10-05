@@ -1,0 +1,22 @@
+image: debian
+
+before_script:
+  - apt-get update
+  - apt-get install gcc make zlib1g-dev
+  - gcc --version
+
+build:
+  stage: build
+  script:
+    - make
+    - make install
+  artifacts:
+    paths:
+      - /usr/lib/libpbwt.so
+      - /usr/include/pbwt.h
+
+test:
+  stage: test
+  script:
+    - test/ptest
+
