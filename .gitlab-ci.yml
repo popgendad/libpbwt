@@ -10,10 +10,6 @@ build:
   script:
     - make
     - make install
-  artifacts:
-    paths:
-      - libpbwt.so
-      - pbwt.h
 
 test:
   stage: test
@@ -21,5 +17,5 @@ test:
     - make
     - make install
     - make -C test
-    - test/ptest test/3881.pbwt F008928.2
+    - test/ptest test/3881.pbwt 101
 
