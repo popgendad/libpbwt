@@ -10,6 +10,8 @@ build:
   script:
     - make
     - make install
+  only:
+    - tags
 
 test:
   stage: test
@@ -18,4 +20,5 @@ test:
     - make install
     - make -C test
     - test/ptest test/3881.pbwt 101
-
+  only:
+    - tags
