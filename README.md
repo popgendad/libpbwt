@@ -238,6 +238,7 @@ The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum 
 int pbwt_query_match (pbwt_t *b, const size_t query_index, const double minlen)
 ```
 
+The `pbwt_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 #### match_search()
 
