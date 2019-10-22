@@ -66,8 +66,10 @@ match_coverage (pbwt_t *b, match_t *node)
     avg_length = 0.0;
     total_length = b->cm[b->nsite-1] - b->cm[0];
     num_matches = match_count (b, node, &avg_length);
+    if (num_matches == 0)
+        return 0.0;
     avg_length /= (double)(num_matches);
-    return avg_length / total_length;
+    return ((2.0 * num_matches) / (double)(b->nsam * b->nsam-1)) * (avg_length / total_length);
 }
 
 double
