@@ -224,6 +224,24 @@ Extracts a unique list of regions from pbwt_t pointed to by `b`. The total numbe
 
 ### Matching
 
+#### pbwt_find_match()
+```c
+int pbwt_find_match (pbwt_t *b, const double minlen)
+```
+
+The `pbwt_find_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than `minlen`
+in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
+
+
+#### pbwt_find_query_match()
+```c
+int pbwt_find_query_match (pbwt_t *b, const double minlen)
+```
+
+The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than 
+`minlen` in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
+
+
 #### pbwt_set_match()
 
 ```c
@@ -267,9 +285,6 @@ N = number of haplotypes in pbwt
 X = average match length (cM)
 L = total length of interval covered by input markers (cM)
 ```
-
-#### match_find()
-
 
 #### match_print()
 

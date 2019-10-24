@@ -59,7 +59,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
                 }
             }
 
-            if (mc)
+            if (mc && i < b->nsite - 1)
                 continue;
 
             if (sdiv[j] >= sdiv[j+1])
@@ -76,7 +76,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
                 }
             }
 
-            if (mc)
+            if (mc && i < b->nsite - 1)
                 continue;
 
             for (k = m + 1; k < j; ++k)

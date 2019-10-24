@@ -88,6 +88,8 @@ extern pbwt_t * pbwt_subset_with_query (pbwt_t *, const char *, const size_t);
 
 extern int pbwt_set_match (pbwt_t *, const double);
 
+extern int pbwt_find_match (pbwt_t *, const size_t);
+
 extern int pbwt_query_match (pbwt_t *, const double);
 
 extern int match_search (pbwt_t *, match_t *, size_t, size_t);
