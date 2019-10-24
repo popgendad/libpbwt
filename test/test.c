@@ -11,7 +11,7 @@ main (int argc, char *argv[])
     pbwt_t *b;
     pbwt_t *s;
     pbwt_t *p;
-    const double minlen = 0.4;
+    double minlen = 0.5;
     char *infile;
 
     v = 0;
@@ -21,7 +21,7 @@ main (int argc, char *argv[])
         infile = strdup (argv[1]);
     else
     {
-        fputs ("Usage: ./ptest <pbwt file> <query id>\n", stderr);
+        fputs ("Usage: ./ptest <pbwt file> <query id> <minlen>\n", stderr);
         return 1;
     }
 
@@ -29,7 +29,15 @@ main (int argc, char *argv[])
         qid = atol (argv[2]);
     else
     {
-        fputs ("Usage: ./ptest <pbwt file> <query id>\n", stderr);
+        fputs ("Usage: ./ptest <pbwt file> <query id> <minlen>\n", stderr);
+        return 1;
+    }
+
+    if (argv[3] != NULL)
+        minlen = atof(argv[3]);
+    else
+    {
+        fputs ("Usage: ./ptest <pbwt file> <query id> <minlen>\n", stderr);
         return 1;
     }
 
