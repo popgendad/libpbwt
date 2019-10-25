@@ -50,7 +50,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
                 while (sdiv[m+1] <= sdiv[j])
                 {
                     if (b->data[TWODCORD(jppa[m], b->nsite, i)] ==
-                        b->data[TWODCORD(jppa[j], b->nsite, i)])
+                        b->data[TWODCORD(jppa[j], b->nsite, i)] && i < b->nsite - 1)
                     {
                         mc = 1;
                         break;
@@ -59,7 +59,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
                 }
             }
 
-            if (mc && i < b->nsite - 1)
+            if (mc)
                 continue;
 
             if (sdiv[j] >= sdiv[j+1])
@@ -67,7 +67,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
                 while (sdiv[n] <= sdiv[j+1])
                 {
                     if (b->data[TWODCORD(jppa[n], b->nsite, i)] ==
-                        b->data[TWODCORD(jppa[j], b->nsite, i)])
+                        b->data[TWODCORD(jppa[j], b->nsite, i)] && i < b->nsite - 1)
                     {
                         mc = 1;
                         break;
@@ -76,7 +76,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
                 }
             }
 
-            if (mc && i < b->nsite - 1)
+            if (mc)
                 continue;
 
             for (k = m + 1; k < j; ++k)
