@@ -32,8 +32,12 @@ match_search (pbwt_t *b, match_t *node, size_t qbegin, size_t qend)
         return 0;
     if (match_overlap (qbegin, qend, node->begin, node->end))
     {
-        printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[node->first], b->reg[node->first],
-                b->sid[node->second], b->reg[node->second], b->cm[node->end] - b->cm[node->begin]);
+        if (b->is_query[node->first])
+            printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[node->first], b->reg[node->first],
+                 b->sid[node->second], b->reg[node->second], b->cm[node->end] - b->cm[node->begin]);
+        else
+            printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[node->second], b->reg[node->second],
+                b->sid[node->first], b->reg[node->first], b->cm[node->end] - b->cm[node->begin]);
     }
     if (node->left != NULL && node->left->max >= qbegin)
     {
