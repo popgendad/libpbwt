@@ -12,6 +12,10 @@
 #define PBWT_H
 
 #include <stdlib.h>
+#include <htslib/khash.h>
+
+/* Declare hash keyed on string with double values */
+KHASH_MAP_INIT_STR(floats, double)
 
 /* 2D linearization macro */
 #define TWODCORD(row, dim, col) ((row) * (dim) + (col))
@@ -92,7 +96,7 @@ extern int pbwt_find_match (pbwt_t *, const size_t);
 
 extern int pbwt_query_match (pbwt_t *, const double);
 
-extern int match_search (pbwt_t *, match_t *, size_t, size_t);
+extern int match_search (pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
 
 extern double match_coverage (pbwt_t *, match_t *);
 

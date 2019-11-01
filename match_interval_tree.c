@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "pbwt.h"
 
+
 match_t *
 match_new (const size_t first, const size_t second, const size_t begin, const size_t end)
 {
@@ -26,24 +27,39 @@ match_new (const size_t first, const size_t second, const size_t begin, const si
 }
 
 int
-match_search (pbwt_t *b, match_t *node, size_t qbegin, size_t qend)
+match_search (pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
 {
     if (node == NULL)
         return 0;
+
     if (match_overlap (qbegin, qend, node->begin, node->end))
     {
+        int a;
+        khint_t k;
+        double length = b->cm[node->end] - b->cm[node->begin];
+        size_t qs;
+
         if (b->is_query[node->first])
-            printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[node->first], b->reg[node->first],
-                 b->sid[node->second], b->reg[node->second], b->cm[node->end] - b->cm[node->begin]);
+            qs = node->second;
         else
-            printf ("%s\t%s\t%s\t%s\t%1.5lf\n", b->sid[node->second], b->reg[node->second],
-                b->sid[node->first], b->reg[node->first], b->cm[node->end] - b->cm[node->begin]);
+            qs = node->first;
+        k = kh_put(floats, result, b->reg[qs], &a);
+        if (a == 0)
+        {
+            double ent = kh_value(result, k);
+            ent += length;
+            kh_value(result, k) = ent;
+        }
+        else
+            kh_value(result, k) = length;
     }
+
     if (node->left != NULL && node->left->max >= qbegin)
     {
-        return match_search (b, node->left, qbegin, qend);
+        return match_search (b, node->left, result, qbegin, qend);
     }
-    return match_search (b, node->right, qbegin, qend);
+
+    return match_search (b, node->right, result, qbegin, qend);
 }
 
 size_t
