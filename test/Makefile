@@ -1,11 +1,11 @@
 CC=gcc
 CFLAGS=-Wall -g
-LIBS=-lpbwt
+LIBS=-lpbwt -lhts
 
-all: ptest
+all: ptest2
 
-ptest: test.c
+ptest2: test2.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm ptest
+	rm ptest2
