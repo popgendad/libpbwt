@@ -5,8 +5,8 @@ before_script:
   - apt-get install -y gcc make zlib1g-dev libhts-dev
   - gcc --version
 
-test:
-  stage: test
+build:
+  stage: build
   script:
     - make
     - make install
