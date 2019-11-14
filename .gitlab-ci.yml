@@ -2,16 +2,8 @@ image: debian
 
 before_script:
   - apt-get update
-  - apt-get install -y gcc make zlib1g-dev
+  - apt-get install -y gcc make zlib1g-dev libhts-dev
   - gcc --version
-
-build:
-  stage: build
-  script:
-    - make
-    - make install
-  only:
-    - tags
 
 test:
   stage: test
