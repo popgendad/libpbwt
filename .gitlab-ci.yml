@@ -11,6 +11,6 @@ build:
     - make
     - make install
     - make -C test
-    - test/ptest test/3881.pbwt 101
+    - test/ptest2 test/3881.pbwt 0.4 101 0 79
   only:
     - tags
