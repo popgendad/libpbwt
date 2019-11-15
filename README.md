@@ -13,7 +13,7 @@ A Makefile is provided with the `libpbwt` package. The only dependency outside o
 ```
 git clone git@gitlab.com/evolgen/libpbwt.git
 cd libpbwt
-make
+make all
 sudo make install
 ```
 
