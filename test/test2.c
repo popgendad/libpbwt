@@ -55,7 +55,7 @@ main (int argc, char *argv[])
 
     /*pbwt_print(p);
     match_print(p, p->match);*/
-    match_search(b, b->match, result, 0, 399);
+    match_search(b, b->match, result, qstart, qend);
 
     /* Print hash */
     size_t i;
