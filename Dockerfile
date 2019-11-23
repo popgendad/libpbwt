@@ -14,7 +14,7 @@ RUN make && make install && ldconfig
 
 RUN make -C test
 
-CMD [ "test/ptest", "test/EV62-phase.3881.pbwt", "100" ]
+CMD [ "test/ptest", "test/HumanOriginsExample.pbwt", "100" ]
 
 
 
