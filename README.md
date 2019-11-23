@@ -230,7 +230,7 @@ int pbwt_find_match (pbwt_t *b, const double minlen)
 ```
 
 The `pbwt_find_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than `minlen`
-in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
+cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
 
 
 #### pbwt_find_query_match()
@@ -239,7 +239,7 @@ int pbwt_find_query_match (pbwt_t *b, const double minlen)
 ```
 
 The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than 
-`minlen` in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
+`minlen` cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
 
 
 #### pbwt_set_match()
@@ -248,7 +248,7 @@ The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matche
 int pbwt_set_match (pbwt_t *b, double minlen)
 ```
 
-The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
+The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 
 #### pbwt_query_match()
@@ -256,7 +256,7 @@ The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum 
 int pbwt_query_match (pbwt_t *b, const size_t query_index, const double minlen)
 ```
 
-The `pbwt_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the proportion of the total genetic map distance of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
+The `pbwt_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 #### match_search()
 
