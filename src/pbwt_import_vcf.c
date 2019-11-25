@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <htslib/tbx.h>
 #include <htslib/vcf.h>
+#include <plink_lite.h>
 #include "pbwt.h"
 
 khash_t(string) *read_popmap(const char *);
@@ -8,9 +9,8 @@ khash_t(string) *read_popmap(const char *);
 int check_popmap(const bcf_hdr_t *, const khash_t(string) *);
 
 
-pbwt *pbwt_convert_vcf(const char *infile, const char *popfile)
+pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
 {
-    int32_t v = 0;
     int32_t i = 0;
     int32_t j = 0;
     int32_t nseq = 0;
@@ -92,13 +92,12 @@ pbwt *pbwt_convert_vcf(const char *infile, const char *popfile)
         int32_t ngt = 0;
         int32_t *gt = NULL;
         khint_t it = 0;
-        khint_t its = 0;
  
         bcf_unpack(rec, BCF_UN_STR);
         bcf_unpack(rec, BCF_UN_INFO);
         chr = bcf_seqname(hdr, rec);
  
-        b->chr[site_counter] = chr;
+        b->chr[site_counter] = atoi(chr);
         b->rsid[site_counter] = strdup(rec->d.id);
         b->cm[site_counter] = rec->d.info[0].v1.f;
  
@@ -107,7 +106,6 @@ pbwt *pbwt_convert_vcf(const char *infile, const char *popfile)
         /* Iterate through sample genotypes */
         for (i = 0; i < nsam; ++i)
         {
-            int absent = 0;
             const char *sid = hdr->samples[i];
             it = kh_get(string, popdb, sid);
             const char *pop = kh_value(popdb, it);

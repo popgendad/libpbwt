@@ -16,14 +16,14 @@ pbwt_t *pbwt_import_plink(const char *instub)
     p = plink_init(instub, 1, 1);
     if (p == NULL)
     {
-        return 1;
+        return NULL;
     }
 
     /* Initialize pbwt structure */
     b = pbwt_init(p->nsnp, 2 * p->nsam);
     if (b == NULL)
     {
-        return 1;
+        return NULL;
     }
 
     /* Iterate through all samples in the fam/reg */

@@ -141,6 +141,22 @@ pbwt_t * pbwt_read(const char *infile)
 
 The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a pointer to the `pbwt_t` data structure contained in that file. The full name of the input file is given in the `infile` variable. The function returns a `NULL` pointer if it encounters a problem reading the file.
 
+#### pbwt_import_plink()
+
+```c
+pbwt_t * pbwt_import_plink(const char *plinkstub)
+```
+
+The `pbwt_import_plink` function returns a `pbwt_t` data structure populated from data imported from a plink-formatted data set specified by `plinkstub` (i.e.g, `.bed`, `bim`, `.fam`), plus a `.reg` file. The function return a `NULL` pointer if it encounters an error during the import process.
+
+#### pbwt_import_vcf()
+
+```c
+pbwt_t *pbwt_import_vcf(const char *vcfinfile, const char *popmap);
+```
+
+The `pbwt_import_vcf` function returns a `pbwt_t` data structure population from the VCF infile specified as `vcfinfile` and the popmap file `popmap` (i.e., two columns with sample identifier and population). The function return a `NULL` pointer if it encounters an error during the import process.
+
 #### pbwt_write()
 
 ```c

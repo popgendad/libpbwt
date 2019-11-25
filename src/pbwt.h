@@ -16,7 +16,6 @@
 
 /* Declare hash keyed on string with double values */
 KHASH_MAP_INIT_STR(floats, double)
-KHASH_MAP_INIT_STR(string, char *)
 
 /* 2D linearization macro */
 #define TWODCORD(row, dim, col) ((row) * (dim) + (col))
@@ -83,7 +82,7 @@ extern pbwt_t *pbwt_read(const char *);
 
 extern pbwt_t *pbwt_import_plink(const char *);
 
-extern pbwt *pbwt_convert_vcf(const char *, const char *);
+extern pbwt_t *pbwt_import_vcf(const char *, const char *);
 
 extern int pbwt_print(const pbwt_t *);
 

@@ -1,6 +1,6 @@
 CC     := gcc
 CFLAGS := -Wall -O2
-LIBS   := -lz
+LIBS   := -lz -lplink_lite
 PREFIX := /usr
 H_DIR  := $(PREFIX)/include
 L_DIR  := $(PREFIX)/lib
