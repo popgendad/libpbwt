@@ -1,14 +1,14 @@
 #include <stdio.h>
 #include "pbwt.h"
 
-pbwt_t *
-pbwt_init (const size_t nsite, const size_t nsam)
+
+pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
 {
-    size_t i;
-    pbwt_t *b;
+    size_t i = 0;
+    pbwt_t *b = NULL;
 
     /* Allocate heap memory for the pwbt data structure */
-    b = (pbwt_t *) malloc (sizeof(pbwt_t));
+    b = (pbwt_t *)malloc(sizeof(pbwt_t));
     if (b == NULL)
     {
         perror ("libpbwt [ERROR]");
@@ -21,75 +21,75 @@ pbwt_init (const size_t nsite, const size_t nsam)
     b->is_compress = FALSE;
     b->match = NULL;
 
-    b->is_query = (int *) malloc (nsam * sizeof(int));
+    b->is_query = (int *)malloc(nsam * sizeof(int));
     if (b->is_query == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->ppa = (size_t *) malloc (nsam * sizeof(size_t));
+    b->ppa = (size_t *)malloc(nsam * sizeof(size_t));
     if (b->ppa == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->div = (size_t *) malloc (nsam * sizeof(size_t));
+    b->div = (size_t *)malloc(nsam * sizeof(size_t));
     if (b->div == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->sid = (char **) malloc (nsam * sizeof(char *));
+    b->sid = (char **)malloc(nsam * sizeof(char *));
     if (b->sid == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->reg = (char **) malloc (nsam * sizeof(char *));
+    b->reg = (char **)malloc(nsam * sizeof(char *));
     if (b->reg == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->data = (unsigned char *) malloc (nsite * nsam * sizeof(unsigned char));
+    b->data = (unsigned char *)malloc(nsite * nsam * sizeof(unsigned char));
     if (b->data == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->chr = (int *) malloc (nsite * sizeof(int));
+    b->chr = (int *)malloc(nsite * sizeof(int));
     if (b->chr == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->cm = (double *) malloc (nsite * sizeof(double));
+    b->cm = (double *)malloc(nsite * sizeof(double));
     if (b->cm == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 
-    b->rsid = (char **) malloc (nsite * sizeof(char *));
+    b->rsid = (char **)malloc(nsite * sizeof(char *));
     if (b->rsid == NULL)
     {
-        perror ("libpbwt [ERROR]");
-        pbwt_destroy (b);
+        perror("libpbwt [ERROR]");
+        pbwt_destroy(b);
         return NULL;
     }
 

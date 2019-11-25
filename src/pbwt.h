@@ -60,56 +60,52 @@ typedef struct pbwt
 
 /* libpbwt API function declarations */
 
-extern pbwt_t *pbwt_init (const size_t, const size_t);
+extern pbwt_t *pbwt_init(const size_t, const size_t);
 
-extern void pbwt_destroy (pbwt_t *);
+extern void pbwt_destroy(pbwt_t *);
 
 extern int pbwt_compress(pbwt_t *);
 
-extern int pbwt_uncompress (pbwt_t *);
+extern int pbwt_uncompress(pbwt_t *);
 
-extern int pbwt_write (const char *, pbwt_t *);
+extern int pbwt_write(const char *, pbwt_t *);
 
-extern int pbwt_push (pbwt_t *, const char *, const char *, const char *, const char *);
+extern int pbwt_push(pbwt_t *, const char *, const char *, const char *, const char *);
 
-extern pbwt_t * pbwt_pull (pbwt_t *, const size_t);
+extern pbwt_t * pbwt_pull(pbwt_t *, const size_t);
 
-extern pbwt_t * pbwt_copy (pbwt_t *);
+extern pbwt_t * pbwt_copy(pbwt_t *);
 
-extern pbwt_t * pbwt_merge (pbwt_t *, pbwt_t *);
+extern pbwt_t * pbwt_merge(pbwt_t *, pbwt_t *);
 
-extern pbwt_t *pbwt_read (const char *);
+extern pbwt_t *pbwt_read(const char *);
 
-extern int pbwt_print (const pbwt_t *);
+extern int pbwt_print(const pbwt_t *);
 
-extern char ** pbwt_get_reglist (pbwt_t *, size_t *);
+extern char ** pbwt_get_reglist(pbwt_t *, size_t *);
 
-extern int pbwt_build (pbwt_t *);
+extern int pbwt_build(pbwt_t *);
 
-extern pbwt_t * pbwt_subset (pbwt_t *, const char *);
+extern pbwt_t * pbwt_subset(pbwt_t *, const char *);
 
-extern pbwt_t * pbwt_subset_with_query (pbwt_t *, const char *, const size_t);
+extern pbwt_t * pbwt_subset_with_query(pbwt_t *, const char *, const size_t);
 
-extern int pbwt_set_match (pbwt_t *, const double);
+extern int pbwt_set_match(pbwt_t *, const double);
 
-extern int pbwt_find_match (pbwt_t *, const size_t);
+extern int pbwt_find_match(pbwt_t *, const size_t);
 
-extern int pbwt_query_match (pbwt_t *, const double);
+extern int pbwt_query_match(pbwt_t *, const double);
 
-extern int match_search (pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
+extern int match_search(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
 
-extern double match_coverage (pbwt_t *, match_t *);
+extern void match_print(pbwt_t *, match_t *);
 
-extern double match_query_coverage (pbwt_t *, match_t *);
+extern match_t * match_insert(match_t *, const size_t, const size_t, const size_t, const size_t);
 
-extern void match_print (pbwt_t *, match_t *);
+extern size_t match_count(pbwt_t *, match_t *, double *);
 
-extern match_t * match_insert (match_t *, const size_t, const size_t, const size_t, const size_t);
+extern match_t * match_new(const size_t, const size_t, const size_t, const size_t);
 
-extern size_t match_count (pbwt_t *, match_t *, double *);
-
-extern match_t * match_new (const size_t, const size_t, const size_t, const size_t);
-
-extern int match_overlap (const size_t, const size_t, const size_t, const size_t);
+extern int match_overlap(const size_t, const size_t, const size_t, const size_t);
 
 #endif

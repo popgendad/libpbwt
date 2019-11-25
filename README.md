@@ -116,7 +116,7 @@ typedef struct _match
 #### pbwt_init()
 
 ```c
-pbwt_t * pbwt_init (const size_t nsite, const size_t nsam)
+pbwt_t * pbwt_init(const size_t nsite, const size_t nsam)
 ```
 
 The `pbwt_t` data structure can be initialized using the `pbwt_init()` function.
@@ -126,7 +126,7 @@ The above function takes the number of sites (`nsite`) and the number of haploty
 #### pbwt_destroy()
 
 ```c
-void pbwt_destroy (pbwt_t *b)
+void pbwt_destroy(pbwt_t *b)
 ```
 
 This function deallocates all memory contained in the `pbwt_t` data structure referred to by `b`. The variable `b` cannot be re-used after `pbwt_destroy()` is called, rather it must be re-initialized with the `pbwt_init()` function. This function does not return a value.
@@ -136,7 +136,7 @@ This function deallocates all memory contained in the `pbwt_t` data structure re
 #### pbwt_read()
 
 ```c
-pbwt_t * pbwt_read (const char *infile)
+pbwt_t * pbwt_read(const char *infile)
 ```
 
 The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a pointer to the `pbwt_t` data structure contained in that file. The full name of the input file is given in the `infile` variable. The function returns a `NULL` pointer if it encounters a problem reading the file.
@@ -144,7 +144,7 @@ The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a
 #### pbwt_write()
 
 ```c
-int pbwt_write (const char *outfile, pbwt_t *b)
+int pbwt_write(const char *outfile, pbwt_t *b)
 ```
 
 The above function will write the `pbwt_t` data structure pointed to by `b` and write it to a `.pbwt` format file named `outfile`. If a file by the name specified by `outfile` exists on disk, the function will overwrite that file. If it does not have permission to overwrite that file, the function will return a value of -1. The function will compress the binary haplotype data contained in the `pbwt_t` data structure before writing the file. The function will return 0 on success and -1 on error.
@@ -152,7 +152,7 @@ The above function will write the `pbwt_t` data structure pointed to by `b` and 
 #### pbwt_print()
 
 ```c
-int pbwt_print (const pbwt_t *b)
+int pbwt_print(const pbwt_t *b)
 ```
 
 The `pbwt_print()` function will print a representation of the `pbwt_t` data structure to `stdout`. The function will return 0 on success and -1 on failure.
@@ -162,7 +162,7 @@ The `pbwt_print()` function will print a representation of the `pbwt_t` data str
 #### pbwt_build()
 
 ```c
-int pbwt_build (pbwt_t *b)
+int pbwt_build(pbwt_t *b)
 ```
 
 The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes an initialized `pbwt_t` data structure that already contains the raw binary haplotype data and constructs both the prefix and divergence arrays up to the site at index position `nsite - 1`. The function will return 0 on success and -1 on error.
@@ -170,7 +170,7 @@ The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes a
 #### pbwt_subset()
 
 ```c
-pbwt_t *pbwt_subset (pbwt_t *b, const char *reg)
+pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
 ```
 
 Subsets the `pbwt_t` data structure pointed to by `b` and creates a new `pbwt_t` data structure that is subset to haplotypes with region label `reg`. Returns a pointer to the new `pbwt_t` data structure on success and a `NULL` pointer on failure.
@@ -178,7 +178,7 @@ Subsets the `pbwt_t` data structure pointed to by `b` and creates a new `pbwt_t`
 #### pbwt_subset_with_query()
 
 ```c
-pbwt_t * pbwt_subset_with_query (pbwt_t *b, const char *reg, const size_t query)
+pbwt_t * pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
 ```
 
 Similar to `pbwt_subset()` except it includes an additional "query" sequence with index `query`.
@@ -186,7 +186,7 @@ Similar to `pbwt_subset()` except it includes an additional "query" sequence wit
 #### pbwt_push()
 
 ```c
-int pbwt_push (pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
+int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
 ```
 
 The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structure pointed to by `b` and reconstructs the prefix and divergence arrays. In addition to a pointer to the `pbwt_t` data structure to be augmented, the function takes arguments that include a pointer to the new sample identifier `new_sid`, a pointer to the new sample region `new_reg` (which can be `NULL`), a pointer to the first binary haplotype array `h1` and the second haplotype array `h2`.
@@ -194,13 +194,13 @@ The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structu
 #### pbwt_pull()
 
 ```c
-pbwt_t * pbwt_pull (pbwt_t *b, const size_t target)
+pbwt_t * pbwt_pull(pbwt_t *b, const size_t target)
 ```
 
 #### pbwt_copy()
 
 ```c
-pbwt_t * pbwt_copy (pbwt_t *b)
+pbwt_t * pbwt_copy(pbwt_t *b)
 ```
 
 Returns a separate copy of the pbwt data structure pointed to by `b`.
@@ -209,7 +209,7 @@ Returns a separate copy of the pbwt data structure pointed to by `b`.
 #### pbwt_merge()
 
 ```c
-pbwt_t * pbwt_merge (pbwt_t *b1, pbwt_t *b2)
+pbwt_t * pbwt_merge(pbwt_t *b1, pbwt_t *b2)
 ```
 
 ### Miscellaneous
@@ -217,7 +217,7 @@ pbwt_t * pbwt_merge (pbwt_t *b1, pbwt_t *b2)
 #### pbwt_get_reglist()
 
 ```c
-char ** pbwt_get_reglist (pbwt_t *b, size_t *nr)
+char ** pbwt_get_reglist(pbwt_t *b, size_t *nr)
 ```
 
 Extracts a unique list of regions from pbwt_t pointed to by `b`. The total number of unique regions is stored in the memory pointed to by `nr` and the string array is returned on success, while a `NULL` pointer is returned on failure.
@@ -226,7 +226,7 @@ Extracts a unique list of regions from pbwt_t pointed to by `b`. The total numbe
 
 #### pbwt_find_match()
 ```c
-int pbwt_find_match (pbwt_t *b, const double minlen)
+int pbwt_find_match(pbwt_t *b, const double minlen)
 ```
 
 The `pbwt_find_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than `minlen`
@@ -235,7 +235,7 @@ cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`
 
 #### pbwt_find_query_match()
 ```c
-int pbwt_find_query_match (pbwt_t *b, const double minlen)
+int pbwt_find_query_match(pbwt_t *b, const double minlen)
 ```
 
 The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than 
@@ -245,7 +245,7 @@ The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matche
 #### pbwt_set_match()
 
 ```c
-int pbwt_set_match (pbwt_t *b, double minlen)
+int pbwt_set_match(pbwt_t *b, double minlen)
 ```
 
 The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
@@ -253,7 +253,7 @@ The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum 
 
 #### pbwt_query_match()
 ```c
-int pbwt_query_match (pbwt_t *b, const size_t query_index, const double minlen)
+int pbwt_query_match(pbwt_t *b, const size_t query_index, const double minlen)
 ```
 
 The `pbwt_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
@@ -261,35 +261,16 @@ The `pbwt_query_match` function finds only the set maximal matches in `b` that i
 #### match_search()
 
 ```c
-int match_search (pbwt_t *b, match_t *node, size_t qbegin, size_t qend)
+int match_search(pbwt_t *b, match_t *node, size_t qbegin, size_t qend)
 ```
 
 The `match_search` function prints a list of all matches overlapping the interval `qbegin` to `qend`.
 
 
-#### match_coverage()
-
-```c
-double match_coverage (pbwt_t *b, match_t *node)
-```
-
-Calculates match coverage over the entire range of input markers. Coverage (C) is defined as
-
-```
-C = ((2 * M) / (N * (N-1))) * (X / L)
-
-where
-
-M = total number of matches
-N = number of haplotypes in pbwt
-X = average match length (cM)
-L = total length of interval covered by input markers (cM)
-```
-
 #### match_print()
 
 ```c
-void match_print (pbwt_t *b, match_t *node)
+void match_print(pbwt_t *b, match_t *node)
 ```
 
 Dumps all reported matches to `stdout`.

@@ -2,30 +2,28 @@
 #include <string.h>
 #include "pbwt.h"
 
-int
-pbwt_find_match (pbwt_t *b, const size_t minlen)
+
+int pbwt_find_match(pbwt_t *b, const size_t minlen)
 {
-    size_t i;
-    size_t j;
+    size_t i = 0;
+    size_t j = 0;
     size_t k = 0;
     size_t kk = 0;
-    size_t *mdiv;
-    size_t *mppa;
-    match_t *intree;
-
-    intree = NULL;
+    size_t *mdiv = NULL;
+    size_t *mppa = NULL;
+    match_t *intree = NULL;
 
     /* Allocate heap memory for prefix and divergence arrays */
-    mdiv = (size_t *) malloc ((b->nsam + 1) * sizeof(size_t));
+    mdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
     if (mdiv == NULL)
     {
-        perror ("libpbwt [ERROR]");
+        perror("libpbwt [ERROR]");
         return -1;
     }
-    mppa = (size_t *) malloc (b->nsam * sizeof(size_t));
+    mppa = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (mppa == NULL)
     {
-        perror ("libpbwt [ERROR]");
+        perror("libpbwt [ERROR]");
         return -1;
     }
 
@@ -38,19 +36,19 @@ pbwt_find_match (pbwt_t *b, const size_t minlen)
 
     for (i = 0; i < b->nsite; ++i)
     {
-        size_t da;
-        size_t db;
-        size_t ia;
-        size_t ib;
-        size_t *ara;
-        size_t *arb;
-        size_t *ard;
-        size_t *are;
+        size_t da = 0;
+        size_t db = 0;
+        size_t ia = 0;
+        size_t ib = 0;
+        size_t *ara = NULL;
+        size_t *arb = NULL;
+        size_t *ard = NULL;
+        size_t *are = NULL;
 
-        ara = (size_t *) malloc (b->nsam * sizeof(size_t));
-        arb = (size_t *) malloc (b->nsam * sizeof(size_t));
-        ard = (size_t *) malloc (b->nsam * sizeof(size_t));
-        are = (size_t *) malloc (b->nsam * sizeof(size_t));
+        ara = (size_t *)malloc(b->nsam * sizeof(size_t));
+        arb = (size_t *)malloc(b->nsam * sizeof(size_t));
+        ard = (size_t *)malloc(b->nsam * sizeof(size_t));
+        are = (size_t *)malloc(b->nsam * sizeof(size_t));
 
         da = i + 1;
         db = i + 1;
@@ -59,16 +57,17 @@ pbwt_find_match (pbwt_t *b, const size_t minlen)
 
         for (j = 0; j < b->nsam; ++j)
         {
-            size_t ix;
-            size_t ms;
+            size_t ix = 0;
+            size_t ms = 0;
 
             ix = mppa[j];
             ms = mdiv[j];
 
             if (ms > i - minlen)
             {
-                size_t x;
-                size_t y;
+                size_t x = 0;
+                size_t y = 0;
+
                 if (ia > 0 && ib > 0)
                 {
                     for (x = k; x < j; ++x)
@@ -76,11 +75,15 @@ pbwt_find_match (pbwt_t *b, const size_t minlen)
                         for (y = x + 1, kk = 0; y < j; ++y)
                         {
                             if (mdiv[y] > kk)
+                            {
                                 kk = mdiv[y];
+                            }
                             unsigned char aa = b->data[TWODCORD(x, b->nsite, i)];
                             unsigned char bb = b->data[TWODCORD(y, b->nsite, i)];
                             if (aa != bb)
-                                intree = match_insert (intree, mppa[x], mppa[y], kk, i);
+                            {
+                                intree = match_insert(intree, mppa[x], mppa[y], kk, i);
+                            }
                         }
                     }
                     ia = 0;
@@ -127,14 +130,14 @@ pbwt_find_match (pbwt_t *b, const size_t minlen)
             }
         }
 
-        free (ara);
-        free (arb);
-        free (ard);
-        free (are);
+        free(ara);
+        free(arb);
+        free(ard);
+        free(are);
     }
 
-    free (mdiv);
-    free (mppa);
+    free(mdiv);
+    free(mppa);
 
     b->match = intree;
 

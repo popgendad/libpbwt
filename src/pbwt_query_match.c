@@ -3,28 +3,26 @@
 #include "pbwt.h"
 
 int
-pbwt_query_match (pbwt_t *b, const double minlen)
+pbwt_query_match(pbwt_t *b, const double minlen)
 {
-    size_t i;
-    size_t j;
-    size_t k;
-    size_t *sdiv;
-    size_t *jppa;
-    match_t *intree;
-
-    intree = NULL;
+    size_t i = 0;
+    size_t j = 0;
+    size_t k = 0;
+    size_t *sdiv = NULL;
+    size_t *jppa = NULL;
+    match_t *intree = NULL;
 
     /* Allocate heap memory for prefix and divergence arrays */
-    sdiv = (size_t *) malloc ((b->nsam + 1) * sizeof(size_t));
+    sdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
     if (sdiv == NULL)
     {
-        perror ("libpbwt [ERROR]");
+        perror("libpbwt [ERROR]");
         return -1;
     }
-    jppa = (size_t *) malloc (b->nsam * sizeof(size_t));
+    jppa = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (jppa == NULL)
     {
-        perror ("libpbwt [ERROR]");
+        perror("libpbwt [ERROR]");
         return -1;
     }
 
@@ -88,9 +86,13 @@ pbwt_query_match (pbwt_t *b, const double minlen)
                     sdiv[j] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
-                        intree = match_insert (intree, jppa[j], jppa[k], sdiv[j], i);
+                    {
+                        intree = match_insert(intree, jppa[j], jppa[k], sdiv[j], i);
+                    }
                     else
-                        intree = match_insert (intree, jppa[k], jppa[j], sdiv[j], i);
+                    {
+                        intree = match_insert(intree, jppa[k], jppa[j], sdiv[j], i);
+                    }
                 }
             }
 
@@ -102,28 +104,32 @@ pbwt_query_match (pbwt_t *b, const double minlen)
                     sdiv[j+1] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
-                        intree = match_insert (intree, jppa[j], jppa[k], sdiv[j+1], i);
+                    {
+                        intree = match_insert(intree, jppa[j], jppa[k], sdiv[j+1], i);
+                    }
                     else
-                        intree = match_insert (intree, jppa[k], jppa[j], sdiv[j+1], i);
+                    {
+                        intree = match_insert(intree, jppa[k], jppa[j], sdiv[j+1], i);
+                    }
                 }
             }
         }
 
         if (i < b->nsite - 1)
         {
-            size_t da;
-            size_t db;
-            size_t ia;
-            size_t ib;
-            size_t *ara;
-            size_t *arb;
-            size_t *ard;
-            size_t *are;
+            size_t da = 0;
+            size_t db = 0;
+            size_t ia = 0;
+            size_t ib = 0;
+            size_t *ara = NULL;
+            size_t *arb = NULL;
+            size_t *ard = NULL;
+            size_t *are = NULL;
 
-            ara = (size_t *) malloc (b->nsam * sizeof(size_t));
-            arb = (size_t *) malloc (b->nsam * sizeof(size_t));
-            ard = (size_t *) malloc (b->nsam * sizeof(size_t));
-            are = (size_t *) malloc (b->nsam * sizeof(size_t));
+            ara = (size_t *)malloc(b->nsam * sizeof(size_t));
+            arb = (size_t *)malloc(b->nsam * sizeof(size_t));
+            ard = (size_t *)malloc(b->nsam * sizeof(size_t));
+            are = (size_t *)malloc(b->nsam * sizeof(size_t));
 
             da = i + 1;
             db = i + 1;
@@ -132,15 +138,19 @@ pbwt_query_match (pbwt_t *b, const double minlen)
 
             for (j = 0; j < b->nsam; ++j)
             {
-                size_t ix;
-                size_t ms;
+                size_t ix = 0;
+                size_t ms = 0;
 
                 ix = jppa[j];
                 ms = sdiv[j];
                 if (ms > da)
+                {
                     da = ms;
+                }
                 if (ms > db)
+                {
                     db = ms;
+                }
 
                 if (b->data[TWODCORD(ix, b->nsite, i)] == '0')
                 {
@@ -171,15 +181,15 @@ pbwt_query_match (pbwt_t *b, const double minlen)
                 sdiv[k] = are[j];
             }
 
-            free (ara);
-            free (arb);
-            free (ard);
-            free (are);
+            free(ara);
+            free(arb);
+            free(ard);
+            free(are);
         }
     }
 
-    free (sdiv);
-    free (jppa);
+    free(sdiv);
+    free(jppa);
 
     b->match = intree;
 
