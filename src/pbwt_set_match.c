@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include "pbwt.h"
 
-int
-pbwt_set_match (pbwt_t *b, const double minlen)
+int pbwt_set_match(pbwt_t *b, const double minlen)
 {
     size_t i = 0;
     size_t j = 0;
@@ -18,6 +17,7 @@ pbwt_set_match (pbwt_t *b, const double minlen)
         perror ("libpbwt [ERROR]");
         return -1;
     }
+
     jppa = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (jppa == NULL)
     {
@@ -132,10 +132,15 @@ pbwt_set_match (pbwt_t *b, const double minlen)
 
                 ix = jppa[j];
                 ms = sdiv[j];
+
                 if (ms > da)
+                {
                     da = ms;
+                }
                 if (ms > db)
+                {
                     db = ms;
+                }
 
                 if (b->data[TWODCORD(ix, b->nsite, i)] == '0')
                 {

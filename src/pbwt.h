@@ -16,6 +16,7 @@
 
 /* Declare hash keyed on string with double values */
 KHASH_MAP_INIT_STR(floats, double)
+KHASH_MAP_INIT_STR(string, char *)
 
 /* 2D linearization macro */
 #define TWODCORD(row, dim, col) ((row) * (dim) + (col))
@@ -80,15 +81,19 @@ extern pbwt_t * pbwt_merge(pbwt_t *, pbwt_t *);
 
 extern pbwt_t *pbwt_read(const char *);
 
+extern pbwt_t *pbwt_import_plink(const char *);
+
+extern pbwt *pbwt_convert_vcf(const char *, const char *);
+
 extern int pbwt_print(const pbwt_t *);
 
-extern char ** pbwt_get_reglist(pbwt_t *, size_t *);
+extern char **pbwt_get_reglist(pbwt_t *, size_t *);
 
 extern int pbwt_build(pbwt_t *);
 
-extern pbwt_t * pbwt_subset(pbwt_t *, const char *);
+extern pbwt_t *pbwt_subset(pbwt_t *, const char *);
 
-extern pbwt_t * pbwt_subset_with_query(pbwt_t *, const char *, const size_t);
+extern pbwt_t *pbwt_subset_with_query(pbwt_t *, const char *, const size_t);
 
 extern int pbwt_set_match(pbwt_t *, const double);
 
@@ -100,11 +105,11 @@ extern int match_search(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
 
 extern void match_print(pbwt_t *, match_t *);
 
-extern match_t * match_insert(match_t *, const size_t, const size_t, const size_t, const size_t);
+extern match_t *match_insert(match_t *, const size_t, const size_t, const size_t, const size_t);
 
 extern size_t match_count(pbwt_t *, match_t *, double *);
 
-extern match_t * match_new(const size_t, const size_t, const size_t, const size_t);
+extern match_t *match_new(const size_t, const size_t, const size_t, const size_t);
 
 extern int match_overlap(const size_t, const size_t, const size_t, const size_t);
 
