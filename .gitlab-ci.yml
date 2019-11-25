@@ -1,4 +1,4 @@
-image: debian
+image: debian:latest
 
 before_script:
   - apt-get update
