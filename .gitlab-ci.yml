@@ -2,7 +2,7 @@ image: debian:latest
 
 before_script:
   - apt-get update
-  - apt-get install -y gcc make zlib1g-dev libhts-dev
+  - apt-get install -y gcc make zlib1g-dev libhts-dev git
   - git clone https://popgendad@gmail.com:${CI_JOB_TOKEN}@gitlab.com.evolgen/libplink_lite.git
   - cd libplink_lite
   - make
