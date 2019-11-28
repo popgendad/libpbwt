@@ -100,7 +100,9 @@ extern int pbwt_find_match(pbwt_t *, const size_t);
 
 extern int pbwt_query_match(pbwt_t *, const double);
 
-extern int match_search(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
+extern int match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
+
+extern int match_search(pbwt_t *, match_t *, double **, size_t, size_t);
 
 extern void match_print(pbwt_t *, match_t *);
 

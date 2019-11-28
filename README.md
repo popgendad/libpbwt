@@ -277,10 +277,18 @@ The `pbwt_query_match` function finds only the set maximal matches in `b` that i
 #### match_search()
 
 ```c
-int match_search(pbwt_t *b, match_t *node, size_t qbegin, size_t qend)
+int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend)
 ```
 
 The `match_search` function prints a list of all matches overlapping the interval `qbegin` to `qend`.
+
+#### match_regsearch()
+
+```c
+int match_regsearch(pbwt_t *b, match_t *node, khash(double) *h, size_t qbegin, size_t qend)
+```
+
+The `match_regsearch` function prints a list of all matches overlapping the interval `qbegin` to `qend`.
 
 
 #### match_print()

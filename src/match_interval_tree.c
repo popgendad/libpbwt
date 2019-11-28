@@ -25,8 +25,27 @@ match_t *match_new(const size_t first, const size_t second, const size_t begin, 
     return node;
 }
 
+int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend)
+{
+    if (node == NULL)
+    {
+        return 0;
+    }
 
-int match_search(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
+    if (match_overlap(qbegin, qend, node->begin, node->end))
+    {
+        cmatrix[node->first][node->second] += b->cm[node->end] - b->cm[node->begin];
+    }
+
+    if (node->left != NULL && node->left->max >= qbegin)
+    {
+        return match_search(b, node->left, cmatrix, qbegin, qend);
+    }
+
+    return match_search(b, node->right, cmatrix, qbegin, qend);    
+}
+
+int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
 {
     if (node == NULL)
     {
@@ -63,10 +82,10 @@ int match_search(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegi
 
     if (node->left != NULL && node->left->max >= qbegin)
     {
-        return match_search(b, node->left, result, qbegin, qend);
+        return match_regsearch(b, node->left, result, qbegin, qend);
     }
 
-    return match_search(b, node->right, result, qbegin, qend);
+    return match_regsearch(b, node->right, result, qbegin, qend);
 }
 
 

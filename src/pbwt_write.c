@@ -13,9 +13,9 @@ int pbwt_write(const char *outfile, pbwt_t *b)
         pbwt_compress(b);
     }
 
-    size_t i = 0;
-    size_t j = 0;
-    size_t r = 0;
+    uint32_t i = 0;
+    uint32_t j = 0;
+    uint32_t r = 0;
     FILE *fout;
 
     /* Open the binary output file stream */
@@ -29,14 +29,14 @@ int pbwt_write(const char *outfile, pbwt_t *b)
     /* Write the data to the output file */
 
     /* Write the number of sites */
-    if (fwrite((const void *)&(b->nsite), sizeof(size_t), 1, fout) != 1)
+    if (fwrite((const void *)&(b->nsite), sizeof(uint32_t), 1, fout) != 1)
     {
         io_error(fout);
         return -1;
     }
 
     /* Write the number of samples */
-    r = fwrite((const void *)&(b->nsam), sizeof(size_t), 1, fout);
+    r = fwrite((const void *)&(b->nsam), sizeof(uint32_t), 1, fout);
     if (r != 1)
     {
         io_error(fout);
@@ -44,7 +44,7 @@ int pbwt_write(const char *outfile, pbwt_t *b)
     }
 
     /* Write the size of the haplotype data */
-    r = fwrite((const void *)&(b->datasize), sizeof(size_t), 1, fout);
+    r = fwrite((const void *)&(b->datasize), sizeof(uint32_t), 1, fout);
     if (r != 1)
     {
         io_error(fout);
@@ -52,7 +52,7 @@ int pbwt_write(const char *outfile, pbwt_t *b)
     }
 
     /* Write the haplotype data */
-    r = fwrite((const void *)b->data, sizeof(unsigned char), b->datasize, fout);
+    r = fwrite((const void *)b->data, sizeof(uint64_t), b->datasize, fout);
     if (r != b->datasize)
     {
         io_error(fout);
