@@ -8,7 +8,7 @@ pbwt_t *pbwt_import_plink(const char *instub)
     size_t i = 0;
     size_t len = 0;
     size_t q = 0;
-    khint_t z;
+    khint_t z = 0;
     plink_t *p = NULL;
     pbwt_t *b = NULL;
 
@@ -30,11 +30,12 @@ pbwt_t *pbwt_import_plink(const char *instub)
     for (i = 0; i < p->nsam; ++i)
     {
         memcpy(&b->data[TWODCORD(2*i, b->nsite, 0)],
-            hap2uchar(p, i, 0),
-            b->nsite * sizeof(unsigned char));
+               hap2uchar(p, i, 0),
+               b->nsite * sizeof(unsigned char));
+
         memcpy(&b->data[TWODCORD(2*i+1, b->nsite, 0)],
-            hap2uchar(p, i, 1),
-            b->nsite * sizeof(unsigned char));
+               hap2uchar(p, i, 1),
+               b->nsite * sizeof(unsigned char));
         len = strlen(p->fam[i].iid);
         b->sid[2*i] = (char *)malloc(len + 3);
         strcpy(b->sid[2*i], p->fam[i].iid);

@@ -2,9 +2,8 @@
 #include <string.h>
 #include "pbwt.h"
 
-int
-pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
-          const char *h1, const char *h2)
+int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
+              const char *h1, const char *h2)
 {
     int has_reg = 0;
     size_t i = 0;
@@ -14,9 +13,13 @@ pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
 
     /* Determine if a sample region is provided */
     if (new_reg)
+    {
         has_reg = TRUE;
+    }
     else
+    {
         has_reg = FALSE;
+    }
 
     /* Check length of input haplotype sequences */
     if (strlen(h1) != b->nsite || strlen(h2) != b->nsite)

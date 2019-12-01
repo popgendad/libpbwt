@@ -15,12 +15,15 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
 
     /* Allocate heap memory for prefix and divergence arrays */
     mdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
+
     if (mdiv == NULL)
     {
         perror("libpbwt [ERROR]");
         return -1;
     }
+
     mppa = (size_t *)malloc(b->nsam * sizeof(size_t));
+
     if (mppa == NULL)
     {
         perror("libpbwt [ERROR]");

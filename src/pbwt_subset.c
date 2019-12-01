@@ -2,8 +2,7 @@
 #include <string.h>
 #include "pbwt.h"
 
-pbwt_t *
-pbwt_subset(pbwt_t *b, const char *reg)
+pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
 {
     /* Check to make sure the pbwt has region information */
     if (b->reg == NULL)
@@ -91,8 +90,7 @@ pbwt_subset(pbwt_t *b, const char *reg)
     return p;
 }
 
-pbwt_t *
-pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
+pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
 {
     /* Check to make sure the pbwt has region information */
     if (b->reg == NULL)

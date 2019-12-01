@@ -3,8 +3,7 @@
 
 static void io_error(FILE *);
 
-pbwt_t *
-pbwt_read(const char *infile)
+pbwt_t *pbwt_read(const char *infile)
 {
     size_t i = 0;
     size_t j = 0;
@@ -18,7 +17,7 @@ pbwt_read(const char *infile)
     fin = fopen(infile, "rb");
     if (fin == NULL)
     {
-        perror ("libpbwt [ERROR]");
+        perror("libpbwt [ERROR]");
         return NULL;
     }
 
@@ -51,7 +50,7 @@ pbwt_read(const char *infile)
     r = fread(&(b->datasize), sizeof(size_t), 1, fin);
     if (r != 1)
     {
-        io_error (fin);
+        io_error(fin);
         return NULL;
     }
 
@@ -196,14 +195,13 @@ pbwt_read(const char *infile)
     return b;
 }
 
-static void
-io_error(FILE *f)
+static void io_error(FILE *f)
 {
-    if (ferror (f))
+    if (ferror(f))
     {
         fputs("libpbwt [ERROR]: I/O failure", stderr);
     }
-    else if (feof (f))
+    else if (feof(f))
     {
         fputs("libpbwt [ERROR]: truncated input file", stderr);
     }

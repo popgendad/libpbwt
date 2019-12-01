@@ -29,14 +29,17 @@ pbwt_t *pbwt_merge(pbwt_t *b1, pbwt_t *b2)
     {
         ret = pbwt_uncompress(b1);
     }
+
     if (ret < 0)
     {
         return NULL;
     }
+
     if (b2->is_compress == TRUE)
     {
         ret = pbwt_uncompress(b2);
     }
+
     if (ret < 0)
     {
         return NULL;

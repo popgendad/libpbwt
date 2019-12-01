@@ -38,7 +38,7 @@ char **pbwt_get_reglist(pbwt_t *b, size_t *nr)
 
 int cmp_strings(const void *a, const void *b)
 {
-    return strcmp (*(const char**)a, *(const char**)b);
+    return strcmp(*(const char**)a, *(const char**)b);
 }
 
 

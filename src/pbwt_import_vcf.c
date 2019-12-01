@@ -4,6 +4,8 @@
 #include <plink_lite.h>
 #include "pbwt.h"
 
+#define MAX_STRLEN 256
+
 khash_t(string) *read_popmap(const char *);
 
 int check_popmap(const bcf_hdr_t *, const khash_t(string) *);
@@ -88,19 +90,18 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
     /* Read through single site entry in VCF */
     while (bcf_read(fin, hdr, rec) == 0)
     {
-        const char *chr;
+        const char *chr = NULL;
         int32_t ngt = 0;
         int32_t *gt = NULL;
         khint_t it = 0;
- 
+
         bcf_unpack(rec, BCF_UN_STR);
         bcf_unpack(rec, BCF_UN_INFO);
         chr = bcf_seqname(hdr, rec);
- 
+
         b->chr[site_counter] = atoi(chr);
         b->rsid[site_counter] = strdup(rec->d.id);
         b->cm[site_counter] = rec->d.info[0].v1.f;
- 
         ngt = bcf_get_genotypes(hdr, rec, &gt, &ngt) / nsam;
 
         /* Iterate through sample genotypes */
@@ -187,6 +188,7 @@ int check_popmap(const bcf_hdr_t *h, const khash_t(string) *pdb)
             return -1;
         }
     }
+
     return nsam;
 }
 
@@ -195,8 +197,8 @@ khash_t(string) *read_popmap(const char *popfile)
 {
     khash_t(string) *popdb = NULL;
     khint_t it = 0;
-    char sid[256];
-    char pop[256];
+    char sid[MAX_STRLEN];
+    char pop[MAX_STRLEN];
     int counter = 0;
     FILE *instream;
 
@@ -216,20 +218,26 @@ khash_t(string) *read_popmap(const char *popfile)
         int ns = 0;
 
         ns = fscanf(instream, "%s\t%s\n", sid, pop);
+
         if (ns != 2)
         {
             fputs("libpbwt [ERROR] cannot read popmap file\n", stderr);
             return NULL;
         }
+
         it = kh_put(string, popdb, sid, &absent);
+
         if (absent)
         {
             kh_key(popdb, it) = strdup(sid);
         }
+
         kh_value(popdb, it) = strdup(pop);
     	counter++;
     }
+
     fclose(instream);
+
     fprintf(stderr, "libpbwt [INFO]: %d entries from %s read into pop database\n", counter, popfile);
 
     return popdb;

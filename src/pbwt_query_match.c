@@ -2,8 +2,7 @@
 #include <stdlib.h>
 #include "pbwt.h"
 
-int
-pbwt_query_match(pbwt_t *b, const double minlen)
+int pbwt_query_match(pbwt_t *b, const double minlen)
 {
     size_t i = 0;
     size_t j = 0;
@@ -14,12 +13,15 @@ pbwt_query_match(pbwt_t *b, const double minlen)
 
     /* Allocate heap memory for prefix and divergence arrays */
     sdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
+
     if (sdiv == NULL)
     {
         perror("libpbwt [ERROR]");
         return -1;
     }
+
     jppa = (size_t *)malloc(b->nsam * sizeof(size_t));
+
     if (jppa == NULL)
     {
         perror("libpbwt [ERROR]");
@@ -59,7 +61,9 @@ pbwt_query_match(pbwt_t *b, const double minlen)
             }
 
             if (mc)
+            {
                 continue;
+            }
 
             if (sdiv[j] >= sdiv[j+1])
             {
@@ -76,12 +80,15 @@ pbwt_query_match(pbwt_t *b, const double minlen)
             }
 
             if (mc)
+            {
                 continue;
+            }
 
             for (k = m + 1; k < j; ++k)
             {
                 /* Evaluate whether match should be recorded */
                 double match_dist = b->cm[i] - b->cm[sdiv[j]];
+
                 if (b->is_query[jppa[j]] == TRUE && b->is_query[jppa[k]] == FALSE &&
                     sdiv[j] < i && match_dist >= minlen)
                 {
@@ -100,6 +107,7 @@ pbwt_query_match(pbwt_t *b, const double minlen)
             {
                 /* Evaluate whether match should be recorded */
                 double match_dist = b->cm[i] - b->cm[sdiv[j+1]];
+
                 if (b->is_query[jppa[j]] == TRUE && b->is_query[jppa[k]] == FALSE &&
                     sdiv[j+1] < i && match_dist >= minlen)
                 {

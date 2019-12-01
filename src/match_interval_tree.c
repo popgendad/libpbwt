@@ -42,7 +42,7 @@ int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size
         return match_search(b, node->left, cmatrix, qbegin, qend);
     }
 
-    return match_search(b, node->right, cmatrix, qbegin, qend);    
+    return match_search(b, node->right, cmatrix, qbegin, qend);
 }
 
 int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
@@ -92,20 +92,23 @@ int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qb
 size_t match_count(pbwt_t *b, match_t *node, double *al)
 {
     static size_t count = 0;
+
     if (node == NULL)
     {
         return count;
     }
+
     match_count(b, node->left, al);
     *al += b->cm[node->end] - b->cm[node->begin];
     count++;
     match_count(b, node->right, al);
+
     return count;
 }
 
 
 match_t *match_insert(match_t *node, const size_t first, const size_t second,
-             const size_t begin, const size_t end)
+                      const size_t begin, const size_t end)
 {
     /* Don't add if it is a duplicate entry */
     if (node && node->first == first && node->second == second && 
@@ -141,12 +144,5 @@ match_t *match_insert(match_t *node, const size_t first, const size_t second,
 
 int match_overlap(const size_t begin1, const size_t end1, const size_t begin2, const size_t end2)
 {
-    if (begin1 <= end2 && begin2 <= end1)
-    {
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
+    return begin1 <= end2 && begin2 <= end1 ? 1 : 0;
 }

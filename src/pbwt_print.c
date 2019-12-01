@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include "pbwt.h"
 
-int
-pbwt_print(const pbwt_t *b)
+int pbwt_print(const pbwt_t *b)
 {
     /* Check if pointer is NULL */
     if (b == NULL)

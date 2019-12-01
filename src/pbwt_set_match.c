@@ -12,13 +12,15 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
 
     /* Allocate heap memory for prefix and divergence arrays */
     sdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
+
     if (sdiv == NULL)
     {
-        perror ("libpbwt [ERROR]");
+        perror("libpbwt [ERROR]");
         return -1;
     }
 
     jppa = (size_t *)malloc(b->nsam * sizeof(size_t));
+
     if (jppa == NULL)
     {
         perror("libpbwt [ERROR]");
@@ -58,7 +60,9 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
             }
 
             if (mc)
+            {
                 continue;
+            }
 
             if (sdiv[j] >= sdiv[j+1])
             {
@@ -75,18 +79,25 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
             }
 
             if (mc)
+            {
                 continue;
+            }
 
             for (k = m + 1; k < j; ++k)
             {
                 /* Evaluate whether match should be recorded */
                 double match_dist = b->cm[i] - b->cm[sdiv[j]];
+
                 if (sdiv[j] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
+                    {
                         intree = match_insert(intree, jppa[j], jppa[k], sdiv[j], i);
+                    }
                     else
+                    {
                         intree = match_insert(intree, jppa[k], jppa[j], sdiv[j], i);
+                    }
                 }
             }
 
@@ -94,12 +105,17 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
             {
                 /* Evaluate whether match should be recorded */
                 double match_dist = b->cm[i] - b->cm[sdiv[j+1]];
+
                 if (sdiv[j+1] < i && match_dist >= minlen)
                 {
                     if (jppa[j] < jppa[k])
+                    {
                         intree = match_insert(intree, jppa[j], jppa[k], sdiv[j+1], i);
+                    }
                     else
+                    {
                         intree = match_insert(intree, jppa[k], jppa[j], sdiv[j+1], i);
+                    }
                 }
             }
         }

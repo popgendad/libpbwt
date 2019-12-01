@@ -46,42 +46,42 @@ void pbwt_destroy(pbwt_t *b)
             }
             free(b->rsid);
         }
- 
+
         if (b->is_query != NULL)
         {
             free(b->is_query);
         }
- 
+
         if (b->data != NULL)
         {
             free(b->data);
         }
- 
+
         if (b->div != NULL)
         {
             free(b->div);
         }
- 
+
         if (b->ppa != NULL)
         {
             free(b->ppa);
         }
- 
+
         if (b->chr != NULL)
         {
             free(b->chr);
         }
- 
+
         if (b->cm != NULL)
         {
             free(b->cm);
         }
- 
+
         if (b->match != NULL)
         {
             match_destroy(b->match);
         }
- 
+
         free(b);
     }
 

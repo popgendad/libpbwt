@@ -16,6 +16,7 @@ pbwt_t *pbwt_copy(pbwt_t *b)
     {
         ret = pbwt_uncompress(b);
     }
+
     if (ret > 0)
     {
         return NULL;
