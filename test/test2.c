@@ -52,7 +52,7 @@ main(int argc, char *argv[])
     /* Find all set-maximal matches */
     v = pbwt_query_match(b, minlen);
 
-    match_search(b, b->match, result, qstart, qend);
+    match_regsearch(b, b->match, result, qstart, qend);
 
     /* Print hash */
     size_t i = 0;
