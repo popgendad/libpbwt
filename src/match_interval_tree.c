@@ -35,6 +35,7 @@ int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size
     if (match_overlap(qbegin, qend, node->begin, node->end))
     {
         cmatrix[node->first][node->second] += b->cm[node->end] - b->cm[node->begin];
+        cmatrix[node->second][node->first] += b->cm[node->end] - b->cm[node->begin];
     }
 
     if (node->left != NULL && node->left->max >= qbegin)
