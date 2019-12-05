@@ -8,8 +8,13 @@ The positional Burrows-Wheeler transform is an efficient method for haplotype st
 
 ## Installation
 
-A Makefile is provided with the `libpbwt` package. There are two dependencies outside of the standard C library, including the DEFLATE compression library `zlib` and the VCF I/O routines in `htslib`. The default installation directories are `/usr/lib` for the both the static and shared library files (`libpbwt.a` and `libpbwt.so` respectively) and `/usr/include` for the `pbwt.h`  header file. Below is an example of installing the library.
+A Makefile is provided with the `libpbwt` package. There are three dependencies outside of the standard C library, including
 
+1. the DEFLATE compression library `zlib`
+2. the PLINK format I/O routines in `libplink_lite`
+3. the VCF I/O routines in `htslib`
+
+The default installation directories are `/usr/lib` for the both the static and shared library files (`libpbwt.a` and `libpbwt.so` respectively) and `/usr/include` for the `pbwt.h` header file. Below is an example of installing the library.
 
 ```
 git clone git@gitlab.com/evolgen/libpbwt.git
