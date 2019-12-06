@@ -143,7 +143,7 @@ This function deallocates all memory contained in the `pbwt_t` data structure re
 const char pbwt_version(void)
 ```
 
-The `print_version` function returns a constant character array holding the version number of the library.
+The `pbwt_version` function returns a constant character array holding the version number of the library.
 
 
 ### I/O functions
