@@ -7,7 +7,7 @@
 const char version[] = xstr(VERSION);
 #endif
 
-const char *print_version(void)
+const char *pbwt_version(void)
 {
 	return version;
 }

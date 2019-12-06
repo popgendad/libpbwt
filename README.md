@@ -137,10 +137,10 @@ void pbwt_destroy(pbwt_t *b)
 
 This function deallocates all memory contained in the `pbwt_t` data structure referred to by `b`. The variable `b` cannot be re-used after `pbwt_destroy()` is called, rather it must be re-initialized with the `pbwt_init()` function. This function does not return a value.
 
-#### print_version()
+#### pbwt_version()
 
 ```c
-const char print_version(void)
+const char pbwt_version(void)
 ```
 
 The `print_version` function returns a constant character array holding the version number of the library.
