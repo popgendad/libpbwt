@@ -180,13 +180,6 @@ int pbwt_write(const char *outfile, pbwt_t *b)
 
 The above function will write the `pbwt_t` data structure pointed to by `b` and write it to a `.pbwt` format file named `outfile`. If a file by the name specified by `outfile` exists on disk, the function will overwrite that file. If it does not have permission to overwrite that file, the function will return a value of -1. The function will compress the binary haplotype data contained in the `pbwt_t` data structure before writing the file. The function will return 0 on success and -1 on error.
 
-#### pbwt_print()
-
-```c
-int pbwt_print(const pbwt_t *b)
-```
-
-The `pbwt_print()` function will print a representation of the `pbwt_t` data structure to `stdout`. The function will return 0 on success and -1 on failure.
 
 ### Functions that operate on pbwt
 

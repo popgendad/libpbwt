@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
     v = pbwt_set_match(b, 0.5);
     match_search(b, b->match, cmatrix, 0, nsites-1);
-    match_print(b, b->match);
-
+    /*match_print(b, b->match);*/
+    elementary_print(b, b->match);
 	return 0;
 }

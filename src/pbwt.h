@@ -84,8 +84,6 @@ extern pbwt_t *pbwt_import_plink(const char *);
 
 extern pbwt_t *pbwt_import_vcf(const char *, const char *);
 
-extern int pbwt_print(const pbwt_t *);
-
 extern char **pbwt_get_reglist(pbwt_t *, size_t *);
 
 extern int pbwt_build(pbwt_t *);
@@ -105,6 +103,8 @@ extern int match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_
 extern int match_search(pbwt_t *, match_t *, double **, size_t, size_t);
 
 extern void match_print(pbwt_t *, match_t *);
+
+extern void elementary_print(pbwt_t *, match_t *);
 
 extern match_t *match_insert(match_t *, const size_t, const size_t, const size_t, const size_t);
 

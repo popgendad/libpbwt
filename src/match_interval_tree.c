@@ -57,7 +57,7 @@ int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qb
     if (match_overlap(qbegin, qend, node->begin, node->end))
     {
         int a = 0;
-        khint_t k;
+        khint_t k = 0;
         double length = b->cm[node->end] - b->cm[node->begin];
         size_t qs = 0;
 

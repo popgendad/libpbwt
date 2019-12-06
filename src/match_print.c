@@ -16,3 +16,23 @@ void match_print(pbwt_t *b, match_t *root)
 
     match_print(b, root->right);
 }
+
+void elementary_print(pbwt_t *b, match_t *root)
+{
+	if (root == NULL)
+	{
+		return;
+	}
+	if (!root->left && !root->right)
+	{
+		printf("%zu\t%zu\n", root->begin, root->end);
+	}
+	if (root->left)
+	{
+		elementary_print(b, root->left);
+	}
+	if (root->right)
+	{
+		elementary_print(b, root->right);
+	}
+}
