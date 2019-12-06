@@ -8,6 +8,9 @@ int main(int argc, char *argv[])
     size_t nsites = 0;
     pbwt_t *b = NULL;
 
+    const char *jj = print_version();
+    printf("version: %s\n", jj);
+
     /* Read in the pbwt file from disk */
     b = pbwt_read(argv[1]);
     if (b == NULL)

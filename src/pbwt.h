@@ -114,4 +114,6 @@ extern match_t *match_new(const size_t, const size_t, const size_t, const size_t
 
 extern int match_overlap(const size_t, const size_t, const size_t, const size_t);
 
+extern const char *print_version(void);
+
 #endif

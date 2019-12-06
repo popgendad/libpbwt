@@ -1,14 +1,15 @@
-CC     := gcc
-CFLAGS := -Wall -O2
-LIBS   := -lz -lplink_lite -lhts
-PREFIX := /usr
-H_DIR  := $(PREFIX)/include
-L_DIR  := $(PREFIX)/lib
-SRCS   := $(wildcard src/*.c)
-DDIR   := build-static
-SDIR   := build-dynamic
-DOBJS  := $(SRCS:src/%.c=$(DDIR)/%.o)
-SOBJS  := $(SRCS:src/%.c=$(SDIR)/%.o)
+CC      := gcc
+VERSION := $(shell cat VERSION)
+CFLAGS  := -Wall -O2 -D VERSION=$(VERSION)
+LIBS    := -lz -lplink_lite -lhts
+PREFIX  := /usr
+H_DIR   := $(PREFIX)/include
+L_DIR   := $(PREFIX)/lib
+SRCS    := $(wildcard src/*.c)
+DDIR    := build-static
+SDIR    := build-dynamic
+DOBJS   := $(SRCS:src/%.c=$(DDIR)/%.o)
+SOBJS   := $(SRCS:src/%.c=$(SDIR)/%.o)
 
 all: libpbwt.so libpbwt.a
 
