@@ -10,7 +10,6 @@ match_t *match_new(const size_t first, const size_t second, const size_t begin, 
     node = (match_t *)malloc(sizeof(match_t));
     if (node == NULL)
     {
-        perror("libpbwt [ERROR]");
         return NULL;
     }
 

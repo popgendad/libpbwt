@@ -24,14 +24,12 @@ int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
     /* Check length of input haplotype sequences */
     if (strlen(h1) != b->nsite || strlen(h2) != b->nsite)
     {
-        fputs("libpbwt [ERROR]: pbwt_add(), input haplotype is wrong length", stderr);
         return -1;
     }
 
     /* Check that new sample identifier string is not NULL */
     if (new_sid == NULL)
     {
-        fputs("libpbwt [ERROR]: pbwt_add(), input sample identifier is NULL", stderr);
         return -1;
     }
 

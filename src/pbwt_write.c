@@ -22,7 +22,6 @@ int pbwt_write(const char *outfile, pbwt_t *b)
     fout = fopen(outfile, "wb");
     if (!fout)
     {
-        perror("libpbwt [ERROR]");
         return -1;
     }
 

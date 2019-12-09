@@ -11,7 +11,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b = (pbwt_t *)malloc(sizeof(pbwt_t));
     if (b == NULL)
     {
-        perror ("libpbwt [ERROR]");
         return NULL;
     }
 
@@ -24,7 +23,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->is_query = (int *)malloc(nsam * sizeof(int));
     if (b->is_query == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -32,7 +30,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->ppa = (size_t *)malloc(nsam * sizeof(size_t));
     if (b->ppa == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -40,7 +37,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->div = (size_t *)malloc(nsam * sizeof(size_t));
     if (b->div == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -48,7 +44,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->sid = (char **)malloc(nsam * sizeof(char *));
     if (b->sid == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -56,7 +51,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->reg = (char **)malloc(nsam * sizeof(char *));
     if (b->reg == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -64,7 +58,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->data = (unsigned char *)malloc(nsite * nsam * sizeof(unsigned char));
     if (b->data == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -72,7 +65,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->chr = (int *)malloc(nsite * sizeof(int));
     if (b->chr == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -80,7 +72,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->cm = (double *)malloc(nsite * sizeof(double));
     if (b->cm == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }
@@ -88,7 +79,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->rsid = (char **)malloc(nsite * sizeof(char *));
     if (b->rsid == NULL)
     {
-        perror("libpbwt [ERROR]");
         pbwt_destroy(b);
         return NULL;
     }

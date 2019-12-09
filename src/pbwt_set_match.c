@@ -15,7 +15,6 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
 
     if (sdiv == NULL)
     {
-        perror("libpbwt [ERROR]");
         return -1;
     }
 
@@ -23,7 +22,6 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
 
     if (jppa == NULL)
     {
-        perror("libpbwt [ERROR]");
         return -1;
     }
 

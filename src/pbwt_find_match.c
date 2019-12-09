@@ -18,7 +18,6 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
 
     if (mdiv == NULL)
     {
-        perror("libpbwt [ERROR]");
         return -1;
     }
 
@@ -26,7 +25,6 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
 
     if (mppa == NULL)
     {
-        perror("libpbwt [ERROR]");
         return -1;
     }
 

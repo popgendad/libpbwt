@@ -17,7 +17,6 @@ pbwt_t *pbwt_read(const char *infile)
     fin = fopen(infile, "rb");
     if (fin == NULL)
     {
-        perror("libpbwt [ERROR]");
         return NULL;
     }
 
@@ -98,7 +97,6 @@ pbwt_t *pbwt_read(const char *infile)
         b->sid[i] = (char *)malloc((len + 1) * sizeof(char));
         if (b->sid[i] == NULL)
         {
-            perror("libpbwt [ERROR]");
             return NULL;
         }
 
@@ -125,7 +123,6 @@ pbwt_t *pbwt_read(const char *infile)
         b->reg[i] = (char *)malloc((len + 1) * sizeof(char));
         if (b->reg[i] == NULL)
         {
-            perror("libpbwt [ERROR]");
             return NULL;
         }
 
@@ -157,7 +154,6 @@ pbwt_t *pbwt_read(const char *infile)
         b->rsid[j] = (char *)malloc((len + 1) * sizeof(char));
         if (b->rsid[j] == NULL)
         {
-            perror("libpbwt [ERROR]");
             return NULL;
         }
 

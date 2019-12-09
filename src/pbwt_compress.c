@@ -18,7 +18,6 @@ int pbwt_uncompress(pbwt_t *b)
     g = (unsigned char *)malloc(b->nsite * b->nsam * sizeof(unsigned char));
     if (g == NULL)
     {
-        perror("libpbwt [ERROR]");
         return -1;
     }
 
@@ -61,7 +60,6 @@ int pbwt_compress(pbwt_t *b)
     f = (unsigned char *)malloc(b->nsam * b->nsite * sizeof(unsigned char));
     if (f == NULL)
     {
-        perror("libpbwt [ERROR]");
         return -1;
     }
 
@@ -77,7 +75,6 @@ int pbwt_compress(pbwt_t *b)
     /* Deflate the data */
     if (deflateInit(&defstream, Z_DEFAULT_COMPRESSION) != Z_OK)
     {
-        fputs("libpwbt [ERROR]: cannot initialize compression stream", stderr);
         return -1;
     }
     deflate(&defstream, Z_FINISH);

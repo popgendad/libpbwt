@@ -7,7 +7,6 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
     /* Check to make sure the pbwt has region information */
     if (b->reg == NULL)
     {
-        fputs("libpbwt [ERROR]: cannot subset pbwt, no region information available", stderr);
         return NULL;
     }
 
@@ -29,7 +28,6 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
     /* Check to make sure we have non-null subset */
     if (nhap_read == 0)
     {
-        fprintf(stderr, "libpbwt [ERROR]: failed to find samples belonging to region: %s\n", reg);
         return NULL;
     }
 
@@ -37,7 +35,6 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
     p = pbwt_init(b->nsite, nhap_read);
     if (p == NULL)
     {
-        fputs("libpbwt [ERROR]: problem initialize subset pbwt structure", stderr);
         return NULL;
     }
 
@@ -49,7 +46,6 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
             /* Buffer overflow check */
             if (nhap_write > nhap_read)
             {
-                fputs("libpbwt [ERROR]: problem with subset function", stderr);
                 return NULL;
             }
 
@@ -83,19 +79,18 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
     /* Check to make sure we wrote the right amount of data */
     if (nhap_write < nhap_read)
     {
-        fputs ("libpbwt [ERROR]: problem with subset function", stderr);
         return NULL;
     }
 
     return p;
 }
 
+
 pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
 {
     /* Check to make sure the pbwt has region information */
     if (b->reg == NULL)
     {
-        fputs("libpbwt [ERROR]: cannot subset pbwt, no region information available", stderr);
         return NULL;
     }
 
@@ -117,7 +112,6 @@ pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
     /* Check to make sure we have non-null subset */
     if (nhap_read == 0)
     {
-        fprintf(stderr, "libpbwt [ERROR]: failed to find samples belonging to region: %s\n", reg);
         return NULL;
     }
 
@@ -125,7 +119,6 @@ pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
     p = pbwt_init(b->nsite, nhap_read);
     if (p == NULL)
     {
-        fputs("libpbwt [ERROR]: problem initialize subset pbwt structure", stderr);
         return NULL;
     }
 
@@ -137,7 +130,6 @@ pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
             /* Buffer overflow check */
             if (nhap_write > nhap_read)
             {
-                fputs("libpbwt [ERROR]: problem with subset function", stderr);
                 return NULL;
             }
 
@@ -180,7 +172,6 @@ pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
     /* Check to make sure we wrote the right amount of data */
     if (nhap_write < nhap_read)
     {
-        fputs("libpbwt [ERROR]: problem with subset function", stderr);
         return NULL;
     }
 

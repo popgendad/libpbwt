@@ -184,7 +184,6 @@ int check_popmap(const bcf_hdr_t *h, const khash_t(string) *pdb)
         it = kh_get(string, pdb, sid);
         if (it == kh_end(pdb))
         {
-            fprintf(stderr, "libpbwt [ERROR]: sample not in population database: %s\n", sid);
             return -1;
         }
     }
@@ -221,7 +220,6 @@ khash_t(string) *read_popmap(const char *popfile)
 
         if (ns != 2)
         {
-            fputs("libpbwt [ERROR] cannot read popmap file\n", stderr);
             return NULL;
         }
 
@@ -236,9 +234,8 @@ khash_t(string) *read_popmap(const char *popfile)
     	counter++;
     }
 
+    /* Close input file stream */
     fclose(instream);
-
-    fprintf(stderr, "libpbwt [INFO]: %d entries from %s read into pop database\n", counter, popfile);
 
     return popdb;
 }
