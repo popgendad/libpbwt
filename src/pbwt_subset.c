@@ -144,7 +144,7 @@ pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
                    &(b->data[TWODCORD(i, b->nsite, 0)]),
                    b->nsite * sizeof(unsigned char));
 
-            p_is_query[nhap_write] = i == query ? TRUE : FALSE;
+            p->is_query[nhap_write] = i == query ? TRUE : FALSE;
 
             /* Iterate number of subset haplotypes */
             ++nhap_write;
