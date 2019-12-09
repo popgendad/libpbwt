@@ -12,14 +12,7 @@ int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
     size_t new_index2 = 0;
 
     /* Determine if a sample region is provided */
-    if (new_reg)
-    {
-        has_reg = TRUE;
-    }
-    else
-    {
-        has_reg = FALSE;
-    }
+    has_reg = new_reg ? TRUE : FALSE;
 
     /* Check length of input haplotype sequences */
     if (strlen(h1) != b->nsite || strlen(h2) != b->nsite)
@@ -54,7 +47,7 @@ int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
     b->reg = (char **)realloc(b->reg, b->nsam * sizeof(char *));
 
     /* Add new region identifier to list */
-    if (has_reg == TRUE)
+    if (has_reg)
     {
         len = strlen(new_reg);
         b->reg[new_index1] = (char *)malloc(len * sizeof(char));

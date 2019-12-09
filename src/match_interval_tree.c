@@ -60,14 +60,7 @@ int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qb
         double length = b->cm[node->end] - b->cm[node->begin];
         size_t qs = 0;
 
-        if (b->is_query[node->first])
-        {
-            qs = node->second;
-        }
-        else
-        {
-            qs = node->first;
-        }
+        qs = b->is_query[node->first] ? node->second : node->first;
         k = kh_put(floats, result, b->reg[qs], &a);
         if (a == 0)
         {

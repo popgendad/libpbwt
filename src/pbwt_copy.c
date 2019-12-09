@@ -12,7 +12,7 @@ pbwt_t *pbwt_copy(pbwt_t *b)
     /* Initialize new pbwt */
     bc = pbwt_init(b->nsite, b->nsam);
 
-    if (b->is_compress == TRUE)
+    if (b->is_compress)
     {
         ret = pbwt_uncompress(b);
     }
