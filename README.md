@@ -253,12 +253,16 @@ Extracts a unique list of regions from pbwt_t pointed to by `b`. The total numbe
 khash_t(integer) *pbwt_get_regcount(pbwt_t *b)
 ```
 
+Returns a hash table keyed on region identifier strings and the associated value is the count of the number of samples in the PBWT from that region.
+
 
 #### pbwt_get_sampdict()
 
 ```c
-khash_t(string) *pbwt_get_sampdict(pbwt_t *b)
+khash_t(integer) *pbwt_get_sampdict(pbwt_t *b)
 ```
+
+Returns a hash table keyed on sample identifier strings and the associated value is the index of the sample in the PBWT.
 
 
 ### Matching

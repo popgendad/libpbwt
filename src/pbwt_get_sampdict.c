@@ -2,7 +2,7 @@
 #include <string.h>
 #include "pbwt.h"
 
-khash_t(string) *pbwt_get_sampdict(pbwt_t *b)
+khash_t(integer) *pbwt_get_sampdict(pbwt_t *b)
 {
 	if (b == NULL)
 	{
@@ -12,18 +12,18 @@ khash_t(string) *pbwt_get_sampdict(pbwt_t *b)
     int absent = 0;
     size_t i = 0;
 	khint_t it = 0;
-	khash_t(string) *sampdict = NULL;
+	khash_t(integer) *sampdict = NULL;
 
-	sampdict = kh_init(string);
+	sampdict = kh_init(integer);
 
     for (i = 0; i < b->nsam; ++i)
     {
-    	it = kh_put(string, sampdict, b->sid[i], &absent);
+    	it = kh_put(integer, sampdict, b->sid[i], &absent);
 	    if (absent)
 	    {
 	        kh_key(sampdict, it) = strdup(b->sid[i]);
 	    }
-        kh_value(sampdict, it) = strdup(b->reg[i]);;
+        kh_value(sampdict, it) = i;
 	}
 
 	return sampdict;
