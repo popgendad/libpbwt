@@ -6,8 +6,8 @@ PREFIX  := /usr
 H_DIR   := $(PREFIX)/include
 L_DIR   := $(PREFIX)/lib
 SRCS    := $(wildcard src/*.c)
-DDIR    := build-static
-SDIR    := build-dynamic
+SDIR    := build-static
+DDIR    := build-dynamic
 DOBJS   := $(SRCS:src/%.c=$(DDIR)/%.o)
 SOBJS   := $(SRCS:src/%.c=$(SDIR)/%.o)
 
