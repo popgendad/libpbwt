@@ -246,6 +246,21 @@ char ** pbwt_get_reglist(pbwt_t *b, size_t *nr)
 
 Extracts a unique list of regions from pbwt_t pointed to by `b`. The total number of unique regions is stored in the memory pointed to by `nr` and the string array is returned on success, while a `NULL` pointer is returned on failure.
 
+
+#### pbwt_get_regcount()
+
+```c
+khash_t(integer) *pbwt_get_regcount(pbwt_t *b)
+```
+
+
+#### pbwt_get_sampdict()
+
+```c
+khash_t(string) *pbwt_get_sampdict(pbwt_t *b)
+```
+
+
 ### Matching
 
 #### pbwt_find_match()
