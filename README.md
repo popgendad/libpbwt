@@ -341,13 +341,34 @@ The example below reads a plink format file and converts it to the `pbwt_t` data
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <plink.h>
 #include <pbwt.h>
 
 int main (int argc, char *argv[])
 {
-    int v = 0;
-    return v;
+    size_t length;
+    char *outfile;
+    pbwt_t *b;
+    char *instub = strdup(argv[1]);
+
+    /* Construct outfile name */
+    length = strlen(instub);
+    outfile = (char *)malloc((length + 4) * sizeof(char));
+    strcpy(outfile, instub);
+    strcat(outfile, ".pbwt");
+
+    /* Import PBWT structure */
+    b = pbwt_import_plink(c->instub);
+
+    /* Build the prefix and divergence arrays */
+    pbwt_build(b);
+
+    /* Write the pbwt to file */
+    pbwt_write(outfile, b);
+
+    /* Free memory for the data structure */
+    pbwt_destroy(b);
+
+    return 0;
 }
 ```
 
