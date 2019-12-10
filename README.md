@@ -335,7 +335,7 @@ Dumps all reported matches to `stdout`.
 
 ## Examples
 
-The example below reads a plink format file and converts it to the `pbwt_t` data structure. The original `pbwt_t` is then subset to haplotypes belonging to the "Beringia" region. The program then prints the Beringia-only `pbwt_t` structure and then finds and prints matches that span more than half of the input window.
+The example below reads a PLINK-format file and converts it to the `pbwt_t` data structure and writes it to a PBWT-format file.
 
 ```c
 #include <stdio.h>
