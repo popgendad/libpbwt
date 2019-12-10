@@ -13,6 +13,7 @@
 
 #include <stdlib.h>
 #include <htslib/khash.h>
+#include <plink_lite.h>
 
 /* Declare hash keyed on string with double values */
 KHASH_MAP_INIT_STR(floats, double)
@@ -85,6 +86,10 @@ extern pbwt_t *pbwt_import_plink(const char *);
 extern pbwt_t *pbwt_import_vcf(const char *, const char *);
 
 extern char **pbwt_get_reglist(pbwt_t *, size_t *);
+
+extern khash_t(string) *pbwt_get_sampdict(pbwt_t *);
+
+extern khash_t(integer) *pbwt_get_regcount(pbwt_t *);
 
 extern int pbwt_build(pbwt_t *);
 
