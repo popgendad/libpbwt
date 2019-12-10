@@ -69,6 +69,13 @@ void pbwt_destroy(pbwt_t *b)
 
         if (b->chr != NULL)
         {
+            for (i = 0; i < b->nsite; ++i)
+            {
+                if (b->chr[i] != NULL)
+                {
+                    free(b->chr[i]);
+                }
+            }
             free(b->chr);
         }
 

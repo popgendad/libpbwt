@@ -16,7 +16,7 @@ int pbwt_write(const char *outfile, pbwt_t *b)
     size_t i = 0;
     size_t j = 0;
     size_t r = 0;
-    FILE *fout;
+    FILE *fout = NULL;
 
     /* Open the binary output file stream */
     fout = fopen(outfile, "wb");
@@ -51,24 +51,8 @@ int pbwt_write(const char *outfile, pbwt_t *b)
     }
 
     /* Write the haplotype data */
-    r = fwrite((const void *)b->data, sizeof(size_t), b->datasize, fout);
+    r = fwrite((const void *)b->data, sizeof(unsigned char), b->datasize, fout);
     if (r != b->datasize)
-    {
-        io_error(fout);
-        return -1;
-    }
-
-    /* Write the prefix array */
-    r = fwrite((const void *)b->ppa, sizeof(size_t), b->nsam, fout);
-    if (r != b->nsam)
-    {
-        io_error(fout);
-        return -1;
-    }
-
-    /* Write the divergence array */
-    r = fwrite((const void *)b->div, sizeof(size_t), b->nsam, fout);
-    if (r != b->nsam)
     {
         io_error(fout);
         return -1;
@@ -79,7 +63,7 @@ int pbwt_write(const char *outfile, pbwt_t *b)
     {
         size_t len = 0;
 
-        /* Write the size of the sample identifier string */
+        /* Write the length of the sample identifier string */
         len = strlen(b->sid[i]);
         r = fwrite((const void *)&len, sizeof(size_t), 1, fout);
         if (r != 1)
@@ -135,9 +119,18 @@ int pbwt_write(const char *outfile, pbwt_t *b)
             return -1;
         }
 
-        /* Write the chromosome identifier */
-        r = fwrite((const void *)&(b->chr[j]), sizeof(int), 1, fout);
+        /* Write the size of the chromosome identifier string */
+        len = strlen(b->chr[j]);
+        r = fwrite((const void *)&len, sizeof(size_t), 1, fout);
         if (r != 1)
+        {
+            io_error(fout);
+            return -1;
+        }
+
+        /* Write the chromosome identifier */
+        r = fwrite(b->chr[j], sizeof(char), len, fout);
+        if (r != len)
         {
             io_error(fout);
             return -1;
@@ -162,11 +155,11 @@ static void io_error(FILE *f)
 {
     if (ferror(f))
     {
-        fputs("libpbwt [ERROR]: I/O failure", stderr);
+        fputs("libpbwt [ERROR]: I/O failure\n", stderr);
     }
     else if (feof(f))
     {
-        fputs("libpbwt [ERROR]: truncated input file", stderr);
+        fputs("libpbwt [ERROR]: truncated input file\n", stderr);
     }
 
     fclose(f);

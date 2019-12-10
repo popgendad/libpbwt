@@ -71,7 +71,7 @@ pbwt_t *pbwt_merge(pbwt_t *b1, pbwt_t *b2)
     {
         bm->rsid[i] = strdup(b1->rsid[i]);
         bm->cm[i] = b1->cm[i];
-        bm->chr[i] = b1->chr[i];
+        bm->chr[i] = strdup(b1->chr[i]);
     }
 
     /* Deallocate original pbwts */
