@@ -25,13 +25,15 @@ sudo make install
 
 ## Linking the library
 
-Coming soon
+### Static Library
 
-## pbwt file format
+### Shared Library
+
+## PBWT File Format
 
 Files with the `.pbwt` extension are binary files that store a single instance of the `pbwt_t` data structure. The haplotype data stored in the `pbwt::data` variable are compressed when the data structure is written to file. The `.pbwt` format can be written and read with the `pbwt_write()` and `pbwt_read()` functions, respectively, provided by the `libpbwt` library.
 
-### File structure
+### File Structure
 
 Below is a table of the data format of a `.pbwt` file, in order that they are are stored.
 
@@ -41,8 +43,6 @@ Below is a table of the data format of a `.pbwt` file, in order that they are ar
 | Number of haplotypes | `size_t` | `pbwt::nsam` |
 | Size of compressed genotype data | `size_t` | `pwbt::datasize` |
 | Compressed genotype data | `unsigned char * pbwt::datasize` | `pbwt::data` |
-| Prefix array | `size_t * pbwt::nsam` | `pbwt::ppa` |
-| Divergence array | `size_t * pbwt::nsam` | `pbwt::div` |
 
 Following these data are the variable-length strings, in which each string is preceeded by its length:
 
@@ -68,15 +68,16 @@ And then the chromosome, genetic map position and RSID of each site:
 foreach j in pbwt::nsite
    "Length of RSID string", size_t, strlen(pbwt::rsid[j])
    "RSID string" char * strlen(pbwt::rsid[j]), pbwt::rsid[j]
-   "Chromosome identifier", int, pbwt::chr[j]
+   "Length of chromosome ID string", size_t, strlen(pbwt::chr[j])
+   "Chromosome identifier", char * strlen(pbwt::chr[j]), pbwt::chr[j]
    "Map position for marker j", double, pbwt::cm[j]
 ```
 
-### Compression metrics
+### Compression Metrics
 
 Coming soon
 
-## Data types
+## Data Types
 
 ### pbwt_t
 
@@ -87,14 +88,18 @@ typedef struct pbwt
 {
     char **sid;               /* Diploid sample identifier string */
     char **reg;               /* Region/population of sample */
+    char **chr;               /* Chromosome identifer of all SNPs in pbwt */
+    char **rsid;              /* RSID for all SNPs in pbwt */
+    double *cm;               /* Genetic map positions for all SNPs in pbwt */
     unsigned char *data;      /* Binary haplotype representation */
     int is_compress;          /* Are haplotype data compressed? */
+    int *is_query;            /* Is the haplotype a query sequence? */
     size_t datasize;          /* Number of bytes stored in data */
     size_t nsite;             /* Number of sampled sites */
     size_t nsam;              /* Number of sampled haplotypes */
     size_t *ppa;              /* Pointer to the prefix array */
     size_t *div;              /* Pointer to the divergence array */
-    match_t *match;           /* Pointer to match data structure */
+    match_t *match;           /* Pointer to set-proximal match linked list */
 } pbwt_t;
 ```
 
@@ -115,14 +120,16 @@ typedef struct _match
 } match_t;
 ```
 
-## API functions
 
-### Create/Destroy data structures
+## API Functions
+
+### Create/Destroy Data Structures
+
 
 #### pbwt_init()
 
 ```c
-pbwt_t * pbwt_init(const size_t nsite, const size_t nsam)
+pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
 ```
 
 The `pbwt_t` data structure can be initialized using the `pbwt_init()` function.
@@ -146,12 +153,12 @@ const char pbwt_version(void)
 The `pbwt_version` function returns a constant character array holding the version number of the library.
 
 
-### I/O functions
+### I/O Functions
 
 #### pbwt_read()
 
 ```c
-pbwt_t * pbwt_read(const char *infile)
+pbwt_t *pbwt_read(const char *infile)
 ```
 
 The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a pointer to the `pbwt_t` data structure contained in that file. The full name of the input file is given in the `infile` variable. The function returns a `NULL` pointer if it encounters a problem reading the file.
@@ -159,7 +166,7 @@ The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a
 #### pbwt_import_plink()
 
 ```c
-pbwt_t * pbwt_import_plink(const char *plinkstub)
+pbwt_t *pbwt_import_plink(const char *plinkstub)
 ```
 
 The `pbwt_import_plink` function returns a `pbwt_t` data structure populated from data imported from a plink-formatted data set specified by `plinkstub` (i.e.g, `.bed`, `bim`, `.fam`), plus a `.reg` file. The function return a `NULL` pointer if it encounters an error during the import process.
@@ -181,7 +188,7 @@ int pbwt_write(const char *outfile, pbwt_t *b)
 The above function will write the `pbwt_t` data structure pointed to by `b` and write it to a `.pbwt` format file named `outfile`. If a file by the name specified by `outfile` exists on disk, the function will overwrite that file. If it does not have permission to overwrite that file, the function will return a value of -1. The function will compress the binary haplotype data contained in the `pbwt_t` data structure before writing the file. The function will return 0 on success and -1 on error.
 
 
-### Functions that operate on pbwt
+### Functions Operating on PBWT
 
 #### pbwt_build()
 
@@ -202,7 +209,7 @@ Subsets the `pbwt_t` data structure pointed to by `b` and creates a new `pbwt_t`
 #### pbwt_subset_with_query()
 
 ```c
-pbwt_t * pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
+pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
 ```
 
 Similar to `pbwt_subset()` except it includes an additional "query" sequence with index `query`.
@@ -218,13 +225,13 @@ The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structu
 #### pbwt_pull()
 
 ```c
-pbwt_t * pbwt_pull(pbwt_t *b, const size_t target)
+pbwt_t *pbwt_pull(pbwt_t *b, const size_t target)
 ```
 
 #### pbwt_copy()
 
 ```c
-pbwt_t * pbwt_copy(pbwt_t *b)
+pbwt_t *pbwt_copy(pbwt_t *b)
 ```
 
 Returns a separate copy of the pbwt data structure pointed to by `b`.
@@ -233,7 +240,7 @@ Returns a separate copy of the pbwt data structure pointed to by `b`.
 #### pbwt_merge()
 
 ```c
-pbwt_t * pbwt_merge(pbwt_t *b1, pbwt_t *b2)
+pbwt_t *pbwt_merge(pbwt_t *b1, pbwt_t *b2)
 ```
 
 ### Miscellaneous
@@ -241,7 +248,7 @@ pbwt_t * pbwt_merge(pbwt_t *b1, pbwt_t *b2)
 #### pbwt_get_reglist()
 
 ```c
-char ** pbwt_get_reglist(pbwt_t *b, size_t *nr)
+char **pbwt_get_reglist(pbwt_t *b, size_t *nr)
 ```
 
 Extracts a unique list of regions from pbwt_t pointed to by `b`. The total number of unique regions is stored in the memory pointed to by `nr` and the string array is returned on success, while a `NULL` pointer is returned on failure.
@@ -339,68 +346,15 @@ The example below reads a plink format file and converts it to the `pbwt_t` data
 
 int main (int argc, char *argv[])
 {
-    int v;
-    size_t i;
-    plink_t *p;
-    pbwt_t *b;
-    match_t *x;
-
-    const char instub[] = "infile_stub";
-
-    /* Initialize plink data structure */
-    p = plink_init(instub, 1, 1);
-
-    /* Initialize pbwt structure */
-    b = pbwt_init(p->nsnp, 2 * p->nsam);
-
-    /* Iterate through all samples in the fam/reg */
-    for (i = 0; i < p->nsam; ++i)
-    {
-        memcpy (&b->data[TWODCORD(2*i, b->nsite, 0)],
-                hap2uchar(p, i, 0),
-                 b->nsite * sizeof(unsigned char));
-        memcpy (&b->data[TWODCORD(2*i+1, b->nsite, 0)],
-                hap2uchar(p, i, 1),
-                b->nsite * sizeof(unsigned char));
-        b->sid[2*i] = strdup(p->fam[i].iid);
-        b->sid[2*i+1] = strdup(p->fam[i].iid);
-        b->reg[2*i] = strdup(p->reg[i].reg);
-        b->reg[2*i+1] = strdup(p->reg[i].reg);
-    }
-
-    /* Read marker data from plink bim */
-    for (i = 0; i < p->nsnp; ++i)
-    {
-        b->rsid[i] = strdup(p->bim[i].rsid);
-        b->cm[i] = p->bim[i].cM;
-        b->chr[i] = p->bim[i].ch;
-    }
-
-    /* Subset the pbwt to the Beringia region */
-    pbwt_t *s = pbwt_subset(b, "Beringia");
-    if (s == NULL)
-        return -1;
-
-    /* Build the prefix and divergence arrays for the subset pbwt */
-    v = pbwt_build(s);
-
-    /* Print the subset pbwt */
-    v = pbwt_print(s);
-
-    /* Find all set-maximal matches */
-    x = pbwt_set_match(s, 0, 0.5);
-
-    /* Print matches to stdout */
-    v = match_print(s, x);
-
-    /* Free memory for the original pbwt data structure */
-    pbwt_destroy(b);
-    pbwt_destroy(s);
-
+    int v = 0;
     return v;
 }
 ```
 
 ## Contributing
 
-Coming soon
+### TODO
+
+1. Translate to C++
+2. Better error signal handling
+3. Finish writing `pbwt_pull` function

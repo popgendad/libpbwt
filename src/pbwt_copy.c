@@ -37,7 +37,7 @@ pbwt_t *pbwt_copy(pbwt_t *b)
     {
         bc->rsid[i] = strdup(b->rsid[i]);
         bc->cm[i] = b->cm[i];
-        bc->chr[i] = b->chr[i];
+        bc->chr[i] = strdup(b->chr[i]);
     }
 
     return bc;

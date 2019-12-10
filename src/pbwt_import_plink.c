@@ -54,7 +54,9 @@ pbwt_t *pbwt_import_plink(const char *instub)
     {
         b->rsid[i] = strdup(p->bim[i].rsid);
         b->cm[i] = p->bim[i].cM;
-        b->chr[i] = p->bim[i].ch;
+        int length = snprintf(NULL, 0, "%d", p->bim[i].ch);
+        b->chr[i] = (char *)malloc((length + 1) * sizeof(char));
+        snprintf(b->chr[i], length + 1, "%d", p->bim[i].ch);
     }
 
     return b;

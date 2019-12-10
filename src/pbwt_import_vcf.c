@@ -98,8 +98,7 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
         bcf_unpack(rec, BCF_UN_STR);
         bcf_unpack(rec, BCF_UN_INFO);
         chr = bcf_seqname(hdr, rec);
-
-        b->chr[site_counter] = atoi(chr);
+        b->chr[site_counter] = strdup(chr);
         b->rsid[site_counter] = strdup(rec->d.id);
         b->cm[site_counter] = rec->d.info[0].v1.f;
         ngt = bcf_get_genotypes(hdr, rec, &gt, &ngt) / nsam;

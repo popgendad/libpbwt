@@ -61,22 +61,6 @@ pbwt_t *pbwt_read(const char *infile)
         return NULL;
     }
 
-    /* Read the prefix array */
-    r = fread(b->ppa, sizeof(size_t), b->nsam, fin);
-    if (r != b->nsam)
-    {
-        io_error(fin);
-        return NULL;
-    }
-
-    /* Read the divergence array */
-    r = fread(b->div, sizeof(size_t), b->nsam, fin);
-    if (r != b->nsam)
-    {
-        io_error(fin);
-        return NULL;
-    }
-
     /* Indicate pbwt is compressed */
     b->is_compress = TRUE;
 
@@ -168,13 +152,31 @@ pbwt_t *pbwt_read(const char *infile)
         /* Append null-terminating character */
         b->rsid[j][len] = '\0';
 
-        /* Read the chromosome identifier */
-        r = fread(&(b->chr[j]), sizeof(int), 1, fin);
+        /* Read length of chromosome identifier string */
+        r = fread(&len, sizeof(size_t), 1, fin);
         if (r != 1)
+        {
+            io_error(fin);
+            return 0;
+        }
+
+        /* Allocate memory for chromosome identifier string */
+        b->chr[j] = (char *)malloc((len + 1) * sizeof(char));
+        if (b->chr[j] == NULL)
+        {
+            return NULL;
+        }
+
+        /* Read the chromosome identifier */
+        r = fread(b->chr[j], sizeof(char), len, fin);
+        if (r != len)
         {
             io_error(fin);
             return NULL;
         }
+
+        /* Append null-terminating character */
+        b->chr[j][len] = '\0';
 
         /* Read centimorgan position */
         r = fread(&(b->cm[j]), sizeof(double), 1, fin);

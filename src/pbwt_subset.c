@@ -68,7 +68,7 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
     /* Copy site data */
     for (j = 0; j < b->nsite; ++j)
     {
-        p->chr[j] = b->chr[j];
+        p->chr[j] = strdup(b->chr[j]);
         if (b->rsid[j] != NULL)
         {
             p->rsid[j] = strdup(b->rsid[j]);
@@ -154,7 +154,7 @@ pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
     /* Copy site data */
     for (j = 0; j < b->nsite; ++j)
     {
-        p->chr[j] = b->chr[j];
+        p->chr[j] = strdup(b->chr[j]);
         if (b->rsid[j] != NULL)
         {
             p->rsid[j] = strdup(b->rsid[j]);

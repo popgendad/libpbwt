@@ -62,7 +62,7 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
         return NULL;
     }
 
-    b->chr = (int *)malloc(nsite * sizeof(int));
+    b->chr = (char **)malloc(nsite * sizeof(char *));
     if (b->chr == NULL)
     {
         pbwt_destroy(b);
@@ -86,7 +86,7 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     /* Initialize values for prefix and divergence arrays */
     for (i = 0; i < nsam; ++i)
     {
-        b->is_query[i] = FALSE;
+        b->is_query[i] = 0;
         b->ppa[i] = i;
         b->div[i] = 0;
     }

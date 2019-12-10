@@ -44,7 +44,7 @@ typedef struct pbwt
 {
     char **sid;               /* Diploid sample identifier string */
     char **reg;               /* Region/population of sample */
-    int *chr;                 /* Chromosome identifer of all SNPs in pbwt */
+    char **chr;               /* Chromosome identifer of all SNPs in pbwt */
     char **rsid;              /* RSID for all SNPs in pbwt */
     double *cm;               /* Genetic map positions for all SNPs in pbwt */
     unsigned char *data;      /* Binary haplotype representation */
