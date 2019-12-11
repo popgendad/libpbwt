@@ -1,10 +1,10 @@
 # libpbwt
 
-A C library for implementing the positional Burrows-Wheeler transform
+A C library for implementing the positional Burrows-Wheeler transform (PBWT)
 
 ## Introduction
 
-The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [PBWT file format](https://gitlab.com/evolgen/libpbwt#PBWT-file-format) subsection below.
+The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing PBWT data, which is described below in the [PBWT file format](https://gitlab.com/evolgen/libpbwt#PBWT-file-format) subsection below.
 
 The [`pbwtmaster`](https://gitlab.com/evolgen/pbwtmaster) program is a front-end utility that uses a large proportion of the functionality provided in the `libpbwt` library.
 
@@ -61,7 +61,7 @@ Below is a table of the data format of a `.pbwt` file, in order that they are ar
 | Size of compressed genotype data | `size_t` | `pwbt::datasize` |
 | Compressed genotype data | `unsigned char * pbwt::datasize` | `pbwt::data` |
 
-Following these data are the variable-length strings, in which each string is preceeded by its length:
+Following these data are the variable-length strings, each string is preceeded by an unsigned integer specifying its length:
 
 The haplotype identifiers:
 
@@ -79,7 +79,7 @@ foreach i in pbwt::nsam
    "Region identifer string", char * strlen(pbwt::reg[i]), pbwt::reg[i]
 ```
 
-And then the chromosome, genetic map position and RSID of each site:
+And then the chromosome/scaffold, genetic map position and RSID of each site:
 
 ```
 foreach j in pbwt::nsite
@@ -140,11 +140,9 @@ typedef struct _match
 } match_t;
 ```
 
-
 ## API Functions
 
 ### Create/Destroy Data Structures
-
 
 #### pbwt_init()
 
@@ -232,7 +230,7 @@ Subsets the `pbwt_t` data structure pointed to by `b` and creates a new `pbwt_t`
 pbwt_t *pbwt_subset_with_query(pbwt_t *b, const char *reg, const size_t query)
 ```
 
-Similar to `pbwt_subset()` except it includes an additional "query" sequence with index `query`.
+Similar to `pbwt_subset()` except it includes an additional query sequence with index `query`.
 
 #### pbwt_push()
 
@@ -254,7 +252,7 @@ pbwt_t *pbwt_pull(pbwt_t *b, const size_t target)
 pbwt_t *pbwt_copy(pbwt_t *b)
 ```
 
-Returns a separate copy of the pbwt data structure pointed to by `b`. The function will return a `NULL` pointer on failure.
+Returns a separate copy of the `pbwt_t` data structure pointed to by `b`. The function will return a `NULL` pointer on failure.
 
 
 #### pbwt_merge()
@@ -274,7 +272,7 @@ Creates a new `pbwt_t` data structure by merging two other `pbwt_t` strucutres a
 char **pbwt_get_reglist(pbwt_t *b, size_t *nr)
 ```
 
-Extracts a unique list of regions from pbwt_t pointed to by `b`. The total number of unique regions is stored in the memory pointed to by `nr` and the string array is returned on success, while a `NULL` pointer is returned on failure.
+Extracts a unique list of regions from the `pbwt_t` data structure pointed to by `b`. The total number of unique regions is stored in the memory pointed to by `nr` and a pointer to the string array is returned on success, while a `NULL` pointer is returned on failure.
 
 
 #### pbwt_get_regcount()

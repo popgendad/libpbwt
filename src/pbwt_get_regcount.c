@@ -22,7 +22,7 @@ khash_t(integer) *pbwt_get_regcount(pbwt_t *b)
 	    if (absent)
 	    {
 	        kh_key(regcount, it) = strdup(b->reg[i]);
-	        kh_value(regcount, it) = 0;
+	        kh_value(regcount, it) = 1;
 	    }
 	    else
 	    {
