@@ -3,7 +3,6 @@
 /* Local function declaration */
 static void match_destroy(match_t *);
 
-
 void pbwt_destroy(pbwt_t *b)
 {
     /* Deallocate all heap memory pointed to by pbwt structure */

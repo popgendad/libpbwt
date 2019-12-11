@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <string.h>
 #include "pbwt.h"
 
@@ -35,12 +34,10 @@ char **pbwt_get_reglist(pbwt_t *b, size_t *nr)
     return array;
 }
 
-
 int cmp_strings(const void *a, const void *b)
 {
     return strcmp(*(const char**)a, *(const char**)b);
 }
-
 
 size_t remove_dups(size_t n, char **array)
 {
@@ -62,4 +59,3 @@ size_t remove_dups(size_t n, char **array)
 
     return n;
 }
-

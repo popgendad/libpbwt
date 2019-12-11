@@ -1,6 +1,5 @@
 #include "pbwt.h"
 
-
 int pbwt_build(pbwt_t *b)
 {
     size_t i = 0;

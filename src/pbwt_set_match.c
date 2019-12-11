@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "pbwt.h"
 
 int pbwt_set_match(pbwt_t *b, const double minlen)

@@ -1,15 +1,12 @@
 #include <stdint.h>
 #include <htslib/tbx.h>
 #include <htslib/vcf.h>
-#include <plink_lite.h>
 #include "pbwt.h"
 
 #define MAX_STRLEN 256
 
 khash_t(string) *read_popmap(const char *);
-
 int check_popmap(const bcf_hdr_t *, const khash_t(string) *);
-
 
 pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
 {
@@ -169,7 +166,6 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
     return b;
 }
 
-
 int check_popmap(const bcf_hdr_t *h, const khash_t(string) *pdb)
 {
     int k = 0;
@@ -189,7 +185,6 @@ int check_popmap(const bcf_hdr_t *h, const khash_t(string) *pdb)
 
     return nsam;
 }
-
 
 khash_t(string) *read_popmap(const char *popfile)
 {

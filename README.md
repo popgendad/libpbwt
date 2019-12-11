@@ -6,6 +6,8 @@ A C library for implementing the positional Burrows-Wheeler transform
 
 The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [pbwt file format](https://gitlab.com/evolgen/libpbwt#pbwt-file-format) subsection below.
 
+The [`pbwtmaster`](https://gitlab.com/evolgen/pbwtmaster) program is a front-end utility that uses a large proportion of the functionality provided in the `libpbwt` library.
+
 ## Installation
 
 A Makefile is provided with the `libpbwt` package. There are three dependencies outside of the standard C library, including
@@ -169,7 +171,7 @@ The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a
 pbwt_t *pbwt_import_plink(const char *plinkstub)
 ```
 
-The `pbwt_import_plink` function returns a `pbwt_t` data structure populated from data imported from a plink-formatted data set specified by `plinkstub` (i.e.g, `.bed`, `bim`, `.fam`), plus a `.reg` file. The function return a `NULL` pointer if it encounters an error during the import process.
+The `pbwt_import_plink` function returns a `pbwt_t` data structure populated from data imported from a plink-formatted data set specified by `plinkstub` (e.g, `.bed`, `bim`, `.fam`), plus a `.reg` file. The function return a `NULL` pointer if it encounters an error during the import process.
 
 #### pbwt_import_vcf()
 
@@ -177,7 +179,7 @@ The `pbwt_import_plink` function returns a `pbwt_t` data structure populated fro
 pbwt_t *pbwt_import_vcf(const char *vcfinfile, const char *popmap);
 ```
 
-The `pbwt_import_vcf` function returns a `pbwt_t` data structure population from the VCF infile specified as `vcfinfile` and the popmap file `popmap` (i.e., two columns with sample identifier and population). The function return a `NULL` pointer if it encounters an error during the import process.
+The `pbwt_import_vcf` function returns a `pbwt_t` data structure population from the VCF infile specified as `vcfinfile` and the popmap file `popmap` (e.g., two columns with sample identifier and population). The function return a `NULL` pointer if it encounters an error during the import process.
 
 #### pbwt_write()
 
@@ -220,7 +222,7 @@ Similar to `pbwt_subset()` except it includes an additional "query" sequence wit
 int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg, const char *h1, const char *h2)
 ```
 
-The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structure pointed to by `b` and reconstructs the prefix and divergence arrays. In addition to a pointer to the `pbwt_t` data structure to be augmented, the function takes arguments that include a pointer to the new sample identifier `new_sid`, a pointer to the new sample region `new_reg` (which can be `NULL`), a pointer to the first binary haplotype array `h1` and the second haplotype array `h2`.
+The `pbwt_push()` function adds two query sequences to the `pbwt_t` data structure pointed to by `b` and reconstructs the prefix and divergence arrays. In addition to a pointer to the `pbwt_t` data structure to be augmented, the function takes arguments that include a pointer to the new sample identifier `new_sid`, a pointer to the new sample region `new_reg` (which can be `NULL`), a pointer to the first binary haplotype array `h1` and the second haplotype array `h2`. The function will return 0 on success and -1 on error.
 
 #### pbwt_pull()
 
@@ -234,7 +236,7 @@ pbwt_t *pbwt_pull(pbwt_t *b, const size_t target)
 pbwt_t *pbwt_copy(pbwt_t *b)
 ```
 
-Returns a separate copy of the pbwt data structure pointed to by `b`.
+Returns a separate copy of the pbwt data structure pointed to by `b`. The function will return a `NULL` pointer on failure.
 
 
 #### pbwt_merge()
@@ -242,6 +244,9 @@ Returns a separate copy of the pbwt data structure pointed to by `b`.
 ```c
 pbwt_t *pbwt_merge(pbwt_t *b1, pbwt_t *b2)
 ```
+
+Creates a new `pbwt_t` data structure by merging two other `pbwt_t` strucutres and returns a pointer to the merged strucutre. The function will return a `NULL` pointer on failure.
+
 
 ### Miscellaneous
 
@@ -260,7 +265,7 @@ Extracts a unique list of regions from pbwt_t pointed to by `b`. The total numbe
 khash_t(integer) *pbwt_get_regcount(pbwt_t *b)
 ```
 
-Returns a hash table keyed on region identifier strings and the associated value is the count of the number of samples in the PBWT from that region.
+Returns a hash table keyed on region identifier strings and the associated value is the count of the number of samples in the PBWT from that region. The function will return a `NULL` pointer on failure.
 
 
 #### pbwt_get_sampdict()
@@ -269,7 +274,7 @@ Returns a hash table keyed on region identifier strings and the associated value
 khash_t(integer) *pbwt_get_sampdict(pbwt_t *b)
 ```
 
-Returns a hash table keyed on sample identifier strings and the associated value is the index of the sample in the PBWT.
+Returns a hash table keyed on sample identifier strings and the associated value is the index of the sample in the PBWT. The function will return a `NULL` pointer on failure.
 
 
 ### Matching
@@ -280,7 +285,7 @@ int pbwt_find_match(pbwt_t *b, const double minlen)
 ```
 
 The `pbwt_find_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than `minlen`
-cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
+cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`. The function will return 0 on success and -1 on error.
 
 
 #### pbwt_find_query_match()
@@ -289,7 +294,7 @@ int pbwt_find_query_match(pbwt_t *b, const double minlen)
 ```
 
 The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than 
-`minlen` cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`.
+`minlen` cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`. The function will return 0 on success and -1 on error.
 
 
 #### pbwt_set_match()
@@ -298,7 +303,7 @@ The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matche
 int pbwt_set_match(pbwt_t *b, double minlen)
 ```
 
-The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
+The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) covered by a potential match. The function returns -1 on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 
 #### pbwt_query_match()
@@ -306,7 +311,7 @@ The `pbwt_set_match` function finds the set maximal matches in `b`. The minimum 
 int pbwt_query_match(pbwt_t *b, const size_t query_index, const double minlen)
 ```
 
-The `pbwt_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) of the window covered by a potential match. The function returns non-zero on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
+The `pbwt_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) of the window covered by a potential match. The function returns -1 on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
 #### match_search()
 
@@ -314,7 +319,7 @@ The `pbwt_query_match` function finds only the set maximal matches in `b` that i
 int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend)
 ```
 
-The `match_search` function prints a list of all matches overlapping the interval `qbegin` to `qend`.
+The `match_search` function prints a list of all matches overlapping the interval `qbegin` to `qend`. The function will return 0 on success and -1 on error.
 
 #### match_regsearch()
 
@@ -322,7 +327,7 @@ The `match_search` function prints a list of all matches overlapping the interva
 int match_regsearch(pbwt_t *b, match_t *node, khash(double) *h, size_t qbegin, size_t qend)
 ```
 
-The `match_regsearch` function prints a list of all matches overlapping the interval `qbegin` to `qend`.
+The `match_regsearch` function prints a list of all matches overlapping the interval `qbegin` to `qend`. The function will return 0 on success and -1 on error.
 
 
 #### match_print()
@@ -331,7 +336,12 @@ The `match_regsearch` function prints a list of all matches overlapping the inte
 void match_print(pbwt_t *b, match_t *node)
 ```
 
-Dumps all reported matches to `stdout`.
+Dumps all reported matches to `stdout`. This function does not return a value.
+
+## Error Reporting
+
+### Error Codes
+
 
 ## Examples
 
@@ -377,5 +387,7 @@ int main (int argc, char *argv[])
 ### TODO
 
 1. Translate to C++
+
 2. Better error signal handling
+
 3. Finish writing `pbwt_pull` function

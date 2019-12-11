@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "pbwt.h"
 
 int pbwt_query_match(pbwt_t *b, const double minlen)

@@ -4,7 +4,6 @@
 
 static void io_error(FILE *);
 
-
 int pbwt_write(const char *outfile, pbwt_t *b)
 {
     /* If data aren't compressed, then compress */
@@ -58,7 +57,7 @@ int pbwt_write(const char *outfile, pbwt_t *b)
         return -1;
     }
 
-    /* Write sample info */
+    /* Write sample-based information */
     for (i = 0; i < b->nsam; ++i)
     {
         size_t len = 0;
@@ -98,6 +97,7 @@ int pbwt_write(const char *outfile, pbwt_t *b)
         }
     }
 
+    /* Write site-based information */
     for (j = 0; j < b->nsite; ++j)
     {
         size_t len = 0;

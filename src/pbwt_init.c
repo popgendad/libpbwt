@@ -1,6 +1,4 @@
-#include <stdio.h>
 #include "pbwt.h"
-
 
 pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
 {

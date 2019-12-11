@@ -1,7 +1,5 @@
 #include <string.h>
-#include <plink_lite.h>
 #include "pbwt.h"
-
 
 pbwt_t *pbwt_import_plink(const char *instub)
 {

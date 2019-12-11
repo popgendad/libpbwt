@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "pbwt.h"
-
 
 match_t *match_new(const size_t first, const size_t second, const size_t begin, const size_t end)
 {

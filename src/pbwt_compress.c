@@ -1,7 +1,5 @@
-#include <stdio.h>
 #include <zlib.h>
 #include "pbwt.h"
-
 
 int pbwt_uncompress(pbwt_t *b)
 {
@@ -43,7 +41,6 @@ int pbwt_uncompress(pbwt_t *b)
 
     return 0;
 }
-
 
 int pbwt_compress(pbwt_t *b)
 {

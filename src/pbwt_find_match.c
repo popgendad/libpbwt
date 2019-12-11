@@ -1,7 +1,5 @@
-#include <stdio.h>
 #include <string.h>
 #include "pbwt.h"
-
 
 int pbwt_find_match(pbwt_t *b, const size_t minlen)
 {
