@@ -166,10 +166,10 @@ This function deallocates all memory contained in the `pbwt_t` data structure re
 #### pbwt_version()
 
 ```c
-const char pbwt_version(void)
+const char *pbwt_version(void)
 ```
 
-The `pbwt_version` function returns a constant character array holding the version number of the library.
+The `pbwt_version` function returns a pointer to a constant character array holding the version number of the library.
 
 
 ### I/O Functions
