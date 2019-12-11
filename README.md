@@ -4,16 +4,18 @@ A C library for implementing the positional Burrows-Wheeler transform
 
 ## Introduction
 
-The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [pbwt file format](https://gitlab.com/evolgen/libpbwt#pbwt-file-format) subsection below.
+The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing pbwt data, which is described below in the [PBWT file format](https://gitlab.com/evolgen/libpbwt#PBWT-file-format) subsection below.
 
 The [`pbwtmaster`](https://gitlab.com/evolgen/pbwtmaster) program is a front-end utility that uses a large proportion of the functionality provided in the `libpbwt` library.
 
 ## Installation
 
-A Makefile is provided with the `libpbwt` package. There are three dependencies outside of the standard C library, including
+A `Makefile` is provided with the `libpbwt` package. There are three dependencies outside of the standard C library, including
 
 1. the DEFLATE compression library `zlib`
+
 2. the PLINK format I/O routines in `libplink_lite`
+
 3. the VCF I/O routines in `htslib`
 
 The default installation directories are `/usr/lib` for the both the static and shared library files (`libpbwt.a` and `libpbwt.so` respectively) and `/usr/include` for the `pbwt.h` header file. Below is an example of installing the library.
@@ -25,11 +27,23 @@ make all
 sudo make install
 ```
 
-## Linking the library
+## Linking the Library
 
 ### Static Library
 
+Include the `/usr/lib/libpbwt.a` file.
+
+```
+gcc -O2 -Wall -o ptest ptest.c /usr/lib/libpbwt.a
+```
+
 ### Shared Library
+
+Add the `-lpbwt` linker statement during compilation.
+
+```
+gcc -O2 -Wall -o ptest ptest.c -lpbwt
+```
 
 ## PBWT File Format
 
@@ -77,7 +91,10 @@ foreach j in pbwt::nsite
 
 ### Compression Metrics
 
-Coming soon
+#### Compression of Haplotype Data
+
+Using the DEFLATE compression algorithm on the haplotype data achieves a mean compression that reduces the size to 0.15 of the original data size.
+
 
 ## Data Types
 
