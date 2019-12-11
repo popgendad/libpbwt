@@ -25,6 +25,7 @@ git clone git@gitlab.com/evolgen/libpbwt.git
 cd libpbwt
 make all
 sudo make install
+make clean
 ```
 
 ## Linking the Library
@@ -169,7 +170,7 @@ This function deallocates all memory contained in the `pbwt_t` data structure re
 const char *pbwt_version(void)
 ```
 
-The `pbwt_version` function returns a pointer to a constant character array holding the version number of the library.
+The `pbwt_version` function returns a pointer to a constant character array holding the version number of the library. This function does not take any arguments.
 
 
 ### I/O Functions
@@ -180,7 +181,7 @@ The `pbwt_version` function returns a pointer to a constant character array hold
 pbwt_t *pbwt_read(const char *infile)
 ```
 
-The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a pointer to the `pbwt_t` data structure contained in that file. The full name of the input file is given in the `infile` variable. The function returns a `NULL` pointer if it encounters a problem reading the file.
+The `pbwt_read()` function reads a `.pbwt` format file into memory and returns a pointer to the `pbwt_t` data structure contained in `infile`. The function returns a `NULL` pointer if it encounters a problem reading the file.
 
 #### pbwt_import_plink()
 
