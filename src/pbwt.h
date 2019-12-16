@@ -27,6 +27,30 @@ KHASH_MAP_INIT_STR(floats, double)
 
 /* Data structure declarations */
 
+/* Weighted edge */
+typedef struct _edge
+{
+    size_t index;
+    double weight;
+    struct _edge *next;
+} edge;
+
+/* Graph vertex */
+typedef struct _vertex
+{
+    size_t numconnect;
+    char *sampid;
+    char *pop;
+    edge *head;
+} vertex;
+
+/* Undirected adjacency list with weighted edges */
+typedef struct _adjlist
+{
+    size_t n_vertices;
+    vertex *nodelist;
+} adjlist;
+
 /* Structure to hold interval tree of matches */
 typedef struct _match
 {
@@ -118,6 +142,14 @@ extern size_t match_count(pbwt_t *, match_t *, double *);
 extern match_t *match_new(const size_t, const size_t, const size_t, const size_t);
 
 extern int match_overlap(const size_t, const size_t, const size_t, const size_t);
+
+extern edge* allocate_new_edge(const size_t, const double);
+
+extern adjlist* create_adjlist(const size_t, char **, char **);
+
+extern void add_edge(adjlist *, double, size_t, size_t);
+
+extern void print_adjlist(adjlist *);
 
 extern const char *pbwt_version(void);
 
