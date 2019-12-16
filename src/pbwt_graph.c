@@ -39,13 +39,15 @@ void add_edge(adjlist *g, double w, size_t src, size_t dest)
     is added at the begining */ 
     edge* new_node = allocate_new_edge(dest, w); 
     new_node->next = g->nodelist[src].head; 
-    g->nodelist[src].head = new_node; 
+    g->nodelist[src].head = new_node;
+    g->nodelist[src].numconnect++;
   
     /* Since graph is undirected, add an edge from 
     dest to src also */ 
     new_node = allocate_new_edge(src, w); 
     new_node->next = g->nodelist[dest].head; 
-    g->nodelist[dest].head = new_node; 
+    g->nodelist[dest].head = new_node;
+    g->nodelist[dest].numconnect++;
 }
 
 void print_adjlist(adjlist *g) 
@@ -53,14 +55,17 @@ void print_adjlist(adjlist *g)
     size_t v = 0;
 
     for (v = 0; v < g->n_vertices; ++v) 
-    { 
-        edge *pcrawl = g->nodelist[v].head; 
-        printf("\n Adjacency list of vertex %zu\n head ", v); 
-        while (pcrawl) 
-        { 
-            printf("-> %zu", pcrawl->index); 
-            pcrawl = pcrawl->next; 
-        } 
-        printf("\n"); 
+    {
+        if (g->nodelist[v].numconnect > 0)
+        {
+            edge *pcrawl = g->nodelist[v].head; 
+            printf("%s:%s", g->nodelist[v].sampid, g->nodelist[v].pop); 
+            while (pcrawl) 
+            { 
+                printf("\t%s:%s:%1.5lf", g->nodelist[pcrawl->index].sampid, g->nodelist[pcrawl->index].pop, pcrawl->weight); 
+                pcrawl = pcrawl->next; 
+            } 
+            printf("\n");
+        }
     } 
 } 

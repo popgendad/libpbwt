@@ -21,7 +21,28 @@ match_t *match_new(const size_t first, const size_t second, const size_t begin, 
     return node;
 }
 
-int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend)
+int match_adjsearch(pbwt_t *b, match_t *node, adjlist *g, size_t qbegin, size_t qend)
+{
+    if (node == NULL)
+    {
+        return 0;
+    }
+
+    if (match_overlap(qbegin, qend, node->begin, node->end))
+    {
+        double length = b->cm[node->end] - b->cm[node->begin];
+        add_edge(g, length, node->first, node->second);
+    }
+
+    if (node->left != NULL && node->left->max >= qbegin)
+    {
+        return match_adjsearch(b, node->left, g, qbegin, qend);
+    }
+
+    return match_adjsearch(b, node->right, g, qbegin, qend);
+}
+
+int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend)
 {
     if (node == NULL)
     {
@@ -37,10 +58,10 @@ int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size
 
     if (node->left != NULL && node->left->max >= qbegin)
     {
-        return match_search(b, node->left, cmatrix, qbegin, qend);
+        return match_coasearch(b, node->left, cmatrix, qbegin, qend);
     }
 
-    return match_search(b, node->right, cmatrix, qbegin, qend);
+    return match_coasearch(b, node->right, cmatrix, qbegin, qend);
 }
 
 int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
@@ -79,7 +100,6 @@ int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qb
     return match_regsearch(b, node->right, result, qbegin, qend);
 }
 
-
 size_t match_count(pbwt_t *b, match_t *node, double *al)
 {
     static size_t count = 0;
@@ -96,7 +116,6 @@ size_t match_count(pbwt_t *b, match_t *node, double *al)
 
     return count;
 }
-
 
 match_t *match_insert(match_t *node, const size_t first, const size_t second,
                       const size_t begin, const size_t end)
@@ -131,7 +150,6 @@ match_t *match_insert(match_t *node, const size_t first, const size_t second,
 
     return node;
 }
-
 
 int match_overlap(const size_t begin1, const size_t end1, const size_t begin2, const size_t end2)
 {

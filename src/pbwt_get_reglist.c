@@ -4,7 +4,6 @@
 size_t remove_dups(size_t, char **);
 int cmp_strings(const void *, const void *);
 
-
 char **pbwt_get_reglist(pbwt_t *b, size_t *nr)
 {
     size_t i = 0;
