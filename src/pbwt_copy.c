@@ -1,7 +1,6 @@
 #include <string.h>
 #include "pbwt.h"
 
-
 pbwt_t *pbwt_copy(pbwt_t *b)
 {
     int ret = 0;
