@@ -3,27 +3,27 @@
 #include "pbwt.h"
 
 /* Locally scoped function prototypes */
-void sort_edges(edge *);
-edge *sorted_merge(edge *, edge *);
-edge *allocate_new_edge(const size_t, const double);
+void sort_edges(edge_t *);
+edge_t *sorted_merge(edge_t *, edge_t *);
+edge_t *allocate_new_edge(const size_t, const double);
 
 
-edge *allocate_new_edge(const size_t partner, const double w)
+edge_t *allocate_new_edge(const size_t partner, const double w)
 {
-    edge* new_edge = (edge*)malloc(sizeof(edge));
+    edge_t *new_edge = (edge_t *)malloc(sizeof(edge_t));
     new_edge->index = partner;
     new_edge->weight = w;
     new_edge->next = NULL;
     return new_edge;
 }
 
-adjlist* create_adjlist(const size_t V, char **samplist, char **reglist)
+adjlist_t *create_adjlist(const size_t V, char **samplist, char **reglist)
 {
-    adjlist *g = (adjlist*)malloc(sizeof(adjlist));
+    adjlist_t *g = (adjlist_t *)malloc(sizeof(adjlist_t));
     g->n_vertices = V;
 
     /* Create an array of adjacency lists.  Size of array will be V */
-    g->nodelist = (vertex*)malloc(V * sizeof(vertex));
+    g->nodelist = (vertex_t *)malloc(V * sizeof(vertex_t));
 
     /* Initialize each adjacency list as empty by making head as NULL */
     size_t i = 0;
@@ -38,12 +38,12 @@ adjlist* create_adjlist(const size_t V, char **samplist, char **reglist)
     return g;
 }
 
-void add_edge(adjlist *g, double w, size_t src, size_t dest)
+void add_edge(adjlist_t *g, double w, size_t src, size_t dest)
 {
     /* Add an edge from src to dest.  A new node is
     added to the adjacency list of src.  The node
     is added at the begining */
-    edge* new_node = allocate_new_edge(dest, w);
+    edge_t *new_node = allocate_new_edge(dest, w);
     new_node->next = g->nodelist[src].head;
     g->nodelist[src].head = new_node;
     g->nodelist[src].numconnect++;
@@ -56,12 +56,12 @@ void add_edge(adjlist *g, double w, size_t src, size_t dest)
     g->nodelist[dest].numconnect++;
 }
 
-void sort_edges(edge *h)
+void sort_edges(edge_t *h)
 {
     size_t a = 0;
     double b = 0.0;
-    edge *temp1 = NULL;
-    edge *temp2 = NULL;
+    edge_t *temp1 = NULL;
+    edge_t *temp2 = NULL;
 
     for (temp1 = h; temp1 != NULL; temp1 = temp1->next)
     {
@@ -80,15 +80,19 @@ void sort_edges(edge *h)
     }
 }
 
-edge *sorted_merge(edge *a, edge *b)
+edge_t *sorted_merge(edge_t *a, edge_t *b)
 {
-    edge *result = NULL;
+    edge_t *result = NULL;
 
     /* Base cases */
     if (a == NULL)
+    {
         return b;
+    }
     else if (b == NULL)
+    {
         return a;
+    }
 
     /* Pick either a or b, and recur */
     if (a->index < b->index)
@@ -111,14 +115,14 @@ edge *sorted_merge(edge *a, edge *b)
     return result;
 }
 
-adjlist *diploidize(adjlist *g)
+adjlist_t *diploidize(adjlist_t *g)
 {
     size_t i = 0;
     size_t new_n_vertices = g->n_vertices / 2;
-    adjlist *z = (adjlist*)malloc(sizeof(adjlist));
+    adjlist_t *z = (adjlist_t *)malloc(sizeof(adjlist_t));
 
     z->n_vertices = new_n_vertices;
-    z->nodelist = (vertex *)malloc(z->n_vertices * sizeof(vertex));
+    z->nodelist = (vertex_t *)malloc(z->n_vertices * sizeof(vertex_t));
 
     for (i = 0; i < new_n_vertices; ++i)
     {
@@ -126,9 +130,10 @@ adjlist *diploidize(adjlist *g)
         size_t k = 2 * i + 1;
         size_t l_j = strlen(g->nodelist[j].sampid);
         size_t nc = 0;
-        edge *r;
-        edge *s;
-        edge *f;
+        edge_t *r;
+        edge_t *s;
+        edge_t *f;
+        edge_t *u;
 
         z->nodelist[i].sampid = (char *)malloc((l_j - 1) * sizeof(char));
         strncpy(z->nodelist[i].sampid, g->nodelist[j].sampid, l_j - 2);
@@ -141,7 +146,7 @@ adjlist *diploidize(adjlist *g)
         r = sorted_merge(f, s);
         z->nodelist[i].head = r;
         nc = 0;
-        edge *u = r;
+        u = r;
         for (; u != NULL; u = u->next)
         {
             u->index = u->index / 2;
@@ -153,7 +158,7 @@ adjlist *diploidize(adjlist *g)
     return z;
 }
 
-void print_adjlist(adjlist *g)
+void print_adjlist(adjlist_t *g)
 {
     size_t v = 0;
 
@@ -161,7 +166,7 @@ void print_adjlist(adjlist *g)
     {
         if (g->nodelist[v].numconnect > 0)
         {
-            edge *pcrawl = g->nodelist[v].head;
+            edge_t *pcrawl = g->nodelist[v].head;
             while (pcrawl)
             {
                 printf("%s\t%s\t%1.5lf\t%s\t%s\n", g->nodelist[v].sampid, g->nodelist[pcrawl->index].sampid,

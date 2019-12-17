@@ -33,7 +33,7 @@ typedef struct _edge
     size_t index;
     double weight;
     struct _edge *next;
-} edge;
+} edge_t;
 
 /* Graph vertex */
 typedef struct _vertex
@@ -41,15 +41,15 @@ typedef struct _vertex
     size_t numconnect;
     char *sampid;
     char *pop;
-    edge *head;
-} vertex;
+    edge_t *head;
+} vertex_t;
 
 /* Undirected adjacency list with weighted edges */
 typedef struct _adjlist
 {
     size_t n_vertices;
-    vertex *nodelist;
-} adjlist;
+    vertex_t *nodelist;
+} adjlist_t;
 
 /* Structure to hold interval tree of matches */
 typedef struct _match
@@ -131,7 +131,7 @@ extern int match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_
 
 extern int match_coasearch(pbwt_t *, match_t *, double **, size_t, size_t);
 
-extern int match_adjsearch(pbwt_t *, match_t *, adjlist *, size_t, size_t);
+extern int match_adjsearch(pbwt_t *, match_t *, adjlist_t *, size_t, size_t);
 
 extern void match_print(pbwt_t *, match_t *);
 
@@ -145,13 +145,13 @@ extern match_t *match_new(const size_t, const size_t, const size_t, const size_t
 
 extern int match_overlap(const size_t, const size_t, const size_t, const size_t);
 
-extern adjlist* create_adjlist(const size_t, char **, char **);
+extern adjlist_t *create_adjlist(const size_t, char **, char **);
 
-extern void add_edge(adjlist *, double, size_t, size_t);
+extern void add_edge(adjlist_t *, double, size_t, size_t);
 
-extern void print_adjlist(adjlist *g);
+extern void print_adjlist(adjlist_t *g);
 
-extern adjlist *diploidize(adjlist *);
+extern adjlist_t *diploidize(adjlist_t *);
 
 extern const char *pbwt_version(void);
 

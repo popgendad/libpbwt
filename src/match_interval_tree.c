@@ -21,7 +21,7 @@ match_t *match_new(const size_t first, const size_t second, const size_t begin, 
     return node;
 }
 
-int match_adjsearch(pbwt_t *b, match_t *node, adjlist *g, size_t qbegin, size_t qend)
+int match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *g, size_t qbegin, size_t qend)
 {
     if (node == NULL)
     {
@@ -121,7 +121,7 @@ match_t *match_insert(match_t *node, const size_t first, const size_t second,
                       const size_t begin, const size_t end)
 {
     /* Don't add if it is a duplicate entry */
-    if (node && node->first == first && node->second == second && 
+    if (node && node->first == first && node->second == second &&
         node->begin == begin && node->end == end)
     {
         return node;

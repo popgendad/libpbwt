@@ -140,6 +140,41 @@ typedef struct _match
 } match_t;
 ```
 
+### Graph-based Data Structures
+
+#### edge_t
+
+```c
+typedef struct _edge
+{
+    size_t index;
+    double weight;
+    struct _edge *next;
+} edge_t;
+```
+
+#### vertex_t
+
+```c
+typedef struct _vertex
+{
+    size_t numconnect;
+    char *sampid;
+    char *pop;
+    edge *head;
+} vertex_t;
+```
+
+#### adjlist_t
+
+```c
+typedef struct _adjlist
+{
+    size_t n_vertices;
+    vertex *nodelist;
+} adjlist_t;
+```
+
 ## API Functions
 
 ### Create/Destroy Data Structures
@@ -309,7 +344,7 @@ cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`
 int pbwt_find_query_match(pbwt_t *b, const double minlen)
 ```
 
-The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than 
+The `pbwt_find_query_match` is algorithm 3 of Durbin (2014). It finds all matches that are longer than
 `minlen` cM in a pbwt matrix and stores them in an interval tree pointed to by `b->match`. The function will return 0 on success and -1 on error.
 
 
@@ -329,13 +364,21 @@ int pbwt_query_match(pbwt_t *b, const size_t query_index, const double minlen)
 
 The `pbwt_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) of the window covered by a potential match. The function returns -1 on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
-#### match_search()
+#### match_adjsearch()
 
 ```c
-int match_search(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend)
+int match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *, size_t qbegin, size_t qend)
 ```
 
-The `match_search` function prints a list of all matches overlapping the interval `qbegin` to `qend`. The function will return 0 on success and -1 on error.
+The `match_adjsearch` function stores the list of all matches overlapping the interval `qbegin` to `qend` in an adjacency list data structure. The function will return 0 on success and -1 on error.
+
+#### match_coasearch()
+
+```c
+int match_coasearch(pbwt_t *b, match_t *node, double **coamat, size_t qbegin, size_t qend)
+```
+
+The `match_coasearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` in a pairwise coancestry matrix. The function will return 0 on success and -1 on error.
 
 #### match_regsearch()
 
@@ -343,8 +386,7 @@ The `match_search` function prints a list of all matches overlapping the interva
 int match_regsearch(pbwt_t *b, match_t *node, khash(double) *h, size_t qbegin, size_t qend)
 ```
 
-The `match_regsearch` function prints a list of all matches overlapping the interval `qbegin` to `qend`. The function will return 0 on success and -1 on error.
-
+The `match_regsearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` into a hash that is keyed on the region/population with the value being the sum of the recombination distance of all matches between the query haplotype and the keyed region. The function will return 0 on success and -1 on error.
 
 #### match_print()
 
@@ -354,9 +396,48 @@ void match_print(pbwt_t *b, match_t *node)
 
 Dumps all reported matches to `stdout`. This function does not return a value.
 
-## Error Reporting
 
-### Error Codes
+### Graphs Representations of Matches
+
+#### create_adjlist()
+
+```c
+adjlist_t *create_adjlist(const size_t V, char **samplist, char **reglist)
+```
+
+Creates an adjacency list representing a graph with `V` vertices, whose string identifiers are stored in `samplist` and whose associated regions are store in `reglist`. On success, the function returns an `adjlist_t` data structure and a `NULL` pointer on failure.
+
+#### allocate_new_edge()
+
+```c
+edge_t *allocate_new_edge(const size_t partner, const double w)
+```
+
+Allocates a new edge with index `partner` and weight `w`. On success, the function returns a pointer to the edge and a `NULL` pointer on failure.
+
+#### diploidize()
+
+```c
+adjlist_t *diploidize(adjlist_t *g)
+```
+
+Creates a new adjacency matrix by joining the two haplotypes in adjacency list `g` from a single diploid individual and returns the merged `adjlist_t` object on success and a `NULL` pointer on failure.
+
+#### print_adjlist()
+
+```c
+void print_adjlist(adjlist_t *g)
+```
+
+Prints an adjacency list to `stdout`. For each edge in the graph represented by `g`, there are five columns, corresponding to:
+
+1. Sample identifier string of vertex
+2. Sample identifier string of matching vertex
+3. Edge weight in cM
+4. Population/region of sample
+5. Population/region of matching sample
+
+The `print_adjlist` function does not return a value.
 
 
 ## Examples
