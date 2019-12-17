@@ -2,7 +2,13 @@
 #include <string.h>
 #include "pbwt.h"
 
-edge* allocate_new_edge(const size_t partner, const double w)
+/* Locally scoped function prototypes */
+void sort_edges(edge *);
+edge *sorted_merge(edge *, edge *);
+edge *allocate_new_edge(const size_t, const double);
+
+
+edge *allocate_new_edge(const size_t partner, const double w)
 {
     edge* new_edge = (edge*)malloc(sizeof(edge));
     new_edge->index = partner;

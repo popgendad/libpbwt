@@ -145,8 +145,6 @@ extern match_t *match_new(const size_t, const size_t, const size_t, const size_t
 
 extern int match_overlap(const size_t, const size_t, const size_t, const size_t);
 
-extern edge* allocate_new_edge(const size_t, const double);
-
 extern adjlist* create_adjlist(const size_t, char **, char **);
 
 extern void add_edge(adjlist *, double, size_t, size_t);
