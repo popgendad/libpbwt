@@ -50,6 +50,103 @@ void add_edge(adjlist *g, double w, size_t src, size_t dest)
     g->nodelist[dest].numconnect++;
 }
 
+void sort_edges(edge *h)
+{
+    size_t a = 0;
+    double b = 0.0;
+    edge *temp1 = NULL;
+    edge *temp2 = NULL;
+
+    for (temp1 = h; temp1 != NULL; temp1 = temp1->next)
+    {
+        for (temp2 = temp1->next; temp2 != NULL; temp2 = temp2->next)
+        {
+            if (temp2->index < temp1->index)
+            {
+                a = temp1->index;
+                b = temp1->weight;
+                temp1->index = temp2->index;
+                temp1->weight = temp2->weight;
+                temp2->index = a;
+                temp2->weight = b;
+            }
+        }
+    }
+}
+
+edge *sorted_merge(edge *a, edge *b)
+{
+    edge *result = NULL;
+
+    /* Base cases */
+    if (a == NULL)
+        return b;
+    else if (b == NULL)
+        return a;
+
+    /* Pick either a or b, and recur */
+    if (a->index < b->index)
+    {
+        result = a;
+        result->next = sorted_merge(a->next, b);
+    }
+    else if (a->index == b->index)
+    {
+        result = a;
+        result->weight = a->weight + b->weight;
+        result->next = sorted_merge(a->next, b);
+    }
+    else
+    {
+        result = b;
+        result->next = sorted_merge(a, b->next);
+    }
+
+    return result;
+}
+
+adjlist *diploidize(adjlist *g)
+{
+    size_t i = 0;
+    size_t new_n_vertices = g->n_vertices / 2;
+    adjlist *z = (adjlist*)malloc(sizeof(adjlist));
+
+    z->n_vertices = new_n_vertices;
+    z->nodelist = (vertex *)malloc(z->n_vertices * sizeof(vertex));
+
+    for (i = 0; i < new_n_vertices; ++i)
+    {
+        size_t j = 2 * i;
+        size_t k = 2 * i + 1;
+        size_t l_j = strlen(g->nodelist[j].sampid);
+        size_t nc = 0;
+        edge *r;
+        edge *s;
+        edge *f;
+
+        z->nodelist[i].sampid = (char *)malloc((l_j - 1) * sizeof(char));
+        strncpy(z->nodelist[i].sampid, g->nodelist[j].sampid, l_j - 2);
+        z->nodelist[i].sampid[l_j - 2] = '\0';
+        z->nodelist[i].pop = strdup(g->nodelist[j].pop);
+        f = g->nodelist[j].head;
+        sort_edges(f);
+        s = g->nodelist[k].head;
+        sort_edges(s);
+        r = sorted_merge(f, s);
+        z->nodelist[i].head = r;
+        nc = 0;
+        edge *u = r;
+        for (; u != NULL; u = u->next)
+        {
+            u->index = u->index / 2;
+            nc++;
+        }
+        z->nodelist[i].numconnect = nc;
+    }
+
+    return z;
+}
+
 void print_adjlist(adjlist *g)
 {
     size_t v = 0;

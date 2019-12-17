@@ -151,7 +151,9 @@ extern adjlist* create_adjlist(const size_t, char **, char **);
 
 extern void add_edge(adjlist *, double, size_t, size_t);
 
-extern void print_adjlist(adjlist *);
+extern void print_adjlist(adjlist *g);
+
+extern adjlist *diploidize(adjlist *);
 
 extern const char *pbwt_version(void);
 
