@@ -1,7 +1,7 @@
 CC      := gcc
 VERSION := $(shell cat VERSION)
 CFLAGS  := -Wall -O2 -D VERSION=$(VERSION)
-LIBS    := -lz -lplink_lite -lhts
+LIBS    := -lm -lz -lplink_lite -lhts
 PREFIX  := /usr
 H_DIR   := $(PREFIX)/include
 L_DIR   := $(PREFIX)/lib

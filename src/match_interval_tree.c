@@ -1,3 +1,4 @@
+#include <math.h>
 #include "pbwt.h"
 
 match_t *match_new(const size_t first, const size_t second, const size_t begin, const size_t end)
@@ -30,7 +31,7 @@ int match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *g, size_t qbegin, size_
 
     if (match_overlap(qbegin, qend, node->begin, node->end))
     {
-        double length = b->cm[node->end] - b->cm[node->begin];
+        double length = fabs(b->cm[node->end] - b->cm[node->begin]);
         add_edge(g, length, node->first, node->second);
     }
 
@@ -51,7 +52,7 @@ int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, s
 
     if (match_overlap(qbegin, qend, node->begin, node->end))
     {
-        double length = b->cm[node->end] - b->cm[node->begin];
+        double length = fabs(b->cm[node->end] - b->cm[node->begin]);
         cmatrix[node->first][node->second] += length;
         cmatrix[node->second][node->first] += length;
     }
@@ -75,7 +76,7 @@ int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qb
     {
         int a = 0;
         khint_t k = 0;
-        double length = b->cm[node->end] - b->cm[node->begin];
+        double length = fabs(b->cm[node->end] - b->cm[node->begin]);
         size_t qs = 0;
 
         qs = b->is_query[node->first] ? node->second : node->first;
@@ -110,7 +111,7 @@ size_t match_count(pbwt_t *b, match_t *node, double *al)
     }
 
     match_count(b, node->left, al);
-    *al += b->cm[node->end] - b->cm[node->begin];
+    *al += fabs(b->cm[node->end] - b->cm[node->begin]);
     count++;
     match_count(b, node->right, al);
 
