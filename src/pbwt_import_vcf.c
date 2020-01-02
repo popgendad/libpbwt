@@ -82,6 +82,23 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
         return NULL;
     }
 
+    /* Fill in sample information */
+    for (i = 0; i < nsam; ++i)
+    {
+        const char *sid = hdr->samples[i];
+        it = kh_get(string, popdb, sid);
+        const char *pop = kh_value(popdb, it);
+        const size_t len = strlen(sid);
+        b->sid[2*i] = (char *)malloc(len + 3);
+        b->sid[2*i+1] = (char *)malloc(len + 3);
+        strcpy(b->sid[2*i], sid);
+        strcat(b->sid[2*i], ".1");
+        strcpy(b->sid[2*i+1], sid);
+        strcat(b->sid[2*i+1], ".2");
+        b->reg[2*i] = strdup(pop);
+        b->reg[2*i+1] = strdup(pop);
+    }
+
     size_t site_counter = 0;
 
     /* Read through single site entry in VCF */
@@ -103,19 +120,7 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
         /* Iterate through sample genotypes */
         for (i = 0; i < nsam; ++i)
         {
-            const char *sid = hdr->samples[i];
-            it = kh_get(string, popdb, sid);
-            const char *pop = kh_value(popdb, it);
             int32_t *ptr = gt + i * ngt;
-            const size_t len = strlen(sid);
-            b->sid[2*i] = (char *)malloc(len + 3);
-            b->sid[2*i+1] = (char *)malloc(len + 3);
-            strcpy(b->sid[2*i], sid);
-            strcat(b->sid[2*i], ".1");
-            strcpy(b->sid[2*i+1], sid);
-            strcat(b->sid[2*i+1], ".2");
-            b->reg[2*i] = strdup(pop);
-            b->reg[2*i+1] = strdup(pop);
             for (j = 0; j < ngt; ++j)
             {
                 if (bcf_gt_is_missing(ptr[j]))
@@ -152,7 +157,7 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
                 }
             }
         }
-        site_counter += 1;
+        site_counter++;
     }
 
     /* Close up shop */
