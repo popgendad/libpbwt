@@ -101,10 +101,16 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
     }
 
     size_t site_counter = 0;
+    const char *tag = "CM";
+    int last_size = (int)sizeof(float);
 
     /* Read through single site entry in VCF */
     while (bcf_read(fin, hdr, rec) == 0)
     {
+        int k = last_size / sizeof(float);
+        int ret = 0;
+        void *tmp = NULL;
+        float *p = NULL;
         const char *chr = NULL;
         int32_t ngt = 0;
         int32_t *gt = NULL;
@@ -114,7 +120,17 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
         chr = bcf_seqname(hdr, rec);
         b->chr[site_counter] = strdup(chr);
         b->rsid[site_counter] = strdup(rec->d.id);
-        b->cm[site_counter] = rec->d.info[0].v1.f;
+
+        /* Safe way to get INFO/CM tag */
+        ret = bcf_get_info_values(hdr, rec, tag, &tmp, &k, BCF_HT_REAL);
+        if (ret <= 0)
+        {
+            return NULL;
+        }
+        p = (float *)tmp;
+        b->cm[site_counter] = (double)(*p);
+        last_size = k * sizeof(float);
+
         ngt = bcf_get_genotypes(hdr, rec, &gt, &ngt) / nsam;
 
         /* Iterate through sample genotypes */
