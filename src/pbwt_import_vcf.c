@@ -83,6 +83,7 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
     }
 
     /* Fill in sample information */
+    khint_t it = 0;
     for (i = 0; i < nsam; ++i)
     {
         const char *sid = hdr->samples[i];
@@ -107,7 +108,6 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
         const char *chr = NULL;
         int32_t ngt = 0;
         int32_t *gt = NULL;
-        khint_t it = 0;
 
         bcf_unpack(rec, BCF_UN_STR);
         bcf_unpack(rec, BCF_UN_INFO);
