@@ -92,7 +92,7 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
                             }
                             unsigned char aa = b->data[TWODCORD(mppa[x], b->nsite, i)];
                             unsigned char bb = b->data[TWODCORD(mppa[y], b->nsite, i)];
-                            if (aa != bb)
+                            if (aa != bb && b->cm[i] - b->cm[kk] > minlen)
                             {
                                 // r[mppa[x]][mppa[y]] += b->cm[i] - b->cm[kk];
                                 /*r[mppa[y]][mppa[x]] += b->cm[i] - b->cm[kk];*/
