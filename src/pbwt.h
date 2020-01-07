@@ -123,9 +123,11 @@ extern pbwt_t *pbwt_subset_with_query(pbwt_t *, const char *, const size_t);
 
 extern int pbwt_set_match(pbwt_t *, const double);
 
-extern double **pbwt_find_match(pbwt_t *, const double);
+extern int pbwt_all_match(pbwt_t *, const double);
 
-extern int pbwt_query_match(pbwt_t *, const double);
+extern int pbwt_all_query_match(pbwt_t *, const double);
+
+extern int pbwt_set_query_match(pbwt_t *, const double);
 
 extern int match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
 

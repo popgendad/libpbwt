@@ -1,7 +1,7 @@
 #include <string.h>
 #include "pbwt.h"
 
-double **pbwt_find_match(pbwt_t *b, const double minlen)
+int pbwt_all_match(pbwt_t *b, const double minlen)
 {
     size_t i = 0;
     size_t j = 0;
@@ -11,20 +11,11 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
     size_t db = 0;
     size_t ia = 0;
     size_t ib = 0;
+    size_t na = 0;
+    size_t nb = 0;
     size_t *mdiv = NULL;
     size_t *mppa = NULL;
     match_t *intree = NULL;
-    double **r = NULL;
-
-    r = (double**)malloc(b->nsam * sizeof(double*));
-    for (i = 0; i < b->nsam; ++i)
-    {
-        r[i] = (double *)malloc(b->nsam * sizeof(double));
-        for (j = 0; j < b->nsam; ++j)
-        {
-            r[i][j] = 0.0;
-        }
-    }
 
     /* Allocate heap memory for prefix and divergence arrays */
     mdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
@@ -48,7 +39,7 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
         mppa[i] = i;
     }
 
-    for (i = 0; i <= b->nsite; ++i)
+    for (i = 0; i < b->nsite; ++i)
     {
 
         size_t *ara = NULL;
@@ -73,14 +64,15 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
 
             ix = mppa[j];
             ms = mdiv[j];
-            double dist = b->cm[i] - b->cm[ms];
+            // double dist = b->cm[i] - b->cm[ms];
 
-            if (dist > minlen)
+            // if (dist > minlen)
+            if (i - ms > 10)
             {
                 size_t x = 0;
                 size_t y = 0;
 
-                if (ia > 0 && ib > 0)
+                if (na > 0 && nb > 0)
                 {
                     for (x = k; x < j; ++x)
                     {
@@ -94,16 +86,12 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
                             unsigned char bb = b->data[TWODCORD(mppa[y], b->nsite, i)];
                             if (aa != bb && b->cm[i] - b->cm[kk] > minlen)
                             {
-                                // r[mppa[x]][mppa[y]] += b->cm[i] - b->cm[kk];
-                                /*r[mppa[y]][mppa[x]] += b->cm[i] - b->cm[kk];*/
-                                printf("%s\t%s\t%s\t%s\t%zu\t%1.4lf\t%zu\t%1.4lf\n",
-                                    b->sid[mppa[x]], b->reg[mppa[x]], b->sid[mppa[y]], b->reg[mppa[y]],
-                                    kk, b->cm[kk], i, b->cm[i]);
+                                intree = match_insert(intree, mppa[x], mppa[y], kk, i);
                             }
                         }
                     }
-                    ia = 0;
-                    ib = 0;
+                    na = 0;
+                    nb = 0;
                     k = j;
                 }
             }
@@ -123,6 +111,7 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
                 ara[ia] = ix;
                 ard[ia] = da;
                 da = 0;
+                ++na;
                 ++ia;
             }
             else
@@ -130,6 +119,7 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
                 arb[ib] = ix;
                 are[ib] = db;
                 db = 0;
+                ++nb;
                 ++ib;
             }
         }
@@ -174,5 +164,5 @@ double **pbwt_find_match(pbwt_t *b, const double minlen)
 
     b->match = intree;
 
-    return r;
+    return 0;
 }
