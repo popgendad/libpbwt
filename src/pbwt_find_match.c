@@ -1,15 +1,30 @@
 #include <string.h>
 #include "pbwt.h"
 
-int pbwt_find_match(pbwt_t *b, const size_t minlen)
+double **pbwt_find_match(pbwt_t *b, const double minlen)
 {
     size_t i = 0;
     size_t j = 0;
     size_t k = 0;
     size_t kk = 0;
+    size_t da = 0;
+    size_t db = 0;
+    size_t ia = 0;
+    size_t ib = 0;
     size_t *mdiv = NULL;
     size_t *mppa = NULL;
     match_t *intree = NULL;
+    double **r = NULL;
+
+    r = (double**)malloc(b->nsam * sizeof(double*));
+    for (i = 0; i < b->nsam; ++i)
+    {
+        r[i] = (double *)malloc(b->nsam * sizeof(double));
+        for (j = 0; j < b->nsam; ++j)
+        {
+            r[i][j] = 0.0;
+        }
+    }
 
     /* Allocate heap memory for prefix and divergence arrays */
     mdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
@@ -33,12 +48,9 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
         mppa[i] = i;
     }
 
-    for (i = 0; i < b->nsite; ++i)
+    for (i = 0; i <= b->nsite; ++i)
     {
-        size_t da = 0;
-        size_t db = 0;
-        size_t ia = 0;
-        size_t ib = 0;
+
         size_t *ara = NULL;
         size_t *arb = NULL;
         size_t *ard = NULL;
@@ -61,8 +73,9 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
 
             ix = mppa[j];
             ms = mdiv[j];
+            double dist = b->cm[i] - b->cm[ms];
 
-            if (ms > i - minlen)
+            if (dist > minlen)
             {
                 size_t x = 0;
                 size_t y = 0;
@@ -77,11 +90,15 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
                             {
                                 kk = mdiv[y];
                             }
-                            unsigned char aa = b->data[TWODCORD(x, b->nsite, i)];
-                            unsigned char bb = b->data[TWODCORD(y, b->nsite, i)];
+                            unsigned char aa = b->data[TWODCORD(mppa[x], b->nsite, i)];
+                            unsigned char bb = b->data[TWODCORD(mppa[y], b->nsite, i)];
                             if (aa != bb)
                             {
-                                intree = match_insert(intree, mppa[x], mppa[y], kk, i);
+                                // r[mppa[x]][mppa[y]] += b->cm[i] - b->cm[kk];
+                                /*r[mppa[y]][mppa[x]] += b->cm[i] - b->cm[kk];*/
+                                printf("%s\t%s\t%s\t%s\t%zu\t%1.4lf\t%zu\t%1.4lf\n",
+                                    b->sid[mppa[x]], b->reg[mppa[x]], b->sid[mppa[y]], b->reg[mppa[y]],
+                                    kk, b->cm[kk], i, b->cm[i]);
                             }
                         }
                     }
@@ -90,6 +107,17 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
                     k = j;
                 }
             }
+
+            if (ms > da)
+            {
+                da = ms;
+            }
+
+            if (ms > db)
+            {
+                db = ms;
+            }
+
             if (b->data[TWODCORD(ix, b->nsite, i)] == '0')
             {
                 ara[ia] = ix;
@@ -105,14 +133,20 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
                 ++ib;
             }
         }
+
 /*        if (ia > 0 && ib > 0)
         {
             size_t x;
             size_t y;
-            for (x=0; x<ia; ++x)
-                for (y=0; y<ib; ++y)
-                    intree = match_insert (intree, ma[x], mb[y], i, b->nsite);
+            for (x = 0; x < ia; ++x)
+            {
+                for (y = 0; y < ib; ++y)
+                {
+                    r[mppa[x]][mppa[y]] += b->cm[i] - b->cm[b->nsite-1];
+                }
+            }
         }*/
+
         if (i < b->nsite - 1)
         {
             /* Concatenate arrays */
@@ -140,5 +174,5 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
 
     b->match = intree;
 
-    return 0;
+    return r;
 }

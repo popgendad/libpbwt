@@ -24,7 +24,7 @@ void elementary_print(pbwt_t *b, match_t *root)
 		return;
 	}
 
-	if (!root->left && !root->right)
+	if (root->left == NULL && root->right == NULL)
 	{
 		printf("%zu\t%zu\n", root->begin, root->end);
 	}
