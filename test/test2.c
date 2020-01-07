@@ -50,7 +50,7 @@ main(int argc, char *argv[])
     b->is_query[qid] = 1;
 
     /* Find all set-maximal matches */
-    v = pbwt_query_match(b, minlen);
+    v = pbwt_all_query_match(b, minlen);
 
     match_regsearch(b, b->match, result, qstart, qend);
 
