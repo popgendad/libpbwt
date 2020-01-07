@@ -1,12 +1,18 @@
 #include <string.h>
 #include "pbwt.h"
 
-int pbwt_find_match(pbwt_t *b, const size_t minlen)
+int pbwt_all_match(pbwt_t *b, const double minlen)
 {
     size_t i = 0;
     size_t j = 0;
     size_t k = 0;
     size_t kk = 0;
+    size_t da = 0;
+    size_t db = 0;
+    size_t ia = 0;
+    size_t ib = 0;
+    size_t na = 0;
+    size_t nb = 0;
     size_t *mdiv = NULL;
     size_t *mppa = NULL;
     match_t *intree = NULL;
@@ -35,10 +41,7 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
 
     for (i = 0; i < b->nsite; ++i)
     {
-        size_t da = 0;
-        size_t db = 0;
-        size_t ia = 0;
-        size_t ib = 0;
+
         size_t *ara = NULL;
         size_t *arb = NULL;
         size_t *ard = NULL;
@@ -61,13 +64,15 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
 
             ix = mppa[j];
             ms = mdiv[j];
+            // double dist = b->cm[i] - b->cm[ms];
 
-            if (ms > i - minlen)
+            // if (dist > minlen)
+            if (i - ms > 10)
             {
                 size_t x = 0;
                 size_t y = 0;
 
-                if (ia > 0 && ib > 0)
+                if (na > 0 && nb > 0)
                 {
                     for (x = k; x < j; ++x)
                     {
@@ -77,24 +82,36 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
                             {
                                 kk = mdiv[y];
                             }
-                            unsigned char aa = b->data[TWODCORD(x, b->nsite, i)];
-                            unsigned char bb = b->data[TWODCORD(y, b->nsite, i)];
-                            if (aa != bb)
+                            unsigned char aa = b->data[TWODCORD(mppa[x], b->nsite, i)];
+                            unsigned char bb = b->data[TWODCORD(mppa[y], b->nsite, i)];
+                            if (aa != bb && b->cm[i] - b->cm[kk] > minlen)
                             {
                                 intree = match_insert(intree, mppa[x], mppa[y], kk, i);
                             }
                         }
                     }
-                    ia = 0;
-                    ib = 0;
+                    na = 0;
+                    nb = 0;
                     k = j;
                 }
             }
+
+            if (ms > da)
+            {
+                da = ms;
+            }
+
+            if (ms > db)
+            {
+                db = ms;
+            }
+
             if (b->data[TWODCORD(ix, b->nsite, i)] == '0')
             {
                 ara[ia] = ix;
                 ard[ia] = da;
                 da = 0;
+                ++na;
                 ++ia;
             }
             else
@@ -102,17 +119,24 @@ int pbwt_find_match(pbwt_t *b, const size_t minlen)
                 arb[ib] = ix;
                 are[ib] = db;
                 db = 0;
+                ++nb;
                 ++ib;
             }
         }
+
 /*        if (ia > 0 && ib > 0)
         {
             size_t x;
             size_t y;
-            for (x=0; x<ia; ++x)
-                for (y=0; y<ib; ++y)
-                    intree = match_insert (intree, ma[x], mb[y], i, b->nsite);
+            for (x = 0; x < ia; ++x)
+            {
+                for (y = 0; y < ib; ++y)
+                {
+                    r[mppa[x]][mppa[y]] += b->cm[i] - b->cm[b->nsite-1];
+                }
+            }
         }*/
+
         if (i < b->nsite - 1)
         {
             /* Concatenate arrays */

@@ -1,15 +1,10 @@
-
 #include <pbwt.h>
 
 int main(int argc, char *argv[])
 {
-    int v = 0;
-    size_t i = 0;
-    size_t nsites = 0;
+	int v = 0;
+    double **r = NULL;
     pbwt_t *b = NULL;
-
-    const char *jj = pbwt_version();
-    printf("version: %s\n", jj);
 
     /* Read in the pbwt file from disk */
     b = pbwt_read(argv[1]);
@@ -19,29 +14,21 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-	/* Unless specified otherwise, indicate penultimate site is end site */
-    nsites = b->nsite;
-
     /* Uncompress the haplotype data */
     pbwt_uncompress(b);
+	v = pbwt_build(b);
 
-    /* Query or coancestry matrix */
-    double **cmatrix = NULL;
-    size_t j = 0;
-
-    cmatrix = (double **)malloc(b->nsam * sizeof(double *));
+    r = pbwt_find_match(b, 0.5);
+    size_t i, j;
     for (i = 0; i < b->nsam; ++i)
     {
-        cmatrix[i] = (double *)malloc(b->nsam * sizeof(double));
+        printf("%s\t%s", b->sid[i], b->reg[i]);
         for (j = 0; j < b->nsam; ++j)
         {
-            cmatrix[i][j] = 0.0;
+            printf("\t%1.4lf", r[i][j]);
         }
+        putchar('\n');
     }
 
-    v = pbwt_set_match(b, 0.5);
-    match_search(b, b->match, cmatrix, 0, nsites-1);
-    /*match_print(b, b->match);*/
-    elementary_print(b, b->match);
 	return 0;
 }

@@ -1,6 +1,6 @@
 #include "pbwt.h"
 
-int pbwt_query_match(pbwt_t *b, const double minlen)
+int pbwt_set_query_match(pbwt_t *b, const double minlen)
 {
     size_t i = 0;
     size_t j = 0;
