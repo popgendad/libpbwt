@@ -19,14 +19,12 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
 
     /* Allocate heap memory for prefix and divergence arrays */
     mdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
-
     if (mdiv == NULL)
     {
         return -1;
     }
 
     mppa = (size_t *)malloc(b->nsam * sizeof(size_t));
-
     if (mppa == NULL)
     {
         return -1;
@@ -41,7 +39,6 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
 
     for (i = 0; i < b->nsite; ++i)
     {
-
         size_t *ara = NULL;
         size_t *arb = NULL;
         size_t *ard = NULL;
@@ -64,9 +61,7 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
 
             ix = mppa[j];
             ms = mdiv[j];
-            // double dist = b->cm[i] - b->cm[ms];
 
-            // if (dist > minlen)
             if (i - ms > 10)
             {
                 size_t x = 0;
