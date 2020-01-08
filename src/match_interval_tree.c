@@ -47,7 +47,7 @@ int match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *g, size_t qbegin, size_
     return match_adjsearch(b, node->right, g, qbegin, qend);
 }
 
-int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend)
+int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
 {
     if (node == NULL)
     {
@@ -59,17 +59,25 @@ int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, s
         if (strcmp(b->chr[node->begin], b->chr[node->end]) == 0)
         {
             double length = fabs(b->cm[node->end] - b->cm[node->begin]);
-            cmatrix[node->first][node->second] += length;
-            cmatrix[node->second][node->first] += length;
+            if (is_diploid)
+            {
+                cmatrix[node->first/2][node->second/2] += length;
+                cmatrix[node->second/2][node->second/2] +=length;
+            }
+            else
+            {
+                cmatrix[node->first][node->second] += length;
+                cmatrix[node->second][node->first] += length;
+            }
         }
     }
 
     if (node->left != NULL && node->left->max >= qbegin)
     {
-        return match_coasearch(b, node->left, cmatrix, qbegin, qend);
+        return match_coasearch(b, node->left, cmatrix, qbegin, qend, is_diploid);
     }
 
-    return match_coasearch(b, node->right, cmatrix, qbegin, qend);
+    return match_coasearch(b, node->right, cmatrix, qbegin, qend, is_diploid);
 }
 
 int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
