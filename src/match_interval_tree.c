@@ -62,7 +62,7 @@ int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, s
             if (is_diploid)
             {
                 cmatrix[node->first/2][node->second/2] += length;
-                cmatrix[node->second/2][node->second/2] +=length;
+                cmatrix[node->second/2][node->first/2] += length;
             }
             else
             {
