@@ -375,10 +375,10 @@ The `match_adjsearch` function stores the list of all matches overlapping the in
 #### match_coasearch()
 
 ```c
-int match_coasearch(pbwt_t *b, match_t *node, double **coamat, size_t qbegin, size_t qend)
+int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
 ```
 
-The `match_coasearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` in a pairwise coancestry matrix. The function will return 0 on success and -1 on error.
+The `match_coasearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` in a pairwise coancestry matrix. The `is_diploid` flag indicates that the dimension of the `cmatrix` is `b->nsam` / 2. The function will return 0 on success and -1 on error.
 
 #### match_regsearch()
 
