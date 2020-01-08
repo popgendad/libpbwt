@@ -367,26 +367,26 @@ The `pbwt_set_query_match` function finds only the set maximal matches in `b` th
 #### match_adjsearch()
 
 ```c
-int match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *, size_t qbegin, size_t qend)
+void match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *, size_t qbegin, size_t qend)
 ```
 
-The `match_adjsearch` function stores the list of all matches overlapping the interval `qbegin` to `qend` in an adjacency list data structure. The function will return 0 on success and -1 on error.
+The `match_adjsearch` function stores the list of all matches overlapping the interval `qbegin` to `qend` in an adjacency list data structure. This function does not return a value.
 
 #### match_coasearch()
 
 ```c
-int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
+void match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
 ```
 
-The `match_coasearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` in a pairwise coancestry matrix. The `is_diploid` flag indicates that the dimension of the `cmatrix` is `b->nsam` / 2. The function will return 0 on success and -1 on error.
+The `match_coasearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` in a pairwise coancestry matrix. The `is_diploid` flag indicates that the dimension of the `cmatrix` is `b->nsam` / 2. This function does not return a value.
 
 #### match_regsearch()
 
 ```c
-int match_regsearch(pbwt_t *b, match_t *node, khash(double) *h, size_t qbegin, size_t qend)
+void match_regsearch(pbwt_t *b, match_t *node, khash(double) *h, size_t qbegin, size_t qend)
 ```
 
-The `match_regsearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` into a hash that is keyed on the region/population with the value being the sum of the recombination distance of all matches between the query haplotype and the keyed region. The function will return 0 on success and -1 on error.
+The `match_regsearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` into a hash that is keyed on the region/population with the value being the sum of the recombination distance of all matches between the query haplotype and the keyed region. This function does not return a value.
 
 #### match_print()
 
