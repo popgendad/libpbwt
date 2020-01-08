@@ -23,100 +23,82 @@ match_t *match_new(const size_t first, const size_t second, const size_t begin, 
     return node;
 }
 
-int match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *g, size_t qbegin, size_t qend)
+void match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *g, size_t qbegin, size_t qend)
 {
     if (node == NULL)
     {
-        return 0;
+        return;
     }
 
-    if (match_overlap(qbegin, qend, node->begin, node->end))
+    match_adjsearch(b, node->left, g, qbegin, qend);
+
+    if (strcmp(b->chr[node->begin], b->chr[node->end]) == 0)
     {
-        if (strcmp(b->chr[node->begin], b->chr[node->end]) == 0)
-        {
-            double length = fabs(b->cm[node->end] - b->cm[node->begin]);
-            add_edge(g, length, node->first, node->second);
-        }
+        double length = fabs(b->cm[node->end] - b->cm[node->begin]);
+        add_edge(g, length, node->first, node->second);
     }
 
-    if (node->left != NULL && node->left->max >= qbegin)
-    {
-        return match_adjsearch(b, node->left, g, qbegin, qend);
-    }
-
-    return match_adjsearch(b, node->right, g, qbegin, qend);
+    match_adjsearch(b, node->right, g, qbegin, qend);
 }
 
-int match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
+void match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
 {
     if (node == NULL)
     {
-        return 0;
+        return;
     }
 
-    if (match_overlap(qbegin, qend, node->begin, node->end))
+    match_coasearch(b, node->left, cmatrix, qbegin, qend, is_diploid);
+
+    if (strcmp(b->chr[node->begin], b->chr[node->end]) == 0)
     {
-        if (strcmp(b->chr[node->begin], b->chr[node->end]) == 0)
+        double length = fabs(b->cm[node->end] - b->cm[node->begin]);
+        if (is_diploid)
         {
-            double length = fabs(b->cm[node->end] - b->cm[node->begin]);
-            if (is_diploid)
-            {
-                cmatrix[node->first/2][node->second/2] += length;
-                cmatrix[node->second/2][node->first/2] += length;
-            }
-            else
-            {
-                cmatrix[node->first][node->second] += length;
-                cmatrix[node->second][node->first] += length;
-            }
+            cmatrix[node->first/2][node->second/2] += length;
+            cmatrix[node->second/2][node->first/2] += length;
+        }
+        else
+        {
+            cmatrix[node->first][node->second] += length;
+            cmatrix[node->second][node->first] += length;
         }
     }
 
-    if (node->left != NULL && node->left->max >= qbegin)
-    {
-        return match_coasearch(b, node->left, cmatrix, qbegin, qend, is_diploid);
-    }
-
-    return match_coasearch(b, node->right, cmatrix, qbegin, qend, is_diploid);
+    match_coasearch(b, node->right, cmatrix, qbegin, qend, is_diploid);
 }
 
-int match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
+void match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t qbegin, size_t qend)
 {
     if (node == NULL)
     {
-        return 0;
+        return;
     }
 
-    if (match_overlap(qbegin, qend, node->begin, node->end))
-    {
-        if (strcmp(b->chr[node->begin], b->chr[node->end]) == 0)
-        {
-            int a = 0;
-            khint_t k = 0;
-            double length = fabs(b->cm[node->end] - b->cm[node->begin]);
-            size_t qs = 0;
+    match_regsearch(b, node->left, result, qbegin, qend);
 
-            qs = b->is_query[node->first] ? node->second : node->first;
-            k = kh_put(floats, result, b->reg[qs], &a);
-            if (a == 0)
-            {
-                double ent = kh_value(result, k);
-                ent += length;
-                kh_value(result, k) = ent;
-            }
-            else
-            {
-                kh_value(result, k) = length;
-            }
+    if (strcmp(b->chr[node->begin], b->chr[node->end]) == 0)
+    {
+        int a = 0;
+        khint_t k = 0;
+        double length = fabs(b->cm[node->end] - b->cm[node->begin]);
+        size_t qs = 0;
+
+        qs = b->is_query[node->first] ? node->second : node->first;
+        k = kh_put(floats, result, b->reg[qs], &a);
+        if (a == 0)
+        {
+            double ent = kh_value(result, k);
+            ent += length;
+            kh_value(result, k) = ent;
+        }
+        else
+        {
+            kh_value(result, k) = length;
         }
     }
 
-    if (node->left != NULL && node->left->max >= qbegin)
-    {
-        return match_regsearch(b, node->left, result, qbegin, qend);
-    }
-
-    return match_regsearch(b, node->right, result, qbegin, qend);
+    match_regsearch(b, node->right, result, qbegin, qend);
 }
 
 size_t match_count(pbwt_t *b, match_t *node, double *al)

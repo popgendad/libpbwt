@@ -129,11 +129,11 @@ extern int pbwt_all_query_match(pbwt_t *, const double);
 
 extern int pbwt_set_query_match(pbwt_t *, const double);
 
-extern int match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
+extern void match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
 
-extern int match_coasearch(pbwt_t *, match_t *, double **, size_t, size_t, int);
+extern void match_coasearch(pbwt_t *, match_t *, double **, size_t, size_t, int);
 
-extern int match_adjsearch(pbwt_t *, match_t *, adjlist_t *, size_t, size_t);
+extern void match_adjsearch(pbwt_t *, match_t *, adjlist_t *, size_t, size_t);
 
 extern void match_print(pbwt_t *, match_t *);
 

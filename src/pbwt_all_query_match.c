@@ -129,7 +129,12 @@ int pbwt_all_query_match(pbwt_t *b, const double minlen)
             {
                 for (y = 0; y < ib; ++y)
                 {
-                    r[mppa[x]][mppa[y]] += b->cm[i] - b->cm[b->nsite-1];
+	                if (b->cm[i] - b->cm[kk] > minlen &&
+	                	((b->is_query[mppa[x]] == TRUE && b->is_query[mppa[y]] == FALSE) ||
+	                	(b->is_query[mppa[x]] == FALSE && b->is_query[mppa[y]] == TRUE)))
+	                {
+	                    intree = match_insert(intree, mppa[x], mppa[y], kk, i);
+	                }
                 }
             }
         }*/
