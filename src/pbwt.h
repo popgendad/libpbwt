@@ -66,20 +66,20 @@ typedef struct _match
 /* Structure to hold the positional Burrows-Wheeler transform */
 typedef struct pbwt
 {
-    char **sid;               /* Diploid sample identifier string */
-    char **reg;               /* Region/population of sample */
-    char **chr;               /* Chromosome identifer of all SNPs in pbwt */
-    char **rsid;              /* RSID for all SNPs in pbwt */
-    double *cm;               /* Genetic map positions for all SNPs in pbwt */
-    unsigned char *data;      /* Binary haplotype representation */
-    int is_compress;          /* Are haplotype data compressed? */
-    int *is_query;            /* Is the haplotype a query sequence? */
-    size_t datasize;          /* Number of bytes stored in data */
-    size_t nsite;             /* Number of sampled sites */
-    size_t nsam;              /* Number of sampled haplotypes */
-    size_t *ppa;              /* Pointer to the prefix array */
-    size_t *div;              /* Pointer to the divergence array */
-    match_t *match;           /* Pointer to set-proximal match linked list */
+    char **sid;                  /* Diploid sample identifier string */
+    char **reg;                  /* Region/population of sample */
+    char **chr;                  /* Chromosome identifer of all SNPs in pbwt */
+    char **rsid;                 /* RSID for all SNPs in pbwt */
+    double *cm;                  /* Genetic map positions for all SNPs in pbwt */
+    unsigned char *data;         /* Binary haplotype representation */
+    unsigned char is_compress;   /* Are haplotype data compressed? */
+    unsigned char *is_query;     /* Is the haplotype a query sequence? */
+    size_t datasize;             /* Number of bytes stored in data */
+    size_t nsite;                /* Number of sampled sites */
+    size_t nsam;                 /* Number of sampled haplotypes */
+    size_t *ppa;                 /* Pointer to the prefix array */
+    size_t *div;                 /* Pointer to the divergence array */
+    match_t *match;              /* Pointer to set-proximal match linked list */
 } pbwt_t;
 
 
@@ -131,7 +131,7 @@ extern int pbwt_set_query_match(pbwt_t *, const double);
 
 extern void match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
 
-extern void match_coasearch(pbwt_t *, match_t *, double **, size_t, size_t, int);
+extern void match_coasearch(pbwt_t *, match_t *, double **, size_t, size_t, unsigned char);
 
 extern void match_adjsearch(pbwt_t *, match_t *, adjlist_t *, size_t, size_t);
 

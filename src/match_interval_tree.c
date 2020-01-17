@@ -41,7 +41,7 @@ void match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *g, size_t qbegin, size
     match_adjsearch(b, node->right, g, qbegin, qend);
 }
 
-void match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
+void match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, unsigned char is_diploid)
 {
     if (node == NULL)
     {

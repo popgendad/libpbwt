@@ -18,7 +18,7 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->is_compress = FALSE;
     b->match = NULL;
 
-    b->is_query = (int *)malloc(nsam * sizeof(int));
+    b->is_query = (unsigned char *)malloc(nsam * sizeof(unsigned char));
     if (b->is_query == NULL)
     {
         pbwt_destroy(b);
