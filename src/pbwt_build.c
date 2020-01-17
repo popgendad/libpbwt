@@ -1,6 +1,6 @@
 #include "pbwt.h"
 
-int pbwt_build(pbwt_t *b)
+size_t *pbwt_build(pbwt_t *b)
 {
     size_t i = 0;
     size_t j = 0;
@@ -81,5 +81,5 @@ int pbwt_build(pbwt_t *b)
     free(ard);
     free(are);
 
-    return 0;
+    return b->ppa;
 }

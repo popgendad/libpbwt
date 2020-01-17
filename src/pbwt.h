@@ -115,7 +115,7 @@ extern khash_t(integer) *pbwt_get_sampdict(pbwt_t *);
 
 extern khash_t(integer) *pbwt_get_regcount(pbwt_t *);
 
-extern int pbwt_build(pbwt_t *);
+extern size_t *pbwt_build(pbwt_t *);
 
 extern pbwt_t *pbwt_subset(pbwt_t *, const char *);
 
