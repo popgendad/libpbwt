@@ -10,23 +10,40 @@ edge_t *allocate_new_edge(const size_t, const double);
 
 edge_t *allocate_new_edge(const size_t partner, const double w)
 {
-    edge_t *new_edge = (edge_t *)malloc(sizeof(edge_t));
+    edge_t *new_edge = NULL;
+    new_edge = (edge_t *)malloc(sizeof(edge_t));
+    if (new_edge == NULL)
+    {
+        return NULL;
+    }
     new_edge->index = partner;
     new_edge->weight = w;
     new_edge->next = NULL;
+
     return new_edge;
 }
 
 adjlist_t *create_adjlist(const size_t V, char **samplist, char **reglist)
 {
-    adjlist_t *g = (adjlist_t *)malloc(sizeof(adjlist_t));
+    size_t i = 0;
+    adjlist_t *g = NULL;
+
+    g = (adjlist_t *)malloc(sizeof(adjlist_t));
+    if (g == NULL)
+    {
+        return NULL;
+    }
+
     g->n_vertices = V;
 
     /* Create an array of adjacency lists.  Size of array will be V */
     g->nodelist = (vertex_t *)malloc(V * sizeof(vertex_t));
+    if (g->nodelist == NULL)
+    {
+        return NULL;
+    }
 
     /* Initialize each adjacency list as empty by making head as NULL */
-    size_t i = 0;
     for (i = 0; i < V; ++i)
     {
     	g->nodelist[i].numconnect = 0;
@@ -118,26 +135,44 @@ edge_t *sorted_merge(edge_t *a, edge_t *b)
 adjlist_t *diploidize(adjlist_t *g)
 {
     size_t i = 0;
-    size_t new_n_vertices = g->n_vertices / 2;
-    adjlist_t *z = (adjlist_t *)malloc(sizeof(adjlist_t));
+    size_t j = 0;
+    size_t k = 0;
+    size_t lj = 0;
+    size_t nc = 0;
+    size_t new_n_vertices = 0;
+    adjlist_t *z = NULL;
 
+    new_n_vertices = g->n_vertices / 2;
+    z = (adjlist_t *)malloc(sizeof(adjlist_t));
+    if (z == NULL)
+    {
+        return NULL;
+    }
     z->n_vertices = new_n_vertices;
     z->nodelist = (vertex_t *)malloc(z->n_vertices * sizeof(vertex_t));
+    if (z->nodelist == NULL)
+    {
+        return NULL;
+    }
 
     for (i = 0; i < new_n_vertices; ++i)
     {
-        size_t j = 2 * i;
-        size_t k = 2 * i + 1;
-        size_t l_j = strlen(g->nodelist[j].sampid);
-        size_t nc = 0;
+        j = 2 * i;
+        k = 2 * i + 1;
+        lj = strlen(g->nodelist[j].sampid);
+        nc = 0;
         edge_t *r;
         edge_t *s;
         edge_t *f;
         edge_t *u;
 
-        z->nodelist[i].sampid = (char *)malloc((l_j - 1) * sizeof(char));
-        strncpy(z->nodelist[i].sampid, g->nodelist[j].sampid, l_j - 2);
-        z->nodelist[i].sampid[l_j - 2] = '\0';
+        z->nodelist[i].sampid = (char *)malloc((lj - 1) * sizeof(char));
+        if (z->nodelist[i].sampid == NULL)
+        {
+            return NULL;
+        }
+        strncpy(z->nodelist[i].sampid, g->nodelist[j].sampid, lj-2);
+        z->nodelist[i].sampid[lj-2] = '\0';
         z->nodelist[i].pop = strdup(g->nodelist[j].pop);
         f = g->nodelist[j].head;
         sort_edges(f);
