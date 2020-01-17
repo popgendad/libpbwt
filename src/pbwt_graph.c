@@ -193,7 +193,7 @@ adjlist_t *diploidize(adjlist_t *g)
     return z;
 }
 
-void print_adjlist(adjlist_t *g)
+void print_adjlist(const adjlist_t *g)
 {
     size_t v = 0;
 
