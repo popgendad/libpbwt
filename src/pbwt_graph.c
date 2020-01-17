@@ -180,9 +180,7 @@ adjlist_t *diploidize(adjlist_t *g)
         sort_edges(s);
         r = sorted_merge(f, s);
         z->nodelist[i].head = r;
-        nc = 0;
-        u = r;
-        for (; u != NULL; u = u->next)
+        for (u = r, nc = 0; u != NULL; u = u->next)
         {
             u->index = u->index / 2;
             nc++;
