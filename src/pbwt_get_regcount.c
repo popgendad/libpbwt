@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include "pbwt.h"
 
-khash_t(integer) *pbwt_get_regcount(pbwt_t *b)
+khash_t(integer) *pbwt_get_regcount(const pbwt_t *b)
 {
 	if (b == NULL)
 	{

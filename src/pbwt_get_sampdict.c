@@ -1,7 +1,7 @@
 #include <string.h>
 #include "pbwt.h"
 
-khash_t(integer) *pbwt_get_sampdict(pbwt_t *b)
+khash_t(integer) *pbwt_get_sampdict(const pbwt_t *b)
 {
 	if (b == NULL)
 	{

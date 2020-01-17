@@ -111,9 +111,9 @@ extern pbwt_t *pbwt_import_vcf(const char *, const char *);
 
 extern char **pbwt_get_reglist(pbwt_t *, size_t *);
 
-extern khash_t(integer) *pbwt_get_sampdict(pbwt_t *);
+extern khash_t(integer) *pbwt_get_sampdict(const pbwt_t *);
 
-extern khash_t(integer) *pbwt_get_regcount(pbwt_t *);
+extern khash_t(integer) *pbwt_get_regcount(const pbwt_t *);
 
 extern size_t *pbwt_build(pbwt_t *);
 
