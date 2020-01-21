@@ -1,6 +1,8 @@
 #include <string.h>
 #include "pbwt.h"
 
+#define MININT 10
+
 int pbwt_all_query_match(pbwt_t *b, const double minlen)
 {
     size_t i = 0;
@@ -62,7 +64,7 @@ int pbwt_all_query_match(pbwt_t *b, const double minlen)
             ix = mppa[j];
             ms = mdiv[j];
 
-            if (i - ms > 10)
+            if (ms > i - MININT)
             {
                 size_t x = 0;
                 size_t y = 0;
@@ -127,7 +129,7 @@ int pbwt_all_query_match(pbwt_t *b, const double minlen)
             size_t y;
             for (x = 0; x < ia; ++x)
             {
-                for (y = 0; y < ib; ++y)
+                for (y = x + 1, kk = 0; y < ib; ++y)
                 {
 	                if (b->cm[i] - b->cm[kk] > minlen &&
 	                	((b->is_query[mppa[x]] == TRUE && b->is_query[mppa[y]] == FALSE) ||
