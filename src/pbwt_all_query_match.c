@@ -43,7 +43,6 @@ int pbwt_all_query_match(pbwt_t *b, const double minlen)
         mppa[i] = i;
     }
 
-
     ara = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (ara == NULL)
     {

@@ -81,9 +81,10 @@ void match_regsearch(pbwt_t *b, match_t *node, khash_t(floats) *result, size_t q
     {
         int a = 0;
         khint_t k = 0;
-        double length = fabs(b->cm[node->end] - b->cm[node->begin]);
+        double length = 0.0;
         size_t qs = 0;
 
+        length = fabs(b->cm[node->end] - b->cm[node->begin]);
         qs = b->is_query[node->first] ? node->second : node->first;
         k = kh_put(floats, result, b->reg[qs], &a);
         if (a == 0)
@@ -128,10 +129,19 @@ match_t *match_insert(match_t *node, const size_t first, const size_t second,
         return node;
     }
 
-    /* Add a leaf node */
+    /* Add a new leaf node */
     if (node == NULL)
     {
-        return match_new(first, second, begin, end);
+        match_t *nn = NULL;
+        nn = match_new(first, second, begin, end);
+        if (nn == NULL)
+        {
+            return NULL;
+        }
+        else
+        {
+            return nn;
+        }
     }
 
     /* Traverse the tree */

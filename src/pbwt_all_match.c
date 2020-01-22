@@ -42,6 +42,7 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
         mdiv[i] = 0;
         mppa[i] = i;
     }
+
     ara = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (ara == NULL)
     {
@@ -63,7 +64,7 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
         return -1;
     }
 
-    for (i = 0; i < b->nsite; ++i)
+    for (i = 0; i <= b->nsite; ++i)
     {
         memset(ara, 0, b->nsam);
         memset(arb, 0, b->nsam);
