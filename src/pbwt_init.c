@@ -2,7 +2,6 @@
 
 pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
 {
-    size_t i = 0;
     pbwt_t *b = NULL;
 
     /* Allocate heap memory for the pwbt data structure */
@@ -18,7 +17,7 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->is_compress = FALSE;
     b->intree = NULL;
 
-    b->is_query = (unsigned char *)malloc(nsam * sizeof(unsigned char));
+    b->is_query = (unsigned char *)calloc(nsam, sizeof(unsigned char));
     if (b->is_query == NULL)
     {
         pbwt_destroy(b);
@@ -65,12 +64,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     {
         pbwt_destroy(b);
         return NULL;
-    }
-
-    /* Initialize values for prefix and divergence arrays */
-    for (i = 0; i < nsam; ++i)
-    {
-        b->is_query[i] = FALSE;
     }
 
     return b;

@@ -18,7 +18,7 @@ int pbwt_set_match(pbwt_t *b, const double minlen,
     size_t *are = NULL;
 
     /* Allocate heap memory for prefix and divergence arrays */
-    div = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
+    div = (size_t *)calloc(b->nsam + 1, sizeof(size_t));
     if (div == NULL)
     {
         return -1;
@@ -33,7 +33,6 @@ int pbwt_set_match(pbwt_t *b, const double minlen,
     /* Initialize prefix and divergence arrays */
     for (i = 0; i < b->nsam; ++i)
     {
-        div[i] = 0;
         ppa[i] = i;
     }
 
