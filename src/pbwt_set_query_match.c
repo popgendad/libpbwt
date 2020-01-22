@@ -1,7 +1,7 @@
 #include "pbwt.h"
 
 int pbwt_set_query_match(pbwt_t *b, const double minlen,
-                         void (*report)(pbwt_t *b, size_t first, size_t second, size_t begin, size_t end))
+                         void (*report)(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end))
 {
     size_t i = 0;
     size_t j = 0;
