@@ -1,25 +1,31 @@
 #include "pbwt.h"
 
-int pbwt_set_match(pbwt_t *b, const double minlen)
+int pbwt_set_match(pbwt_t *b, const double minlen,
+                   void (*report)(pbwt_t *b, size_t first, size_t second, size_t begin, size_t end))
 {
     size_t i = 0;
     size_t j = 0;
     size_t k = 0;
-    size_t *sdiv = NULL;
-    size_t *jppa = NULL;
-    match_t *intree = NULL;
+    size_t da = 0;
+    size_t db = 0;
+    size_t ia = 0;
+    size_t ib = 0;
+    size_t *div = NULL;
+    size_t *ppa = NULL;
+    size_t *ara = NULL;
+    size_t *arb = NULL;
+    size_t *ard = NULL;
+    size_t *are = NULL;
 
     /* Allocate heap memory for prefix and divergence arrays */
-    sdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
-
-    if (sdiv == NULL)
+    div = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
+    if (div == NULL)
     {
         return -1;
     }
 
-    jppa = (size_t *)malloc(b->nsam * sizeof(size_t));
-
-    if (jppa == NULL)
+    ppa = (size_t *)malloc(b->nsam * sizeof(size_t));
+    if (ppa == NULL)
     {
         return -1;
     }
@@ -27,14 +33,38 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
     /* Initialize prefix and divergence arrays */
     for (i = 0; i < b->nsam; ++i)
     {
-        sdiv[i] = 0;
-        jppa[i] = i;
+        div[i] = 0;
+        ppa[i] = i;
+    }
+
+    ara = (size_t *)malloc(b->nsam * sizeof(size_t));
+    if (ara == NULL)
+    {
+        return -1;
+    }
+
+    arb = (size_t *)malloc(b->nsam * sizeof(size_t));
+    if (arb == NULL)
+    {
+        return -1;
+    }
+
+    ard = (size_t *)malloc(b->nsam * sizeof(size_t));
+    if (ard == NULL)
+    {
+        return -1;
+    }
+
+    are = (size_t *)malloc(b->nsam * sizeof(size_t));
+    if (are == NULL)
+    {
+        return -1;
     }
 
     for (i = 0; i < b->nsite; ++i)
     {
-        sdiv[0] = i + 1;
-        sdiv[b->nsam] = i + 1;
+        div[0] = i + 1;
+        div[b->nsam] = i + 1;
 
         for (j = 0; j < b->nsam; ++j)
         {
@@ -42,12 +72,12 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
             int n = j + 1;
             int mc = 0;
 
-            if (sdiv[j] <= sdiv[j+1])
+            if (div[j] <= div[j+1])
             {
-                while (sdiv[m+1] <= sdiv[j])
+                while (div[m+1] <= div[j])
                 {
-                    if (b->data[TWODCORD(jppa[m], b->nsite, i)] ==
-                        b->data[TWODCORD(jppa[j], b->nsite, i)] && i < b->nsite - 1)
+                    if (b->data[TWODCORD(ppa[m], b->nsite, i)] ==
+                        b->data[TWODCORD(ppa[j], b->nsite, i)] && i < b->nsite - 1)
                     {
                         mc = 1;
                         break;
@@ -61,12 +91,12 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
                 continue;
             }
 
-            if (sdiv[j] >= sdiv[j+1])
+            if (div[j] >= div[j+1])
             {
-                while (sdiv[n] <= sdiv[j+1])
+                while (div[n] <= div[j+1])
                 {
-                    if (b->data[TWODCORD(jppa[n], b->nsite, i)] ==
-                        b->data[TWODCORD(jppa[j], b->nsite, i)] && i < b->nsite - 1)
+                    if (b->data[TWODCORD(ppa[n], b->nsite, i)] ==
+                        b->data[TWODCORD(ppa[j], b->nsite, i)] && i < b->nsite - 1)
                     {
                         mc = 1;
                         break;
@@ -83,17 +113,17 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
             for (k = m + 1; k < j; ++k)
             {
                 /* Evaluate whether match should be recorded */
-                double match_dist = b->cm[i] - b->cm[sdiv[j]];
+                double match_dist = b->cm[i] - b->cm[div[j]];
 
-                if (sdiv[j] < i && match_dist >= minlen)
+                if (div[j] < i && match_dist >= minlen)
                 {
-                    if (jppa[j] < jppa[k])
+                    if (ppa[j] < ppa[k])
                     {
-                        intree = match_insert(intree, jppa[j], jppa[k], sdiv[j], i);
+                        (*report)(b, ppa[j], ppa[k], div[j], i);
                     }
                     else
                     {
-                        intree = match_insert(intree, jppa[k], jppa[j], sdiv[j], i);
+                        (*report)(b, ppa[k], ppa[j], div[j], i);
                     }
                 }
             }
@@ -101,17 +131,17 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
             for (k = j + 1; k < n; ++k)
             {
                 /* Evaluate whether match should be recorded */
-                double match_dist = b->cm[i] - b->cm[sdiv[j+1]];
+                double match_dist = b->cm[i] - b->cm[div[j+1]];
 
-                if (sdiv[j+1] < i && match_dist >= minlen)
+                if (div[j+1] < i && match_dist >= minlen)
                 {
-                    if (jppa[j] < jppa[k])
+                    if (ppa[j] < ppa[k])
                     {
-                        intree = match_insert(intree, jppa[j], jppa[k], sdiv[j+1], i);
+                        (*report)(b, ppa[j], ppa[k], div[j+1], i);
                     }
                     else
                     {
-                        intree = match_insert(intree, jppa[k], jppa[j], sdiv[j+1], i);
+                        (*report)(b, ppa[k], ppa[j], div[j+1], i);
                     }
                 }
             }
@@ -119,33 +149,19 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
 
         if (i < b->nsite - 1)
         {
-            size_t da = 0;
-            size_t db = 0;
-            size_t ia = 0;
-            size_t ib = 0;
-            size_t *ara = NULL;
-            size_t *arb = NULL;
-            size_t *ard = NULL;
-            size_t *are = NULL;
-
-            ara = (size_t *)malloc(b->nsam * sizeof(size_t));
-            arb = (size_t *)malloc(b->nsam * sizeof(size_t));
-            ard = (size_t *)malloc(b->nsam * sizeof(size_t));
-            are = (size_t *)malloc(b->nsam * sizeof(size_t));
-
             da = i + 1;
             db = i + 1;
             ia = 0;
             ib = 0;
+            memset(ara, 0, b->nsam);
+            memset(arb, 0, b->nsam);
+            memset(ard, 0, b->nsam);
+            memset(are, 0, b->nsam);
 
             for (j = 0; j < b->nsam; ++j)
             {
-                size_t ix = 0;
-                size_t ms = 0;
-
-                ix = jppa[j];
-                ms = sdiv[j];
-
+                size_t ix = ppa[j];
+                size_t ms = div[j];
                 if (ms > da)
                 {
                     da = ms;
@@ -174,27 +190,24 @@ int pbwt_set_match(pbwt_t *b, const double minlen)
             /* Concatenate arrays */
             for (j = 0; j < ia; ++j)
             {
-                jppa[j] = ara[j];
-                sdiv[j] = ard[j];
+                ppa[j] = ara[j];
+                div[j] = ard[j];
             }
 
             for (j = 0, k = ia; j < ib; ++j, ++k)
             {
-                jppa[k] = arb[j];
-                sdiv[k] = are[j];
+                ppa[k] = arb[j];
+                div[k] = are[j];
             }
-
-            free(ara);
-            free(arb);
-            free(ard);
-            free(are);
         }
     }
 
-    free(sdiv);
-    free(jppa);
-
-    b->match = intree;
+    free(div);
+    free(ppa);
+    free(ara);
+    free(arb);
+    free(ard);
+    free(are);
 
     return 0;
 }

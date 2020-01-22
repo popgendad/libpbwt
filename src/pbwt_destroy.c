@@ -1,7 +1,7 @@
 #include "pbwt.h"
 
 /* Local function declaration */
-static void match_destroy(match_t *);
+static void match_destroy(node_t *);
 
 void pbwt_destroy(pbwt_t *b)
 {
@@ -56,16 +56,6 @@ void pbwt_destroy(pbwt_t *b)
             free(b->data);
         }
 
-        if (b->div != NULL)
-        {
-            free(b->div);
-        }
-
-        if (b->ppa != NULL)
-        {
-            free(b->ppa);
-        }
-
         if (b->chr != NULL)
         {
             for (i = 0; i < b->nsite; ++i)
@@ -83,9 +73,23 @@ void pbwt_destroy(pbwt_t *b)
             free(b->cm);
         }
 
-        if (b->match != NULL)
+        if (b->intree != NULL)
         {
-            match_destroy(b->match);
+            match_destroy(b->intree);
+        }
+
+        if (b->reghash != NULL)
+        {
+            kh_destroy(floats, b->reghash);
+        }
+
+        if (b->cmatrix != NULL)
+        {
+            for (i = 0; i < b->nsam; ++i)
+            {
+                free(b->cmatrix[i]);
+            }
+            free(b->cmatrix);
         }
 
         free(b);
@@ -95,7 +99,7 @@ void pbwt_destroy(pbwt_t *b)
 }
 
 
-static void match_destroy(match_t *root)
+static void match_destroy(node_t *root)
 {
     if (root == NULL)
     {

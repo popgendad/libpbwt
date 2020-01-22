@@ -27,41 +27,17 @@ KHASH_MAP_INIT_STR(floats, double)
 
 /* Data structure declarations */
 
-/* Weighted edge */
-typedef struct _edge
-{
-    size_t index;
-    double weight;
-    struct _edge *next;
-} edge_t;
-
-/* Graph vertex */
-typedef struct _vertex
-{
-    size_t numconnect;
-    char *sampid;
-    char *pop;
-    edge_t *head;
-} vertex_t;
-
-/* Undirected adjacency list with weighted edges */
-typedef struct _adjlist
-{
-    size_t n_vertices;
-    vertex_t *nodelist;
-} adjlist_t;
-
 /* Structure to hold interval tree of matches */
-typedef struct _match
+typedef struct _node
 {
     size_t first;             /* The original index of the first matching haplotype */
     size_t second;            /* The original index of the second matching haplotype */
     size_t begin;             /* The beginning position of the match */
     size_t end;               /* The end position of the match */
     size_t max;               /* Maximum end position in subtree */
-    struct _match *left;      /* Pointer to the left match */
-    struct _match *right;     /* Pointer to the right match */
-} match_t;
+    struct _node *left;       /* Pointer to the left match */
+    struct _node *right;      /* Pointer to the right match */
+} node_t;
 
 /* Structure to hold the positional Burrows-Wheeler transform */
 typedef struct pbwt
@@ -77,9 +53,9 @@ typedef struct pbwt
     size_t datasize;             /* Number of bytes stored in data */
     size_t nsite;                /* Number of sampled sites */
     size_t nsam;                 /* Number of sampled haplotypes */
-    size_t *ppa;                 /* Pointer to the prefix array */
-    size_t *div;                 /* Pointer to the divergence array */
-    match_t *match;              /* Pointer to set-proximal match linked list */
+    node_t *intree;              /* Pointer to interval tree of matches */
+    khash_t(floats) *reghash;    /* Pointer to the region hash table */
+    double **cmatrix;            /* Pointer to the coancestry matrix */
 } pbwt_t;
 
 
@@ -115,45 +91,25 @@ extern khash_t(integer) *pbwt_get_sampdict(const pbwt_t *);
 
 extern khash_t(integer) *pbwt_get_regcount(const pbwt_t *);
 
-extern size_t *pbwt_build(pbwt_t *);
+extern size_t *pbwt_build(const pbwt_t *);
 
 extern pbwt_t *pbwt_subset(pbwt_t *, const char *);
 
 extern pbwt_t *pbwt_subset_with_query(pbwt_t *, const char *, const size_t);
 
-extern int pbwt_set_match(pbwt_t *, const double);
+extern int pbwt_set_match(pbwt_t *, const double, void (*report)(pbwt_t *, size_t, size_t, size_t, size_t));
 
-extern int pbwt_all_match(pbwt_t *, const double);
+extern int pbwt_all_match(pbwt_t *, const double, void (*report)(pbwt_t *, size_t, size_t, size_t, size_t));
 
-extern int pbwt_all_query_match(pbwt_t *, const double);
+extern int pbwt_all_query_match(pbwt_t *, const double, void (*report)(pbwt_t *, size_t, size_t, size_t, size_t));
 
-extern int pbwt_set_query_match(pbwt_t *, const double);
+extern int pbwt_set_query_match(pbwt_t *, const double, void (*report)(pbwt_t *, size_t, size_t, size_t, size_t));
 
-extern void match_regsearch(pbwt_t *, match_t *, khash_t(floats) *, size_t, size_t);
+extern void intree_print(pbwt_t *, node_t *);
 
-extern void match_coasearch(pbwt_t *, match_t *, double **, size_t, size_t, unsigned char);
+extern node_t *match_insert(node_t *, const size_t, const size_t, const size_t, const size_t);
 
-extern void match_adjsearch(pbwt_t *, match_t *, adjlist_t *, size_t, size_t);
-
-extern void match_print(pbwt_t *, match_t *);
-
-extern void elementary_print(pbwt_t *, match_t *);
-
-extern match_t *match_insert(match_t *, const size_t, const size_t, const size_t, const size_t);
-
-extern size_t match_count(pbwt_t *, match_t *, double *);
-
-extern match_t *match_new(const size_t, const size_t, const size_t, const size_t);
-
-extern int match_overlap(const size_t, const size_t, const size_t, const size_t);
-
-extern adjlist_t *create_adjlist(const size_t, char **, char **);
-
-extern void add_edge(adjlist_t *, double, size_t, size_t);
-
-extern void print_adjlist(const adjlist_t *);
-
-extern adjlist_t *diploidize(adjlist_t *);
+extern size_t match_count(pbwt_t *, node_t *, double *);
 
 extern const char *pbwt_version(void);
 

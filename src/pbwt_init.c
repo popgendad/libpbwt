@@ -16,24 +16,10 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->nsam = nsam;
     b->datasize = nsite * nsam;
     b->is_compress = FALSE;
-    b->match = NULL;
+    b->intree = NULL;
 
     b->is_query = (unsigned char *)malloc(nsam * sizeof(unsigned char));
     if (b->is_query == NULL)
-    {
-        pbwt_destroy(b);
-        return NULL;
-    }
-
-    b->ppa = (size_t *)malloc(nsam * sizeof(size_t));
-    if (b->ppa == NULL)
-    {
-        pbwt_destroy(b);
-        return NULL;
-    }
-
-    b->div = (size_t *)malloc(nsam * sizeof(size_t));
-    if (b->div == NULL)
     {
         pbwt_destroy(b);
         return NULL;
@@ -85,8 +71,6 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     for (i = 0; i < nsam; ++i)
     {
         b->is_query[i] = FALSE;
-        b->ppa[i] = i;
-        b->div[i] = 0;
     }
 
     return b;

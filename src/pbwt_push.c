@@ -5,7 +5,6 @@ int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
               const char *h1, const char *h2)
 {
     int has_reg = 0;
-    size_t i = 0;
     size_t len = 0;
     size_t new_index1 = 0;
     size_t new_index2 = 0;
@@ -64,19 +63,6 @@ int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,
     /* Copy new binary haplotype data */
     memcpy(&(b->data[TWODCORD(new_index1, b->nsite, 0)]), h1, b->nsite);
     memcpy(&(b->data[TWODCORD(new_index2, b->nsite, 0)]), h2, b->nsite);
-
-    /* Grow the prefix array */
-    b->ppa = (size_t *)realloc(b->ppa, b->nsam * sizeof(size_t));
-
-    /* Grow the divergence array */
-    b->div = (size_t *)realloc(b->div, b->nsam * sizeof(size_t));
-
-    /* Re-initialize prefix and divergence arrays */
-    for (i = 0; i < b->nsam; ++i)
-    {
-        b->ppa[i] = i;
-        b->div[i] = 0;
-    }
 
     return 0;
 }

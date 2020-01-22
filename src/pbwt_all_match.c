@@ -3,7 +3,8 @@
 
 #define MININT 10
 
-int pbwt_all_match(pbwt_t *b, const double minlen)
+int pbwt_all_match(pbwt_t *b, const double minlen,
+                   void (*report)(pbwt_t *b, size_t first, size_t second, size_t begin, size_t end))
 {
     size_t i = 0;
     size_t j = 0;
@@ -15,23 +16,22 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
     size_t ib = 0;
     size_t na = 0;
     size_t nb = 0;
-    size_t *mdiv = NULL;
-    size_t *mppa = NULL;
+    size_t *div = NULL;
+    size_t *ppa = NULL;
     size_t *ara = NULL;
     size_t *arb = NULL;
     size_t *ard = NULL;
     size_t *are = NULL;
-    match_t *intree = NULL;
 
     /* Allocate heap memory for prefix and divergence arrays */
-    mdiv = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
-    if (mdiv == NULL)
+    div = (size_t *)malloc((b->nsam + 1) * sizeof(size_t));
+    if (div == NULL)
     {
         return -1;
     }
 
-    mppa = (size_t *)malloc(b->nsam * sizeof(size_t));
-    if (mppa == NULL)
+    ppa = (size_t *)malloc(b->nsam * sizeof(size_t));
+    if (ppa == NULL)
     {
         return -1;
     }
@@ -39,8 +39,8 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
     /* Initialize prefix and divergence arrays */
     for (i = 0; i < b->nsam; ++i)
     {
-        mdiv[i] = 0;
-        mppa[i] = i;
+        div[i] = 0;
+        ppa[i] = i;
     }
 
     ara = (size_t *)malloc(b->nsam * sizeof(size_t));
@@ -48,16 +48,19 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
     {
         return -1;
     }
+
     arb = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (arb == NULL)
     {
         return -1;
     }
+
     ard = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (ard == NULL)
     {
         return -1;
     }
+
     are = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (are == NULL)
     {
@@ -66,24 +69,19 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
 
     for (i = 0; i <= b->nsite; ++i)
     {
+        da = i + 1;
+        db = i + 1;
+        ia = 0;
+        ib = 0;
         memset(ara, 0, b->nsam);
         memset(arb, 0, b->nsam);
         memset(ard, 0, b->nsam);
         memset(are, 0, b->nsam);
 
-        da = i + 1;
-        db = i + 1;
-        ia = 0;
-        ib = 0;
-
         for (j = 0; j < b->nsam; ++j)
         {
-            size_t ix = 0;
-            size_t ms = 0;
-
-            ix = mppa[j];
-            ms = mdiv[j];
-
+            size_t ix = ppa[j];
+            size_t ms = div[j];
             if (ms > i - MININT)
             {
                 size_t x = 0;
@@ -95,15 +93,15 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
                     {
                         for (y = x + 1, kk = 0; y < j; ++y)
                         {
-                            if (mdiv[y] > kk)
+                            if (div[y] > kk)
                             {
-                                kk = mdiv[y];
+                                kk = div[y];
                             }
-                            unsigned char aa = b->data[TWODCORD(mppa[x], b->nsite, i)];
-                            unsigned char bb = b->data[TWODCORD(mppa[y], b->nsite, i)];
+                            unsigned char aa = b->data[TWODCORD(ppa[x], b->nsite, i)];
+                            unsigned char bb = b->data[TWODCORD(ppa[y], b->nsite, i)];
                             if (aa != bb && b->cm[i] - b->cm[kk] > minlen)
                             {
-                                intree = match_insert(intree, mppa[x], mppa[y], kk, i);
+                                (*report)(b, ppa[x], ppa[y], kk, i);
                             }
                         }
                     }
@@ -146,26 +144,24 @@ int pbwt_all_match(pbwt_t *b, const double minlen)
             /* Concatenate arrays */
             for (j = 0; j < ia; ++j)
             {
-                mppa[j] = ara[j];
-                mdiv[j] = ard[j];
+                ppa[j] = ara[j];
+                div[j] = ard[j];
             }
 
             for (j = 0, k = ia; j < ib; ++j, ++k)
             {
-                mppa[k] = arb[j];
-                mdiv[k] = are[j];
+                ppa[k] = arb[j];
+                div[k] = are[j];
             }
         }
     }
 
-    free(mdiv);
-    free(mppa);
+    free(div);
+    free(ppa);
     free(ara);
     free(arb);
     free(ard);
     free(are);
-
-    b->match = intree;
 
     return 0;
 }

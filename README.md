@@ -106,73 +106,38 @@ The main data type is called `pbwt_t` and it stores all of the information assoc
 ```c
 typedef struct pbwt
 {
-    char **sid;               /* Diploid sample identifier string */
-    char **reg;               /* Region/population of sample */
-    char **chr;               /* Chromosome identifer of all SNPs in pbwt */
-    char **rsid;              /* RSID for all SNPs in pbwt */
-    double *cm;               /* Genetic map positions for all SNPs in pbwt */
-    unsigned char *data;      /* Binary haplotype representation */
-    int is_compress;          /* Are haplotype data compressed? */
-    int *is_query;            /* Is the haplotype a query sequence? */
-    size_t datasize;          /* Number of bytes stored in data */
-    size_t nsite;             /* Number of sampled sites */
-    size_t nsam;              /* Number of sampled haplotypes */
-    size_t *ppa;              /* Pointer to the prefix array */
-    size_t *div;              /* Pointer to the divergence array */
-    match_t *match;           /* Pointer to set-proximal match linked list */
+    char **sid;                  /* Diploid sample identifier string */
+    char **reg;                  /* Region/population of sample */
+    char **chr;                  /* Chromosome identifer of all SNPs in pbwt */
+    char **rsid;                 /* RSID for all SNPs in pbwt */
+    double *cm;                  /* Genetic map positions for all SNPs in pbwt */
+    unsigned char *data;         /* Binary haplotype representation */
+    unsigned char is_compress;   /* Are haplotype data compressed? */
+    unsigned char *is_query;     /* Is the haplotype a query sequence? */
+    size_t datasize;             /* Number of bytes stored in data */
+    size_t nsite;                /* Number of sampled sites */
+    size_t nsam;                 /* Number of sampled haplotypes */
+    node_t *intree;              /* Pointer to interval tree of matches */
+    khash_t(floats) *reghash;    /* Pointer to the region hash table */
+    double **cmatrix;            /* Pointer to the coancestry matrix */
 } pbwt_t;
 ```
 
-### match_t
+### node_t
 
-The `match_t` data type stores match coordinates found within the pbwt in an interval tree. The interval tree can be easily searched for coverage and depth. The `match_t` type is declared as
+The `node_t` data type stores match coordinates found within the pbwt in an interval tree. The interval tree can be easily searched for coverage and depth. The `node_t` type is declared as
 
 ```c
-typedef struct _match
+typedef struct _node
 {
     size_t first;             /* The original index of the first matching haplotype */
     size_t second;            /* The original index of the second matching haplotype */
     size_t begin;             /* The beginning position of the match */
     size_t end;               /* The end position of the match */
     size_t max;               /* Maximum end position in subtree */
-    struct _match *left;      /* Pointer to the left match */
-    struct _match *right;     /* Pointer to the right match */
-} match_t;
-```
-
-### Graph-based Data Structures
-
-#### edge_t
-
-```c
-typedef struct _edge
-{
-    size_t index;
-    double weight;
-    struct _edge *next;
-} edge_t;
-```
-
-#### vertex_t
-
-```c
-typedef struct _vertex
-{
-    size_t numconnect;
-    char *sampid;
-    char *pop;
-    edge *head;
-} vertex_t;
-```
-
-#### adjlist_t
-
-```c
-typedef struct _adjlist
-{
-    size_t n_vertices;
-    vertex *nodelist;
-} adjlist_t;
+    struct _node *left;       /* Pointer to the left match */
+    struct _node *right;      /* Pointer to the right match */
+} node_t;
 ```
 
 ## API Functions
@@ -187,7 +152,7 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
 
 The `pbwt_t` data structure can be initialized using the `pbwt_init()` function.
 
-The above function takes the number of sites (`nsite`) and the number of haplotypes (`nsam`) and returns an empty pbwt structure of size `nsam` x `nsite`. The function will return a `NULL` pointer if it encounters a problem initializing the data structure. The new data structure has memory allocated for the uncompressed binary haplotype data (`data`), the sample and region identifiers (`sid` and `reg`, respectively), the prefix array (`ppa`) and the divergence array (`div`). The `match` member variable is not initialized at this time and remains `NULL`.
+The above function takes the number of sites (`nsite`) and the number of haplotypes (`nsam`) and returns an empty pbwt structure of size `nsam` x `nsite`. The function will return a `NULL` pointer if it encounters a problem initializing the data structure. The new data structure has memory allocated for the uncompressed binary haplotype data (`data`), the sample and region identifiers (`sid` and `reg`, respectively). The `intree`, `cmatrix`, and `reghash` member variables are not initialized at this time and remain `NULL`.
 
 #### pbwt_destroy()
 
@@ -246,10 +211,11 @@ The above function will write the `pbwt_t` data structure pointed to by `b` and 
 #### pbwt_build()
 
 ```c
-int pbwt_build(pbwt_t *b)
+size_t *pbwt_build(const pbwt_t *b)
 ```
 
-The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes an initialized `pbwt_t` data structure that already contains the raw binary haplotype data and constructs both the prefix and divergence arrays up to the site at index position `nsite - 1`. The function will return 0 on success and -1 on error.
+The `pbwt_build()` function is based on algorithm 2 of Durbin (2014) and takes an initialized `pbwt_t` data structure that already contains the raw binary haplotype data and constructs both the prefix and divergence arrays up to the site at index position `nsite - 1`. The function will return a pointer to the resulting
+positional prefix array on success and a `NULL` pointer on failure.
 
 #### pbwt_subset()
 
@@ -364,80 +330,14 @@ int pbwt_set_query_match(pbwt_t *b, const size_t query_index, const double minle
 
 The `pbwt_set_query_match` function finds only the set maximal matches in `b` that involve the haplotypes labeled as query sequences. The minimum length required to be considered a match is specified by the `minlen` variable. The minimum length is the total genetic map distance (cM) of the window covered by a potential match. The function returns -1 on error and zero on success. A pointer to the match interval tree is stored in `b->match`.
 
-#### match_adjsearch()
+
+#### intree_print()
 
 ```c
-void match_adjsearch(pbwt_t *b, match_t *node, adjlist_t *, size_t qbegin, size_t qend)
+void intree_print(pbwt_t *b, node_t *node)
 ```
 
-The `match_adjsearch` function stores the list of all matches overlapping the interval `qbegin` to `qend` in an adjacency list data structure. This function does not return a value.
-
-#### match_coasearch()
-
-```c
-void match_coasearch(pbwt_t *b, match_t *node, double **cmatrix, size_t qbegin, size_t qend, int is_diploid)
-```
-
-The `match_coasearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` in a pairwise coancestry matrix. The `is_diploid` flag indicates that the dimension of the `cmatrix` is `b->nsam` / 2. This function does not return a value.
-
-#### match_regsearch()
-
-```c
-void match_regsearch(pbwt_t *b, match_t *node, khash(double) *h, size_t qbegin, size_t qend)
-```
-
-The `match_regsearch` function stores a list of all matches overlapping the interval `qbegin` to `qend` into a hash that is keyed on the region/population with the value being the sum of the recombination distance of all matches between the query haplotype and the keyed region. This function does not return a value.
-
-#### match_print()
-
-```c
-void match_print(pbwt_t *b, match_t *node)
-```
-
-Dumps all reported matches to `stdout`. This function does not return a value.
-
-
-### Graphs Representations of Matches
-
-#### create_adjlist()
-
-```c
-adjlist_t *create_adjlist(const size_t V, char **samplist, char **reglist)
-```
-
-Creates an adjacency list representing a graph with `V` vertices, whose string identifiers are stored in `samplist` and whose associated regions are store in `reglist`. On success, the function returns an `adjlist_t` data structure and a `NULL` pointer on failure.
-
-#### allocate_new_edge()
-
-```c
-edge_t *allocate_new_edge(const size_t partner, const double w)
-```
-
-Allocates a new edge with index `partner` and weight `w`. On success, the function returns a pointer to the edge and a `NULL` pointer on failure.
-
-#### diploidize()
-
-```c
-adjlist_t *diploidize(adjlist_t *g)
-```
-
-Creates a new adjacency matrix by joining the two haplotypes in adjacency list `g` from a single diploid individual and returns the merged `adjlist_t` object on success and a `NULL` pointer on failure.
-
-#### print_adjlist()
-
-```c
-void print_adjlist(adjlist_t *g)
-```
-
-Prints an adjacency list to `stdout`. For each edge in the graph represented by `g`, there are five columns, corresponding to:
-
-1. Sample identifier string of vertex
-2. Sample identifier string of matching vertex
-3. Edge weight in cM
-4. Population/region of sample
-5. Population/region of matching sample
-
-The `print_adjlist` function does not return a value.
+Dumps all reported matches in the interval tree pointed to by `node` to `stdout`. This function does not return a value.
 
 
 ## Examples
