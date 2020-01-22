@@ -2,10 +2,10 @@ CC=gcc
 CFLAGS=-Wall -g
 LIBS=-lpbwt -lhts
 
-all: ptest2
+all: ptest
 
-ptest2: test2.c
+ptest: test.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 clean:
-	rm ptest2
+	rm ptest
