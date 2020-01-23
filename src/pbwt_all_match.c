@@ -66,7 +66,7 @@ int pbwt_all_match(pbwt_t *b, const double minlen,
         return -1;
     }
 
-    for (i = 0; i <= b->nsite; ++i)
+    for (i = 0; i < b->nsite; ++i)
     {
         da = i + 1;
         db = i + 1;
@@ -98,9 +98,19 @@ int pbwt_all_match(pbwt_t *b, const double minlen,
                             }
                             unsigned char aa = b->data[TWODCORD(ppa[x], b->nsite, i)];
                             unsigned char bb = b->data[TWODCORD(ppa[y], b->nsite, i)];
-                            if (aa != bb && b->cm[i] - b->cm[kk] > minlen)
+
+
+                            /* Check if alleles are different */
+                            if (aa == bb)
                             {
-                                (*report)(b, ppa[x], ppa[y], kk, i);
+                                continue;
+                            }
+                            else
+                            {
+                                if (b->cm[i] - b->cm[kk] > minlen)
+                                {
+                                    (*report)(b, ppa[x], ppa[y], kk, i);
+                                }
                             }
                         }
                     }
