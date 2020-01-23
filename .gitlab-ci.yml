@@ -15,6 +15,6 @@ build:
     - make all
     - make install
     - make -C test
-    - test/ptest test/HumanOriginsExample.pbwt 0.5 200
+    - test/ptest test/HumanOriginsExample.pbwt 0.5 10
   only:
     - tags

@@ -29,6 +29,8 @@ int pbwt_all_match(pbwt_t *b, const double minlen,
     {
         return -1;
     }
+    div[0] = 1;
+    div[b->nsam] = 1;
 
     ppa = (size_t *)malloc(b->nsam * sizeof(size_t));
     if (ppa == NULL)
