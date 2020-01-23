@@ -187,17 +187,10 @@ int pbwt_set_match(pbwt_t *b, const double minlen,
             }
 
             /* Concatenate arrays */
-            for (j = 0; j < ia; ++j)
-            {
-                ppa[j] = ara[j];
-                div[j] = ard[j];
-            }
-
-            for (j = 0, k = ia; j < ib; ++j, ++k)
-            {
-                ppa[k] = arb[j];
-                div[k] = are[j];
-            }
+            memcpy(ppa, ara, ia * sizeof(size_t));
+            memcpy(div, ard, ia * sizeof(size_t));
+            memcpy(ppa + ia, arb, ib * sizeof(size_t));
+            memcpy(div + ia, are, ib * sizeof(size_t));
         }
     }
 
