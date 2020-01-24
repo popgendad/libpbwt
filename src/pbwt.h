@@ -12,6 +12,7 @@
 #define PBWT_H
 
 #include <stdlib.h>
+#include <string.h>
 #include <htslib/khash.h>
 #include <plink_lite.h>
 

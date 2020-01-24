@@ -1,4 +1,3 @@
-#include <string.h>
 #include "pbwt.h"
 
 pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)

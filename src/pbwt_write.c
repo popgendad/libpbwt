@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include "pbwt.h"
 
 static void io_error(FILE *);

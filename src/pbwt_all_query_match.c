@@ -1,4 +1,3 @@
-#include <string.h>
 #include "pbwt.h"
 
 #define MININT 10
@@ -98,6 +97,7 @@ int pbwt_all_query_match(pbwt_t *b, const double minlen,
                             {
                                 kk = div[y];
                             }
+
                             unsigned char aa = b->data[TWODCORD(ppa[x], b->nsite, i)];
                             unsigned char bb = b->data[TWODCORD(ppa[y], b->nsite, i)];
 
@@ -122,6 +122,7 @@ int pbwt_all_query_match(pbwt_t *b, const double minlen,
                     k = j;
                 }
             }
+
             if (ms > da)
             {
                 da = ms;

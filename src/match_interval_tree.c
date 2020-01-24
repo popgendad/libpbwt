@@ -1,5 +1,3 @@
-#include <string.h>
-#include <math.h>
 #include "pbwt.h"
 
 int match_overlap(const size_t, const size_t, const size_t, const size_t);
@@ -15,7 +13,7 @@ size_t match_count(pbwt_t *b, node_t *node, double *al)
     }
 
     match_count(b, node->left, al);
-    *al += fabs(b->cm[node->end] - b->cm[node->begin]);
+    *al += b->cm[node->end] - b->cm[node->begin];
     count++;
     match_count(b, node->right, al);
 

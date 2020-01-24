@@ -1,4 +1,3 @@
-#include <string.h>
 #include "pbwt.h"
 
 int pbwt_push(pbwt_t *b, const char *new_sid, const char *new_reg,

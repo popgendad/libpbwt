@@ -1,4 +1,3 @@
-#include <string.h>
 #include "pbwt.h"
 
 pbwt_t *pbwt_import_plink(const char *instub)

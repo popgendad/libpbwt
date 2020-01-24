@@ -163,6 +163,7 @@ int pbwt_set_query_match(pbwt_t *b, const double minlen,
             {
                 size_t ix = ppa[j];
                 size_t ms = div[j];
+
                 if (ms > da)
                 {
                     da = ms;

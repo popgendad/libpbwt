@@ -1,4 +1,3 @@
-#include <string.h>
 #include "pbwt.h"
 
 size_t remove_dups(size_t, char **);
