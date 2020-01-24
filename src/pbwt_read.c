@@ -197,11 +197,11 @@ static void io_error(FILE *f)
 {
     if (ferror(f))
     {
-        fputs("libpbwt [ERROR]: I/O failure", stderr);
+        fputs("libpbwt [ERROR]: I/O failure\n", stderr);
     }
     else if (feof(f))
     {
-        fputs("libpbwt [ERROR]: truncated input file", stderr);
+        fputs("libpbwt [ERROR]: truncated input file\n", stderr);
     }
 
     fclose(f);
