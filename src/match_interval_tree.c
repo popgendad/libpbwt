@@ -25,13 +25,6 @@ size_t match_count(pbwt_t *b, node_t *node, double *al)
 node_t *match_insert(node_t *node, const size_t first, const size_t second,
                      const size_t begin, const size_t end)
 {
-    /* Don't add if it is a duplicate entry */
-    if (node && node->first == first && node->second == second &&
-        node->begin == begin && node->end == end)
-    {
-        return node;
-    }
-
     /* Add a new leaf node */
     if (node == NULL)
     {
@@ -44,6 +37,13 @@ node_t *match_insert(node_t *node, const size_t first, const size_t second,
         {
             return nn;
         }
+    }
+
+    /* Don't add if it is a duplicate entry */
+    if (node && node->first == first && node->second == second &&
+        node->begin == begin && node->end == end)
+    {
+        return node;
     }
 
     /* Traverse the tree */

@@ -3,6 +3,10 @@
 #include <string.h>
 #include <pbwt.h>
 
+void insert_interval(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
+{
+    b->intree = match_insert(b->intree, first, second, begin, end);
+}
 
 void add_region(pbwt_t *b, const size_t first, const size_t second, const size_t begin, const size_t end)
 {
@@ -63,6 +67,11 @@ int main(int argc, char *argv[])
 
     /* Find all set-maximal matches */
     v = pbwt_all_query_match(b, minlen, add_region);
+
+/*    v = pbwt_all_query_match(b, minlen, insert_interval);
+
+    if (b->intree == NULL) { puts("Problem with reporting to interval tree"); }
+    intree_print(b, b->intree);*/
 
     /* Print hash */
     size_t i = 0;
