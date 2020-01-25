@@ -66,15 +66,15 @@ int main(int argc, char *argv[])
     b->is_query[qid] = 1;
 
     /* Find all set-maximal matches */
-    v = pbwt_all_query_match(b, minlen, add_region);
+    /*v = pbwt_all_query_match(b, minlen, add_region);*/
 
-/*    v = pbwt_all_query_match(b, minlen, insert_interval);
+    v = pbwt_all_query_match(b, minlen, insert_interval);
 
     if (b->intree == NULL) { puts("Problem with reporting to interval tree"); }
-    intree_print(b, b->intree);*/
+    tree_print(b, b->intree);
 
     /* Print hash */
-    size_t i = 0;
+    /*size_t i = 0;
     size_t nregs = 0;
     char **reglist = NULL;
     reglist = pbwt_get_reglist(b, &nregs);
@@ -86,11 +86,11 @@ int main(int argc, char *argv[])
             fprintf(stdout, "%s\t%s\t%s\t%1.5lf\n", infile, b->reg[qid], reglist[i], kh_value(b->reghash, k));
         else
             fprintf(stdout, "%s\t%s\t%s\t0.00000\n", infile, b->reg[qid], reglist[i]);
-    }
+    }*/
 
     /* Free memory for the original pbwt data structure */
     pbwt_destroy(b);
-    free(reglist);
+    /* free(reglist); */
 
     return v;
 }

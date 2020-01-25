@@ -31,11 +31,10 @@ KHASH_MAP_INIT_STR(floats, double)
 /* Structure to hold interval tree of matches */
 typedef struct _node
 {
-    size_t first;             /* The original index of the first matching haplotype */
-    size_t second;            /* The original index of the second matching haplotype */
     size_t begin;             /* The beginning position of the match */
     size_t end;               /* The end position of the match */
     size_t max;               /* Maximum end position in subtree */
+    size_t count;             /* Count of matches in the interval */
     struct _node *left;       /* Pointer to the left match */
     struct _node *right;      /* Pointer to the right match */
 } node_t;
@@ -106,7 +105,7 @@ extern int pbwt_all_query_match(pbwt_t *, const double, void (*report)(pbwt_t *,
 
 extern int pbwt_set_query_match(pbwt_t *, const double, void (*report)(pbwt_t *, const size_t, const size_t, const size_t, const size_t));
 
-extern void intree_print(pbwt_t *, node_t *);
+extern void tree_print(pbwt_t *, node_t *);
 
 extern node_t *match_insert(node_t *, const size_t, const size_t, const size_t, const size_t);
 
