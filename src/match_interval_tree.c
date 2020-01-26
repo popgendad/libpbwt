@@ -83,6 +83,6 @@ void tree_print(pbwt_t *b, node_t *root)
         return;
     }
     tree_print(b, root->left);
-    printf("%zu\t%zu\t%1.5lf\t%1.5lf\n", root->begin, root->end, b->cm[root->begin], b->cm[root->end]);
+    printf("%zu\t%zu\t%zu\t%1.5lf\t%1.5lf\n", root->begin, root->end, root->count, b->cm[root->begin], b->cm[root->end]);
     tree_print(b, root->right);
 }
