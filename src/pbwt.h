@@ -111,6 +111,6 @@ extern node_t *match_insert(node_t *, const size_t, const size_t, const size_t, 
 
 extern void match_count(pbwt_t *, node_t *, size_t *, const size_t, const size_t);
 
-extern const char *pbwt_version(void);
+extern const char *libpbwt_version(void);
 
 #endif

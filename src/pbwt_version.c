@@ -4,10 +4,10 @@
 #define stringy(x) xstringy(x)
 
 #ifdef VERSION
-const char version[] = stringy(VERSION);
+const char libpbwt_version[] = stringy(VERSION);
 #endif
 
-const char *pbwt_version(void)
+const char *libpbwt_version(void)
 {
-	return version;
+	return libpbwt_version;
 }
