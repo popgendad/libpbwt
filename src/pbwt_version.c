@@ -1,10 +1,10 @@
 #include "pbwt.h"
 
-#define str(s) #s
-#define xstr(s) str(s)
+#define xstringy(x) #x
+#define stringy(x) xstringy(x)
 
 #ifdef VERSION
-const char version[] = xstr(VERSION);
+const char version[] = stringy(VERSION);
 #endif
 
 const char *pbwt_version(void)
