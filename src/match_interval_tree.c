@@ -30,6 +30,7 @@ node_t *match_insert(node_t *node, const size_t first, const size_t second,
     if (node == NULL)
     {
         node = match_new(begin, end);
+        return node;
     }
 
     /* Add to count if interval exists */
