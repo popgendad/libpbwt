@@ -3,21 +3,24 @@
 int match_overlap(const size_t, const size_t, const size_t, const size_t);
 node_t *match_new(const size_t, const size_t);
 
-size_t match_count(pbwt_t *b, node_t *node, double *al)
+void match_count(pbwt_t *b, node_t *node, size_t *count, const size_t begin, const size_t end)
 {
-    static size_t count = 0;
-
     if (node == NULL)
     {
-        return count;
+        return;
     }
 
-    match_count(b, node->left, al);
-    *al += b->cm[node->end] - b->cm[node->begin];
-    count++;
-    match_count(b, node->right, al);
+    if (match_overlap(node->begin, node->end, begin, end))
+    {
+        *count += node->count;
+    }
 
-    return count;
+    if (node->left != NULL && node->left->max >= begin)
+    {
+        match_count(b, node->left, count, begin, end);
+    }
+
+    match_count(b, node->right, count, begin, end);
 }
 
 node_t *match_insert(node_t *node, const size_t first, const size_t second,

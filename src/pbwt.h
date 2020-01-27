@@ -109,7 +109,7 @@ extern void tree_print(pbwt_t *, node_t *);
 
 extern node_t *match_insert(node_t *, const size_t, const size_t, const size_t, const size_t);
 
-extern size_t match_count(pbwt_t *, node_t *, double *);
+extern void match_count(pbwt_t *, node_t *, size_t *, const size_t, const size_t);
 
 extern const char *pbwt_version(void);
 

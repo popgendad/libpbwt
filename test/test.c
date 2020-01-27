@@ -35,6 +35,7 @@ void add_region(pbwt_t *b, const size_t first, const size_t second, const size_t
 int main(int argc, char *argv[])
 {
     int v = 0;
+    size_t i = 0;
     size_t qid = 0;
     pbwt_t *b = NULL;
     double minlen = 0.5;
@@ -44,7 +45,9 @@ int main(int argc, char *argv[])
 
     /* Define infile name */
     if (argv[1] != NULL)
+    {
         infile = strdup(argv[1]);
+    }
     else
     {
         fputs("Usage: ./ptest2 <pbwt file> <minlen> <hap_index>\n", stderr);
@@ -65,14 +68,21 @@ int main(int argc, char *argv[])
     pbwt_uncompress(b);
     b->is_query[qid] = 1;
 
-    /* Find all set-maximal matches */
+    /* Find all matches */
     /*v = pbwt_all_query_match(b, minlen, add_region);*/
 
     v = pbwt_all_query_match(b, minlen, insert_interval);
 
     if (b->intree == NULL) { puts("Problem with reporting to interval tree"); }
-    tree_print(b, b->intree);
-
+    /*tree_print(b, b->intree);*/
+    for (i = 0; i < b->nsite - 10; i += 10)
+    {
+        size_t start_pos = i;
+        size_t end_pos = i+10;
+        size_t c = 0;
+        match_count(b, b->intree, &c, start_pos, end_pos);
+        printf("%zu\t%zu\t%zu\n", start_pos, end_pos, c);
+    }
     /* Print hash */
     /*size_t i = 0;
     size_t nregs = 0;
