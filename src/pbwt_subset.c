@@ -1,36 +1,18 @@
 #include "pbwt.h"
 
-pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
+pbwt_t *pbwt_subset(pbwt_t *b, const khash_t(integer) *include)
 {
-    /* Check to make sure the pbwt has region information */
-    if (b->reg == NULL)
-    {
-        return NULL;
-    }
-
     size_t i = 0;
     size_t j = 0;
-    size_t nhap_read = 0;
+    size_t nhap_include = 0;
     size_t nhap_write = 0;
+    khint_t k = 0;
     pbwt_t *p = NULL;
 
-    /* Count number of haplotypes within region */
-    for (i = 0; i < b->nsam; ++i)
-    {
-        if (strcmp(b->reg[i], reg) == 0)
-        {
-            ++nhap_read;
-        }
-    }
-
-    /* Check to make sure we have non-null subset */
-    if (nhap_read == 0)
-    {
-        return NULL;
-    }
+    nhap_include = 2 * kh_size(include);
 
     /* Initialize new pbwt_t structure */
-    p = pbwt_init(b->nsite, nhap_read);
+    p = pbwt_init(b->nsite, nhap_include);
     if (p == NULL)
     {
         return NULL;
@@ -39,10 +21,14 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
     /* Copy subset data to new pbwt_t structure */
     for (i = 0; i < b->nsam; ++i)
     {
-        if (strcmp(b->reg[i], reg) == 0)
+        size_t sl = strlen(b->sid[i]) - 2;
+        char *query_sid = (char *)malloc(sizeof(sl));
+        strncpy(query_sid, b->sid[i], sl);
+        k = kh_get(integer, include, query_sid);
+        if (kh_exist(include, k) && k != kh_end(include))
         {
             /* Buffer overflow check */
-            if (nhap_write > nhap_read)
+            if (nhap_write > nhap_include)
             {
                 return NULL;
             }
@@ -75,7 +61,7 @@ pbwt_t *pbwt_subset(pbwt_t *b, const char *reg)
     }
 
     /* Check to make sure we wrote the right amount of data */
-    if (nhap_write < nhap_read)
+    if (nhap_write < nhap_include)
     {
         return NULL;
     }

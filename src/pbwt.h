@@ -73,7 +73,7 @@ extern int pbwt_write(const char *, pbwt_t *);
 
 extern int pbwt_push(pbwt_t *, const char *, const char *, const char *, const char *);
 
-extern pbwt_t *pbwt_pull(pbwt_t *, const size_t);
+extern pbwt_t *pbwt_remove(pbwt_t *, const khash_t(integer) *);
 
 extern pbwt_t *pbwt_copy(pbwt_t *);
 
@@ -93,7 +93,7 @@ extern khash_t(integer) *pbwt_get_regcount(const pbwt_t *);
 
 extern size_t *pbwt_build(const pbwt_t *);
 
-extern pbwt_t *pbwt_subset(pbwt_t *, const char *);
+extern pbwt_t *pbwt_subset(pbwt_t *, const khash_t(integer) *);
 
 extern pbwt_t *pbwt_subset_with_query(pbwt_t *, const char *, const size_t);
 
