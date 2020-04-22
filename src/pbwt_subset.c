@@ -59,7 +59,7 @@ pbwt_t *pbwt_subset(pbwt_t *b, const khash_t(integer) *include)
         {
             p->rsid[j] = strdup(b->rsid[j]);
         }
-        p->cm[j] = b->cm[j];
+        memcpy(&(p->cm[j]), &(b->cm[j]), sizeof(double));
     }
 
     /* Check to make sure we wrote the right amount of data */
