@@ -122,14 +122,15 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
         b->rsid[site_counter] = strdup(rec->d.id);
 
         /* Safe way to get INFO/CM tag */
-        ret = bcf_get_info_values(hdr, rec, tag, &tmp, &k, BCF_HT_REAL);
+	b->cm[site_counter] = rec->d.info->v1.f;
+        /*ret = bcf_get_info_values(hdr, rec, tag, &tmp, &k, BCF_HT_REAL);
         if (ret <= 0)
         {
             return NULL;
         }
         p = (float *)tmp;
         b->cm[site_counter] = (double)(*p);
-        last_size = k * sizeof(float);
+        last_size = k * sizeof(float); */
 
         ngt = bcf_get_genotypes(hdr, rec, &gt, &ngt) / nsam;
 

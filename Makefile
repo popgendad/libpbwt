@@ -1,8 +1,8 @@
 CC      := gcc
 VERSION := $(shell cat VERSION)
-CFLAGS  := -Wall -O2 -D VERSION=$(VERSION)
+CFLAGS  := -Wall -O2 -D VERSION=$(VERSION) -I/shared/include -L/shared/lib
 LIBS    := -lm -lz -lplink_lite -lhts
-PREFIX  := /usr/local
+PREFIX  := /shared
 H_DIR   := $(PREFIX)/include
 L_DIR   := $(PREFIX)/lib
 SRCS    := $(wildcard src/*.c)
@@ -23,7 +23,7 @@ libpbwt.a: $(SOBJS)
 libpbwt.so: CFLAGS+=-fPIC
 
 libpbwt.so: $(DOBJS)
-	gcc -shared -o $@ $^ $(LIBS)
+	gcc -shared $(CFLAGS) -o $@ $^ $(LIBS)
 
 $(DDIR)/%.o:src/%.c | $(DDIR)
 	$(CC) $(CFLAGS) -o $@ -c $<
