@@ -24,6 +24,7 @@ pbwt_t *pbwt_subset(pbwt_t *b, const khash_t(integer) *include)
         size_t sl = strlen(b->sid[i]) - 2;
         char *query_sid = (char *)malloc(sizeof(sl));
         strncpy(query_sid, b->sid[i], sl);
+        query_sid[sl] = '\0';
         k = kh_get(integer, include, query_sid);
         if (kh_exist(include, k) && k != kh_end(include))
         {
