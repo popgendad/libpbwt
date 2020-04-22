@@ -47,6 +47,7 @@ pbwt_t *pbwt_subset(pbwt_t *b, const khash_t(integer) *include)
             /* Iterate number of subset haplotypes */
             ++nhap_write;
         }
+        free(query_id);
     }
 
     /* Copy site data */
