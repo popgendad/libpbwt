@@ -35,8 +35,8 @@ int pbwt_uncompress(pbwt_t *b)
 
     /* Update pbwt data structure */
     b->datasize = infstream.total_out;
-    realloc(b->data, (b->nsite * b->nsam) * sizeof(unsigned char));
-    memmove(b->data, g, (b->nsite * b->nsam) * sizeof(unsigned char));
+    b->data = (unsigned char *)realloc(b->data, b->nsite * b->nsam * sizeof(unsigned char));
+    memmove(b->data, g, b->nsite * b->nsam * sizeof(unsigned char));
     free(g);
     b->is_compress = FALSE;
 
@@ -79,10 +79,11 @@ int pbwt_compress(pbwt_t *b)
     deflateEnd(&defstream);
 
     /* Update pbwt data structure */
-    free(b->data);
-    b->is_compress = TRUE;
-    b->data = f;
     b->datasize = defstream.total_out;
+    b->data = (unsigned char *)realloc(b->data, b->datasize * sizeof(unsigned char));
+    memmove(b->data, f, b->datasize * sizeof(unsigned char));
+    b->is_compress = TRUE;
+    free(f);
 
     return 0;
 }
