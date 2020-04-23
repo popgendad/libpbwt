@@ -35,8 +35,8 @@ int pbwt_uncompress(pbwt_t *b)
 
     /* Update pbwt data structure */
     b->datasize = infstream.total_out;
-    realloc(b->data, b->datasize);
-    memcpy(b->data, g, b->datasize * sizeof(unsigned char));
+    realloc(b->data, b->datasize * sizeof(unsigned char));
+    memmove(b->data, g, b->datasize * sizeof(unsigned char));
     free(g);
     b->is_compress = FALSE;
 
