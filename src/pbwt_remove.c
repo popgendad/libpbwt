@@ -1,6 +1,6 @@
 #include "pbwt.h"
 
-pbwt_t *pbwt_remove(pbwt_t *b, const khash_t(integer) *remove)
+pbwt_t *pbwt_remove(const pbwt_t *b, const khash_t(integer) *remove)
 {
     size_t i = 0;
     size_t j = 0;
@@ -61,7 +61,7 @@ pbwt_t *pbwt_remove(pbwt_t *b, const khash_t(integer) *remove)
         {
             p->rsid[j] = strdup(b->rsid[j]);
         }
-        p->cm[j] = b->cm[j];
+        memcpy(&(p->cm[j]), &(b->cm[j]), sizeof(double));
     }
 
     /* Check to make sure we wrote the right amount of data */

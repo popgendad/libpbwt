@@ -1,6 +1,6 @@
 #include "pbwt.h"
 
-pbwt_t *pbwt_subset(pbwt_t *b, const khash_t(integer) *include)
+pbwt_t *pbwt_subset(const pbwt_t *b, const khash_t(integer) *include)
 {
     size_t i = 0;
     size_t j = 0;
