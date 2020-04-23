@@ -18,7 +18,7 @@ pbwt_t *pbwt_subset(const pbwt_t *b, const khash_t(integer) *include)
     }
 
     /* Copy subset data to new pbwt_t structure */
-    const ch = '.';
+    const char ch = '.';
     char *ret;
     for (i = 0; i < b->nsam; ++i)
     {
