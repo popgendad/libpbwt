@@ -18,12 +18,20 @@ pbwt_t *pbwt_subset(const pbwt_t *b, const khash_t(integer) *include)
     }
 
     /* Copy subset data to new pbwt_t structure */
+    const ch = '.';
+    char *ret;
     for (i = 0; i < b->nsam; ++i)
     {
-        size_t sl = strlen(b->sid[i]) - 2;
-        char *query_sid = (char *)malloc(sl + 1);
-        strncpy(query_sid, b->sid[i], sl);
-        query_sid[sl] = '\0';
+        /* Memory address of final period character */
+        ret = strrchr(b->sid[i], ch);
+
+        /* Index location of final period character */
+        size_t fl = ret - b->sid[i];
+
+        /* Duplicate string up until final period */
+        char *query_sid = strndup(b->sid[i], fl); 
+
+        /* Move query_sid to hash table */
         k = kh_get(integer, include, query_sid);
         if (kh_exist(include, k) && k != kh_end(include))
         {
@@ -47,7 +55,6 @@ pbwt_t *pbwt_subset(const pbwt_t *b, const khash_t(integer) *include)
             /* Iterate number of subset haplotypes */
             ++nhap_write;
         }
-        free(query_sid);
     }
 
     /* Copy site data */
