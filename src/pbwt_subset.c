@@ -33,7 +33,7 @@ pbwt_t *pbwt_subset(const pbwt_t *b, const khash_t(integer) *include)
 
         /* Move query_sid to hash table */
         k = kh_get(integer, include, query_sid);
-        if (kh_exist(include, k) && k != kh_end(include))
+        if (k != kh_end(include))
         {
             /* Buffer overflow check */
             if (nhap_write > nhap_include)
