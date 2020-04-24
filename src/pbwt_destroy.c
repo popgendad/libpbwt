@@ -92,6 +92,15 @@ void pbwt_destroy(pbwt_t *b)
             free(b->cmatrix);
         }
 
+        if (b->nmatrix != NULL)
+        {
+            for (i = 0; i < b->nsam; ++i)
+            {
+                free(b->nmatrix[i]);
+            }
+            free(b->nmatrix);
+        }
+
         free(b);
     }
 

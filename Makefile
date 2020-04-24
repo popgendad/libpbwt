@@ -2,7 +2,7 @@ CC      := gcc
 VERSION := $(shell cat VERSION)
 CFLAGS  := -Wall -O2 -D VERSION=$(VERSION) -I/shared/include -L/shared/lib
 LIBS    := -lm -lz -lplink_lite -lhts
-PREFIX  := /shared
+PREFIX  := /usr
 H_DIR   := $(PREFIX)/include
 L_DIR   := $(PREFIX)/lib
 SRCS    := $(wildcard src/*.c)

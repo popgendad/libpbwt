@@ -56,6 +56,7 @@ typedef struct pbwt
     node_t *intree;              /* Pointer to interval tree of matches */
     khash_t(floats) *reghash;    /* Pointer to the region hash table */
     double **cmatrix;            /* Pointer to the coancestry matrix */
+    size_t **nmatrix;            /* Pointer to the match count matrix */
 } pbwt_t;
 
 

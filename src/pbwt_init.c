@@ -17,6 +17,7 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->is_compress = FALSE;
     b->intree = NULL;
     b->cmatrix = NULL;
+    b->nmatrix = NULL;
     b->reghash = NULL;
 
     b->is_query = (unsigned char *)calloc(nsam, sizeof(unsigned char));

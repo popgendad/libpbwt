@@ -127,9 +127,8 @@ int pbwt_set_match(pbwt_t *b, const double minlen,
                 }
             }
 
-            for (k = j + 1; k < n; ++k)
+/*            for (k = j + 1; k < n; ++k)
             {
-                /* Evaluate whether match should be recorded */
                 double match_dist = b->cm[i] - b->cm[div[j+1]];
 
                 if (div[j+1] < i && match_dist >= minlen)
@@ -143,7 +142,7 @@ int pbwt_set_match(pbwt_t *b, const double minlen,
                         (*report)(b, ppa[k], ppa[j], div[j+1], i);
                     }
                 }
-            }
+            }*/
         }
 
         if (i < b->nsite - 1)
