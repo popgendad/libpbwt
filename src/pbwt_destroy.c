@@ -80,6 +80,13 @@ void pbwt_destroy(pbwt_t *b)
 
         if (b->reghash != NULL)
         {
+            for (i = 0; i != kh_end(b->reghash); ++i)
+            {
+                if (kh_exist(b->reghash, i))
+                {
+                    free((char *)kh_key(b->reghash, i));
+                }
+            }
             kh_destroy(floats, b->reghash);
         }
 
