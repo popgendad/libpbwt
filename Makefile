@@ -14,6 +14,8 @@ SOBJS   := $(SRCS:src/%.c=$(SDIR)/%.o)
 
 ifneq ($(wildcard /shared/include/.*),)
 	CFLAGS += -I/shared/include -L/shared/lib
+	H_DIR := /shared/include
+	L_DIR := /shared/lib
 endif
 
 all: libpbwt.so libpbwt.a
