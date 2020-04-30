@@ -101,38 +101,18 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
     }
 
     size_t site_counter = 0;
-    const char *tag = "CM";
-    int last_size = (int)sizeof(float);
 
     /* Read through single site entry in VCF */
     while (bcf_read(fin, hdr, rec) == 0)
     {
-        int k = last_size / sizeof(float);
-        int ret = 0;
-        void *tmp = NULL;
-        float *p = NULL;
-        const char *chr = NULL;
-        int32_t ngt = 0;
         int32_t *gt = NULL;
-
         bcf_unpack(rec, BCF_UN_STR);
         bcf_unpack(rec, BCF_UN_INFO);
-        chr = bcf_seqname(hdr, rec);
+        const char *chr = bcf_seqname(hdr, rec);
         b->chr[site_counter] = strdup(chr);
         b->rsid[site_counter] = strdup(rec->d.id);
-
-        /* Safe way to get INFO/CM tag */
-	b->cm[site_counter] = rec->d.info->v1.f;
-        /*ret = bcf_get_info_values(hdr, rec, tag, &tmp, &k, BCF_HT_REAL);
-        if (ret <= 0)
-        {
-            return NULL;
-        }
-        p = (float *)tmp;
-        b->cm[site_counter] = (double)(*p);
-        last_size = k * sizeof(float); */
-
-        ngt = bcf_get_genotypes(hdr, rec, &gt, &ngt) / nsam;
+        b->cm[site_counter] = rec->d.info->v1.f;
+        int32_t ngt = bcf_get_genotypes(hdr, rec, &gt, &ngt) / nsam;
 
         /* Iterate through sample genotypes */
         for (i = 0; i < nsam; ++i)
@@ -140,38 +120,11 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
             int32_t *ptr = gt + i * ngt;
             for (j = 0; j < ngt; ++j)
             {
-                if (bcf_gt_is_missing(ptr[j]))
+                if (bcf_gt_is_missing(ptr[j]) || ptr[j] == bcf_int32_vector_end)
                 {
                     break;
                 }
-
-                if (ptr[j] == bcf_int32_vector_end)
-                {
-                    break;
-                }
-
-                if (j % 2 == 0)
-                {
-                    if (bcf_gt_allele(ptr[j]) == 1)
-                    {
-                        b->data[TWODCORD(2*i, b->nsite, site_counter)] = '1';
-                    }
-                    else
-                    {
-                        b->data[TWODCORD(2*i, b->nsite, site_counter)] = '0';
-                    }
-                }
-                else
-                {
-                    if (bcf_gt_allele(ptr[j]) == 1)
-                    {
-                        b->data[TWODCORD(2*i+1, b->nsite, site_counter)] = '1';
-                    }
-                    else
-                    {
-                        b->data[TWODCORD(2*i+1, b->nsite, site_counter)] = '0';
-                    }
-                }
+                b->data[TWODCORD(2 * i + (j % 2), b->nsite, site_counter)] = bcf_gt_allele(ptr[j]) == 1 ? '1' : '0';
             }
         }
         site_counter++;
@@ -190,7 +143,7 @@ pbwt_t *pbwt_import_vcf(const char *infile, const char *popfile)
 
 int check_popmap(const bcf_hdr_t *h, const khash_t(string) *pdb)
 {
-    int k = 0;
+    int32_t k = 0;
     khint_t it = 0;
     const int32_t nsam = bcf_hdr_nsamples(h);
 
@@ -210,15 +163,16 @@ int check_popmap(const bcf_hdr_t *h, const khash_t(string) *pdb)
 
 khash_t(string) *read_popmap(const char *popfile)
 {
-    khash_t(string) *popdb = NULL;
     khint_t it = 0;
     char sid[MAX_STRLEN];
     char pop[MAX_STRLEN];
     int counter = 0;
-    FILE *instream;
+    int ns = 0;
+    int a =  0;
+    FILE *instream = NULL;
 
     /* Initialize sample->population hash table */
-    popdb = kh_init(string);
+    khash_t(string) *popdb = kh_init(string);
 
     /* Open popmap input file stream */
     instream = fopen(popfile, "r");
@@ -229,23 +183,16 @@ khash_t(string) *read_popmap(const char *popfile)
 
     while (!feof(instream))
     {
-        int absent = 0;
-        int ns = 0;
-
         ns = fscanf(instream, "%s\t%s\n", sid, pop);
-
         if (ns != 2)
         {
             return NULL;
         }
-
-        it = kh_put(string, popdb, sid, &absent);
-
-        if (absent)
+        it = kh_put(string, popdb, sid, &a);
+        if (a)
         {
             kh_key(popdb, it) = strdup(sid);
         }
-
         kh_value(popdb, it) = strdup(pop);
     	counter++;
     }

@@ -1,8 +1,9 @@
 CC      := gcc
 VERSION := $(shell cat VERSION)
-CFLAGS  := -Wall -O2 -D VERSION=$(VERSION) -I/shared/include -L/shared/lib
+CFLAGS  := -Wall -O2 -D VERSION=$(VERSION)
 LIBS    := -lm -lz -lplink_lite -lhts
 PREFIX  := /usr
+SHARED  := /shared/include
 H_DIR   := $(PREFIX)/include
 L_DIR   := $(PREFIX)/lib
 SRCS    := $(wildcard src/*.c)
@@ -10,6 +11,10 @@ SDIR    := build-static
 DDIR    := build-dynamic
 DOBJS   := $(SRCS:src/%.c=$(DDIR)/%.o)
 SOBJS   := $(SRCS:src/%.c=$(SDIR)/%.o)
+
+ifneq ($(wildcard /shared/include/.*),)
+	CFLAGS += -I/shared/include -L/shared/lib
+endif
 
 all: libpbwt.so libpbwt.a
 
