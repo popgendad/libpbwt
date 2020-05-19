@@ -92,7 +92,7 @@ void pbwt_destroy(pbwt_t *b)
 
         if (b->cmatrix != NULL)
         {
-            for (i = 0; i < b->nsam; ++i)
+            for (i = 0; i < b->nsam - b->nref; ++i)
             {
                 free(b->cmatrix[i]);
             }

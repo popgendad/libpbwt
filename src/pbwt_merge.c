@@ -1,79 +1,87 @@
 #include "pbwt.h"
 
-pbwt_t *pbwt_merge(pbwt_t *b1, pbwt_t *b2)
+pbwt_t *pbwt_merge(pbwt_t *bref, pbwt_t *bquery)
 {
     int ret = 0;
     size_t i = 0;
-    pbwt_t *bm = NULL;
+    size_t j = 0;
+    size_t tot_size = 0;
+    pbwt_t *bmerge = NULL;
 
     /* Check if two pbwts have same number of sites */
-    if (b1->nsite != b2->nsite)
+    if (bref->nsite != bquery->nsite)
     {
         return NULL;
     }
 
     /* Check concordance of RSIDs */
-    for (i = 0; i < b1->nsite; ++i)
+    for (i = 0; i < bref->nsite; ++i)
     {
-        if (strcmp(b1->rsid[i], b2->rsid[i]) != 0)
+        if (strcmp(bref->rsid[i], bquery->rsid[i]) != 0)
         {
             return NULL;
         }
     }
 
     /* Check if pbwts are compressed */
-    if (b1->is_compress == TRUE)
+    if (bref->is_compress == TRUE)
     {
-        ret = pbwt_uncompress(b1);
+        ret = pbwt_uncompress(bref);
+        if (ret < 0)
+        {
+            return NULL;
+        }
     }
 
-    if (ret < 0)
+    if (bquery->is_compress == TRUE)
     {
-        return NULL;
+        ret = pbwt_uncompress(bquery);
+        if (ret < 0)
+        {
+            return NULL;
+        }
     }
 
-    if (b2->is_compress == TRUE)
-    {
-        ret = pbwt_uncompress(b2);
-    }
-
-    if (ret < 0)
-    {
-        return NULL;
-    }
+    /* Total sample size of merged pbwt */
+    tot_size = bref->nsam + bquery->nsam;
 
     /* Initialize new pbwt */
-    bm = pbwt_init(b1->nsite, b1->nsam + b2->nsam);
+    bmerge = pbwt_init(bref->nsite, tot_size);
+    bmerge->nref = bref->nsam;
 
     /* Copy genotype data */
-    memcpy(bm->data, b1->data, b1->datasize * sizeof(unsigned char));
-    memcpy(bm->data + b1->datasize, b2->data, b2->datasize * sizeof(unsigned char));
+    memcpy(bmerge->data, bref->data, bref->datasize * sizeof(unsigned char));
+    memcpy(bmerge->data + bref->datasize, bquery->data, bquery->datasize * sizeof(unsigned char));
 
     /* Copy sample information */
-    for (i = 0; i < b1->nsam; ++i)
+
+    /* b1 is reference set */
+    for (i = 0; i < bmerge->nref; ++i)
     {
-        bm->sid[i] = strdup(b1->sid[i]);
-        bm->reg[i] = strdup(b1->reg[i]);
+        bmerge->sid[i] = strdup(bref->sid[i]);
+        bmerge->reg[i] = strdup(bref->reg[i]);
+        bmerge->is_query[i] = FALSE;
     }
 
-    for (i = 0; i < b2->nsam; ++i)
+    /* b2 is query set */
+    for (i = bmerge->nref, j = 0; i < tot_size; ++i, ++j)
     {
-        size_t j = b1->nsam + i;
-        bm->sid[j] = strdup(b2->sid[i]);
-        bm->reg[j] = strdup(b2->reg[i]);
+        bmerge->sid[i] = strdup(bquery->sid[j]);
+        bmerge->reg[i] = strdup(bquery->reg[j]);
+        bmerge->is_query[i] = TRUE;
     }
 
     /* Copy site information */
-    for (i = 0; i < b1->nsite; ++i)
+    for (i = 0; i < bref->nsite; ++i)
     {
-        bm->rsid[i] = strdup(b1->rsid[i]);
-        bm->cm[i] = b1->cm[i];
-        bm->chr[i] = strdup(b1->chr[i]);
+        bmerge->rsid[i] = strdup(bref->rsid[i]);
+        bmerge->cm[i] = bref->cm[i];
+        bmerge->chr[i] = strdup(bref->chr[i]);
     }
 
     /* Deallocate original pbwts */
-    pbwt_destroy(b1);
-    pbwt_destroy(b2);
+    pbwt_destroy(bref);
+    pbwt_destroy(bquery);
 
-    return bm;
+    return bmerge;
 }

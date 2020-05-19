@@ -117,14 +117,8 @@ int pbwt_set_query_match(pbwt_t *b, const double minlen,
                 if (b->is_query[ppa[j]] == TRUE && b->is_query[ppa[k]] == FALSE &&
                     div[j] < i && match_dist >= minlen)
                 {
-                    if (ppa[j] < ppa[k])
-                    {
-                        (*report)(b, ppa[j], ppa[k], div[j], i);
-                    }
-                    else
-                    {
-                        (*report)(b, ppa[k], ppa[j], div[j], i);
-                    }
+
+                    (*report)(b, ppa[j], ppa[k], div[j], i);
                 }
             }
 
@@ -136,14 +130,7 @@ int pbwt_set_query_match(pbwt_t *b, const double minlen,
                 if (b->is_query[ppa[j]] == TRUE && b->is_query[ppa[k]] == FALSE &&
                     div[j+1] < i && match_dist >= minlen)
                 {
-                    if (ppa[j] < ppa[k])
-                    {
-                        (*report)(b, ppa[j], ppa[k], div[j+1], i);
-                    }
-                    else
-                    {
-                        (*report)(b, ppa[k], ppa[j], div[j+1], i);
-                    }
+                    (*report)(b, ppa[j], ppa[k], div[j+1], i);
                 }
             }
         }

@@ -14,6 +14,7 @@ pbwt_t *pbwt_init(const size_t nsite, const size_t nsam)
     b->nsite = nsite;
     b->nsam = nsam;
     b->datasize = nsite * nsam;
+    b->nref = 0;
     b->is_compress = FALSE;
     b->intree = NULL;
     b->cmatrix = NULL;
