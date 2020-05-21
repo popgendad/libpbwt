@@ -53,6 +53,7 @@ typedef struct pbwt
     size_t datasize;             /* Number of bytes stored in data */
     size_t nsite;                /* Number of sampled sites */
     size_t nsam;                 /* Number of sampled haplotypes */
+    size_t nref;                 /* Number of reference haplotypes */
     node_t *intree;              /* Pointer to interval tree of matches */
     khash_t(floats) *reghash;    /* Pointer to the region hash table */
     double **cmatrix;            /* Pointer to the coancestry matrix */
