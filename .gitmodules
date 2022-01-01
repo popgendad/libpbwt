@@ -1,0 +1,3 @@
+[submodule "libplink_lite"]
+	path = libplink_lite
+	url = https://github.com/popgendad/libplink_lite.git
