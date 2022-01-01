@@ -4,9 +4,9 @@ A C library for implementing the positional Burrows-Wheeler transform (PBWT)
 
 ## Introduction
 
-The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing PBWT data, which is described below in the [PBWT file format](https://github.com/wisdomhealth-inc/libpbwt#PBWT-file-format) subsection below.
+The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing PBWT data, which is described below in the [PBWT file format](https://github.com/popgendad/libpbwt#PBWT-file-format) subsection below.
 
-The [`pbwtmaster`](https://github.com/wisdomhealth-inc/pbwtmaster) program is a front-end utility that uses a large proportion of the functionality provided in the `libpbwt` library.
+The [`pbwtutil`](https://github.com/popgendad/pbwtutil) program is a front-end utility that uses a large proportion of the functionality provided in the `libpbwt` library.
 
 ## Installation
 
@@ -21,7 +21,7 @@ A `Makefile` is provided with the `libpbwt` package. There are three dependencie
 The default installation directories are `/usr/lib` for the both the static and shared library files (`libpbwt.a` and `libpbwt.so` respectively) and `/usr/include` for the `pbwt.h` header file. Below is an example of installing the library.
 
 ```
-git clone git@github.com:wisdomhealth-inc/libpbwt.git
+git clone git@github.com:popgendad/libpbwt.git
 cd libpbwt
 make all
 sudo make install
@@ -378,13 +378,3 @@ int main (int argc, char *argv[])
     return 0;
 }
 ```
-
-## Contributing
-
-### TODO
-
-1. Translate to C++
-
-2. Better error signal handling
-
-3. Finish writing `pbwt_pull` function
