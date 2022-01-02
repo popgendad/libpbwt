@@ -2,6 +2,8 @@
 
 A C library for implementing the positional Burrows-Wheeler transform (PBWT)
 
+[![Publish Docker image](https://github.com/popgendad/libpbwt/actions/workflows/main.yml/badge.svg)](https://github.com/popgendad/libpbwt/actions/workflows/main.yml)
+
 ## Introduction
 
 The positional Burrows-Wheeler transform is an efficient method for haplotype storage and matching ([Durbin 2014](https://www.ncbi.nlm.nih.gov/pubmed/24413527)). The `libpbwt` library introduces a new file format for storing PBWT data, which is described below in the [PBWT file format](https://github.com/popgendad/libpbwt#PBWT-file-format) subsection below.
