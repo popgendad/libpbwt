@@ -1,10 +1,11 @@
 CC      := gcc
 VERSION := $(shell cat VERSION)
-CFLAGS  := -Wall -O2 -D VERSION=$(VERSION) -I./libplink_lite/src -L.
+UNAME      := $(shell uname)
+CFLAGS  := -Wall -O2 -D VERSION=$(VERSION) -I./libplink_lite/src
+ifeq ($(UNAME), Darwin)
+CFLAGS  := -Wall -O2 -D VERSION=$(VERSION) -I/opt/homebrew/Cellar/htslib/1.14/include -L/opt/homebrew/Cellar/htslib/1.14/lib
+endif
 LIBS    := -lm -lz -lplink_lite -lhts
-PREFIX  := /usr
-H_DIR   := $(PREFIX)/include
-L_DIR   := $(PREFIX)/lib
 SRCS    := $(wildcard src/*.c)
 SDIR    := build-static
 DDIR    := build-dynamic
@@ -35,8 +36,8 @@ $(SDIR) $(DDIR):
 	@mkdir $@
 
 install:
-	cp libpbwt.* $(L_DIR)
-	cp src/pbwt.h $(H_DIR)
+	cp libpbwt.* /usr/local/lib/
+	cp src/pbwt.h /usr/local/include/pbwt.h
 
 clean:
 	rm -rf $(DDIR) $(SDIR) libpbwt.*

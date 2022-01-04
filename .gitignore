@@ -2,3 +2,5 @@ test/ptest
 *.o
 libpbwt.so
 .vscode
+.DS_Store
+libplink_lite/.DS_Store
